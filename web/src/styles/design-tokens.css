@@ -1,0 +1,103 @@
+:root {
+  /* Cupiddle Brand Palette */
+  --color-violet-950: #1e0b36;
+  --color-violet-900: #2e1065;
+  --color-violet-800: #4c1d95;
+  --color-violet-700: #6d28d9;
+  --color-violet-600: #7c3aed;
+  --color-violet-500: #8b5cf6;
+  --color-violet-400: #a78bfa;
+  --color-lavender-200: #ddd6fe;
+  --color-lavender-100: #ede9fe;
+  --color-lavender-50: #f5f3ff;
+
+  --color-coral-500: #f43f5e;
+  --color-coral-400: #fb7185;
+  --color-coral-300: #fda4af;
+  --color-coral-50: #fff1f2;
+
+  --color-amber-500: #f59e0b;
+  --color-amber-50: #fffbeb;
+
+  --color-surface-bg: #0d0814;
+  --color-surface-card: #181024;
+  --color-surface-card-hover: #221733;
+  --color-surface-border: #2d1f45;
+  --color-surface-input: #1f1430;
+
+  --color-text-primary: #fdfbf7;
+  --color-text-secondary: #c4b5fd;
+  --color-text-muted: #8b7aa6;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 25px rgba(124, 58, 237, 0.25);
+  --shadow-coral-glow: 0 0 20px rgba(244, 63, 94, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-bg);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .brand-font {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+input, textarea, select {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-input);
+  border: 1px solid var(--color-surface-border);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-violet-500);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-border);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-violet-700);
+}
