@@ -32,9 +32,10 @@ func InitDB(driverName, dataSourceName string) (*DB, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	db.SetMaxOpenConns(25)
-	db.SetMaxIdleConns(10)
-	db.SetConnMaxLifetime(5 * time.Minute)
+	db.SetMaxOpenConns(20)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(15 * time.Minute)
+	db.SetConnMaxIdleTime(3 * time.Minute)
 
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("database ping failed: %w", err)
@@ -289,14 +290,16 @@ func (db *DB) seedDefaultCommunities() error {
 	for _, c := range defaultCommunities {
 		_, err := db.Exec(
 			`INSERT INTO communities (id, slug, name, description, icon, category, member_count, post_count, created_at)
-			 VALUES ($1, $2, $3, $4, $5, $6, 0, 0, $7)`,
+			 VALUES ($1, $2, $3, $4, $5, $6, 0, 0, $7)
+			 ON CONFLICT (id) DO NOTHING`,
 			c.ID, c.Slug, c.Name, c.Description, c.Icon, c.Category, now,
 		)
 		if err != nil {
 			// For SQLite parameter syntax compatibility if needed:
 			_, err = db.Exec(
 				`INSERT INTO communities (id, slug, name, description, icon, category, member_count, post_count, created_at)
-				 VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?)`,
+				 VALUES (?, ?, ?, ?, ?, ?, 0, 0, ?)
+				 ON CONFLICT (id) DO NOTHING`,
 				c.ID, c.Slug, c.Name, c.Description, c.Icon, c.Category, now,
 			)
 			if err != nil {
@@ -308,3 +311,4 @@ func (db *DB) seedDefaultCommunities() error {
 	log.Printf("[DATABASE] Seeded %d initial Rabbit Hole communities", len(defaultCommunities))
 	return nil
 }
+

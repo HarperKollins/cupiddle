@@ -321,3 +321,4 @@ func (h *AdminHandler) GetAuditLogs(w http.ResponseWriter, r *http.Request) {
 		"count":      len(logs),
 	})
 }
+

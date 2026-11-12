@@ -49,3 +49,4 @@ In strict compliance with the Nigeria Data Protection Act (NDPA) and global data
 1. **Report Workflow:** Every profile, conversation, and community contribution includes a multi-category reporting mechanism (`POST /api/safety/report`).
 2. **Staff Console Oversight:** All reports generate immutable case records in the administration dashboard queue. Human moderators review reported content, previous incident history, and decide appropriate sanctions (Official Warning, 7-Day Suspension, or Permanent Ban).
 3. **Two-Way Blocking:** Blocking an account (`POST /api/safety/block`) permanently severs discovery visibility, terminates existing matches, and closes active conversations.
+

@@ -140,3 +140,4 @@ func TestRegisterAndLoginFlow(t *testing.T) {
 		t.Fatalf("Expected 401 Unauthorized for request without token, got: %d", rec.Code)
 	}
 }
+

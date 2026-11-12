@@ -156,7 +156,7 @@ func main() {
 			 latitude, longitude, bio, dating_intentions, target_genders, age_min, age_max, max_distance_km,
 			 is_paused, is_verified, verification_badge, rabbit_hole, defend_take, teach_me, my_world_tags, interests, created_at, updated_at)
 			 VALUES ($1, $2, $3, $4, $5, $6, $7, 'Nigeria',
-			 $8, $9, $10, $11, '["All"]', 18, 99, 200,
+			 $8, $9, $10, $11, '["All"]', 18, 99, 2000,
 			 false, true, 'Curious Mind', $12, $13, $14, $15, $16, $17, $17)
 			 ON CONFLICT (user_id) DO NOTHING`,
 			u.ID, u.Name, u.DOB, u.Age, u.Gender, u.Pronouns, u.City,
@@ -234,3 +234,4 @@ func main() {
 
 	log.Println("[SEED] Database successfully populated with admin, curiosity profiles, communities, and real sparks!")
 }
+

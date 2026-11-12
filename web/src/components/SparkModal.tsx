@@ -211,3 +211,4 @@ export const SparkModal: React.FC<SparkModalProps> = ({
     </div>
   );
 };
+

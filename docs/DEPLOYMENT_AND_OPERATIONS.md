@@ -100,3 +100,4 @@ npm run build
 ### 4.3 Database Backup & Restore Procedure
 - **SQLite (Local / Standalone):** Automated hourly atomic snapshot of `cuppidle.db`.
 - **PostgreSQL (Supabase / Production):** Nightly automated backups with Point-in-Time Recovery (PITR) enabled.
+

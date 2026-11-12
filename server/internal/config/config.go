@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 )
 
 // Config holds all runtime application configuration
@@ -20,11 +21,17 @@ type Config struct {
 // LoadConfig reads configuration from environment variables with fallbacks
 func LoadConfig() *Config {
 	port := getEnv("PORT", "8080")
-	dbURL := getEnv("DATABASE_URL", "cuppidle.db")
-	driver := getEnv("DB_DRIVER", "")
+	dbURL := getEnv("DATABASE_URL", "")
+	if dbURL == "" {
+		dbURL = getEnv("NEON_DATABASE_URL", "")
+	}
+	if dbURL == "" {
+		dbURL = getEnv("POSTGRES_URL", "cuppidle.db")
+	}
 
+	driver := getEnv("DB_DRIVER", "")
 	if driver == "" {
-		if len(dbURL) >= 11 && dbURL[:11] == "postgres://" || len(dbURL) >= 14 && dbURL[:14] == "postgresql://" {
+		if strings.HasPrefix(dbURL, "postgres://") || strings.HasPrefix(dbURL, "postgresql://") {
 			driver = "postgres"
 		} else {
 			driver = "sqlite"
@@ -60,3 +67,4 @@ func getEnv(key, defaultVal string) string {
 	}
 	return val
 }
+

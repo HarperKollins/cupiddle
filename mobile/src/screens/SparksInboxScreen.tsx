@@ -111,3 +111,4 @@ const styles = StyleSheet.create({
   acceptBtn: { backgroundColor: theme.colors.coral, paddingVertical: 8, paddingHorizontal: 20, borderRadius: theme.radius.full },
   acceptBtnText: { color: theme.colors.white, fontSize: 13, fontWeight: '700' },
 });
+

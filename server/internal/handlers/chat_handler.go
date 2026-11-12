@@ -374,3 +374,4 @@ func (h *ChatHandler) getPartnerProfile(userID string) *models.Profile {
 
 	return &p
 }
+

@@ -268,3 +268,4 @@ func (h *SparkHandler) getPhotos(userID string) []models.Photo {
 	}
 	return photos
 }
+

@@ -111,7 +111,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Insert default profile
+	// Insert default profile (Nationwide Nigeria discovery enabled by default)
 	profile := &models.Profile{
 		UserID:           userID,
 		DisplayName:      req.DisplayName,
@@ -123,7 +123,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		TargetGenders:    []string{},
 		AgeMin:           18,
 		AgeMax:           99,
-		MaxDistanceKm:    100,
+		MaxDistanceKm:    2000, // Nationwide Nigeria coverage
 		MyWorldTags:      []string{},
 		Interests:        []string{},
 		Photos:           []models.Photo{},
@@ -136,7 +136,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		 latitude, longitude, bio, dating_intentions, target_genders, age_min, age_max, max_distance_km,
 		 is_paused, is_verified, verification_badge, audio_intro_url, audio_intro_duration,
 		 rabbit_hole, defend_take, teach_me, my_world_tags, interests, created_at, updated_at)
-		 VALUES ($1, $2, $3, $4, $5, '', $6, $7, 0, 0, '', '', '[]', 18, 99, 100,
+		 VALUES ($1, $2, $3, $4, $5, '', $6, $7, 0, 0, '', '', '[]', 18, 99, 2000,
 		 false, false, '', '', 0, '', '', '', '[]', '[]', $8, $9)`,
 		userID, req.DisplayName, req.Birthdate, age, req.Gender, req.City, country, now, now,
 	)
@@ -304,3 +304,4 @@ func respondJSON(w http.ResponseWriter, status int, data interface{}) {
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(data)
 }
+

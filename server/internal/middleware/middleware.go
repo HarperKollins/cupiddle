@@ -163,3 +163,4 @@ func (rl *RateLimiter) Limit(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+

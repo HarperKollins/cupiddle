@@ -68,9 +68,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Nav Tabs */}
+      {/* Nav Tabs (Desktop) */}
       {myProfile && (
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={() => setActiveTab('stream')}
             style={{
@@ -251,3 +251,4 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+

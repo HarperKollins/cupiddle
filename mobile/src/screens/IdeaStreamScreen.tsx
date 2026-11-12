@@ -211,3 +211,4 @@ const styles = StyleSheet.create({
   modalCancelBtn: { paddingVertical: 8, paddingHorizontal: 16 },
   modalSendBtn: { backgroundColor: theme.colors.coral, paddingVertical: 8, paddingHorizontal: 20, borderRadius: theme.radius.full },
 });
+

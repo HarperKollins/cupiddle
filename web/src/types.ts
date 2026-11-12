@@ -145,3 +145,4 @@ export interface CoopGame {
   created_at: string;
   completed_at?: string;
 }
+

@@ -280,3 +280,4 @@ func (h *CommunityHandler) AddComment(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: now,
 	})
 }
+

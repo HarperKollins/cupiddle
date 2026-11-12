@@ -31,3 +31,4 @@ test_cupiddle.db
 .env
 .env.local
 .env.production
+

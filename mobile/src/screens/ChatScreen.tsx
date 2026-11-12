@@ -88,3 +88,4 @@ const styles = StyleSheet.create({
   input: { flex: 1, backgroundColor: theme.colors.inputBg, borderRadius: theme.radius.full, paddingHorizontal: 16, color: theme.colors.white },
   sendBtn: { backgroundColor: theme.colors.primaryViolet, paddingHorizontal: 18, justifyContent: 'center', borderRadius: theme.radius.full },
 });
+

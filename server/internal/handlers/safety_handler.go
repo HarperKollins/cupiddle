@@ -173,3 +173,4 @@ func (h *SafetyHandler) SubmitReport(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:  now,
 	})
 }
+

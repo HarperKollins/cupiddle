@@ -386,3 +386,4 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
     </div>
   );
 };
+

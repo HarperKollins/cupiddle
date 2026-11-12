@@ -84,3 +84,4 @@ export interface Community {
   post_count: number;
   is_member: boolean;
 }
+

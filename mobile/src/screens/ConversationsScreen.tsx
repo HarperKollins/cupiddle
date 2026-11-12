@@ -72,3 +72,4 @@ const styles = StyleSheet.create({
   unreadText: { color: theme.colors.white, fontSize: 11, fontWeight: '700' },
   lastMsg: { color: theme.colors.textMuted, fontSize: 13 },
 });
+

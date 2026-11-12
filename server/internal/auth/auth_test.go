@@ -74,3 +74,4 @@ func TestJWTGenerationAndValidation(t *testing.T) {
 		t.Fatalf("Expected error validating with wrong secret, got nil")
 	}
 }
+

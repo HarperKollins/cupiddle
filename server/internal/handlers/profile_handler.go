@@ -348,3 +348,4 @@ func (h *ProfileHandler) fetchFullProfile(userID string) *models.Profile {
 
 	return &p
 }
+

@@ -9,7 +9,7 @@ import { ProfileEditor } from './components/ProfileEditor';
 import { AuthModal } from './components/AuthModal';
 import { User, Profile, DiscoveryCandidate, Spark, Conversation } from './types';
 import { api } from './api';
-import { Sparkles, Compass, ArrowRight } from 'lucide-react';
+import { Sparkles, Compass, ArrowRight, Heart, MessageCircle, Users, User as UserIcon } from 'lucide-react';
 import './styles/design-tokens.css';
 
 export const App: React.FC = () => {
@@ -385,6 +385,128 @@ export const App: React.FC = () => {
         }}
         sendSparkFn={api.sendSpark.bind(api)}
       />
+
+      {/* Mobile App Bottom Navigation Bar */}
+      {myProfile && (
+        <nav
+          className="mobile-bottom-bar"
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '64px',
+            backgroundColor: 'rgba(24, 16, 36, 0.95)',
+            backdropFilter: 'blur(16px)',
+            borderTop: '1px solid var(--color-surface-border)',
+            display: 'none',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            zIndex: 90,
+            paddingBottom: 'env(safe-area-inset-bottom)',
+          }}
+        >
+          <button
+            onClick={() => setActiveTab('stream')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              color: activeTab === 'stream' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
+              fontSize: '10px',
+              fontWeight: 700,
+            }}
+          >
+            <Compass size={20} />
+            <span>Discover</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('sparks')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              color: activeTab === 'sparks' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
+              fontSize: '10px',
+              fontWeight: 700,
+              position: 'relative',
+            }}
+          >
+            <Heart size={20} />
+            <span>Sparks</span>
+            {sparks.length > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-4px',
+                right: '4px',
+                width: '14px',
+                height: '14px',
+                backgroundColor: 'var(--color-coral-500)',
+                color: '#fff',
+                borderRadius: '50%',
+                fontSize: '9px',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                {sparks.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab('chat')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              color: activeTab === 'chat' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
+              fontSize: '10px',
+              fontWeight: 700,
+            }}
+          >
+            <MessageCircle size={20} />
+            <span>Chats</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('communities')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              color: activeTab === 'communities' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
+              fontSize: '10px',
+              fontWeight: 700,
+            }}
+          >
+            <Users size={20} />
+            <span>Rabbit Holes</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('profile')}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '2px',
+              color: activeTab === 'profile' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
+              fontSize: '10px',
+              fontWeight: 700,
+            }}
+          >
+            <UserIcon size={20} />
+            <span>Profile</span>
+          </button>
+        </nav>
+      )}
 
       {/* Auth Modal */}
       <AuthModal

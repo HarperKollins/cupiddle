@@ -91,3 +91,4 @@ const styles = StyleSheet.create({
   tabLabel: { color: theme.colors.textMuted, fontSize: 13, fontWeight: '600' },
   tabLabelActive: { color: theme.colors.primaryViolet, fontWeight: '800' },
 });
+

@@ -99,18 +99,18 @@ func (h *DiscoveryHandler) GetIdeaStream(w http.ResponseWriter, r *http.Request)
 			continue
 		}
 
-		// Gender filtering (if configured)
-		if len(myProfile.TargetGenders) > 0 && !containsString(myProfile.TargetGenders, p.Gender) {
+		// Gender filtering (if configured and not "All" / "Everyone")
+		if len(myProfile.TargetGenders) > 0 && !containsString(myProfile.TargetGenders, "All") && !containsString(myProfile.TargetGenders, "Everyone") && !containsString(myProfile.TargetGenders, p.Gender) {
 			continue
 		}
-		if len(p.TargetGenders) > 0 && !containsString(p.TargetGenders, myProfile.Gender) {
+		if len(p.TargetGenders) > 0 && !containsString(p.TargetGenders, "All") && !containsString(p.TargetGenders, "Everyone") && !containsString(p.TargetGenders, myProfile.Gender) {
 			continue
 		}
 
 		// Calculate approximate distance
 		distance := haversineDistance(myProfile.Latitude, myProfile.Longitude, p.Latitude, p.Longitude)
-		if myProfile.MaxDistanceKm > 0 && distance > float64(myProfile.MaxDistanceKm) && myProfile.City != p.City {
-			// If different city and beyond preferred distance, skip
+		// If user explicitly configured a tight local radius (< 1500km), respect it; otherwise allow Nationwide Nigeria discovery
+		if myProfile.MaxDistanceKm > 0 && myProfile.MaxDistanceKm < 1500 && distance > float64(myProfile.MaxDistanceKm) && myProfile.City != p.City {
 			continue
 		}
 
@@ -299,3 +299,4 @@ func (h *DiscoveryHandler) fetchFullProfile(userID string) *models.Profile {
 	p.Photos = h.getPhotos(p.UserID)
 	return &p
 }
+

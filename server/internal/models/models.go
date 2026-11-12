@@ -201,3 +201,4 @@ type DiscoveryCandidate struct {
 	SharedInterests []string `json:"shared_interests"`
 	MatchScore      float64  `json:"match_score"`
 }
+

@@ -101,3 +101,24 @@ input:focus, textarea:focus, select:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-violet-700);
 }
+
+
+
+/* Mobile First Responsive Navigation */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-bottom-bar {
+    display: flex !important;
+  }
+  main {
+    padding-bottom: 84px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-bottom-bar {
+    display: none !important;
+  }
+}

@@ -214,3 +214,4 @@ func ServeWS(hub *Hub, w http.ResponseWriter, r *http.Request, userID string) {
 	go client.WritePump()
 	go client.ReadPump()
 }
+
