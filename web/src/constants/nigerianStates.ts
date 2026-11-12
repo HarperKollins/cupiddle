@@ -39,3 +39,4 @@ export const NIGERIAN_STATES = [
 ] as const;
 
 export type NigerianState = typeof NIGERIAN_STATES[number];
+

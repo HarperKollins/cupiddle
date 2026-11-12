@@ -98,6 +98,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       }}
     >
       <div
+        className="animate-modal-spring"
         style={{
           backgroundColor: 'var(--color-paper-white, #ffffff)',
           color: 'var(--color-bumble-ink, #202020)',
@@ -471,6 +472,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <button
             type="submit"
             disabled={loading}
+            className="btn-bumble-action"
             style={{
               marginTop: '12px',
               padding: '16px',

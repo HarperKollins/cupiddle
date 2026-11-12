@@ -186,3 +186,177 @@ input:focus, textarea:focus, select:focus {
     display: none !important;
   }
 }
+
+/* ========================================================
+   BUMBLE SUNLIT HONEY EDITORIAL ANIMATION SYSTEM
+   ======================================================== */
+
+/* 1. Tilted Phone Cards Floating Physics */
+@keyframes floatLeftTilt {
+  0%, 100% {
+    transform: rotate(-7deg) translateY(20px);
+  }
+  50% {
+    transform: rotate(-5deg) translateY(6px);
+  }
+}
+
+@keyframes floatRightTilt {
+  0%, 100% {
+    transform: rotate(7deg) translateY(20px);
+  }
+  50% {
+    transform: rotate(5deg) translateY(8px);
+  }
+}
+
+@keyframes floatCenterHero {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-float-left {
+  animation: floatLeftTilt 6s ease-in-out infinite;
+}
+
+.animate-float-right {
+  animation: floatRightTilt 6.5s ease-in-out infinite 0.5s;
+}
+
+.animate-float-center {
+  animation: floatCenterHero 5.5s ease-in-out infinite 0.2s;
+}
+
+/* Pause floating animation and straighten on hover with tactile spring physics */
+.interactive-card-hover {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), z-index 0.2s;
+  cursor: pointer;
+  will-change: transform, box-shadow;
+}
+
+.interactive-card-hover:hover {
+  animation-play-state: paused !important;
+  transform: rotate(0deg) translateY(-14px) scale(1.03) !important;
+  box-shadow: 0 24px 48px rgba(32, 32, 32, 0.22) !important;
+  z-index: 30 !important;
+}
+
+/* 2. Infinite Continuous Marquee Ticker */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 12px;
+  animation: marqueeScroll 32s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* 3. Subtle Ambient Pulse & Shimmer */
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 1px 8px rgba(32, 32, 32, 0.12);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 6px 20px rgba(32, 32, 32, 0.18);
+  }
+}
+
+.animate-pulse-gentle {
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
+/* 4. Button & Pill Tactile Physics */
+.btn-bumble-action {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+}
+
+.btn-bumble-action:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 8px 24px rgba(32, 32, 32, 0.25);
+}
+
+.btn-bumble-action:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.pill-interactive {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.pill-interactive:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(32, 32, 32, 0.16);
+}
+
+.pill-interactive:active {
+  transform: translateY(0px) scale(0.97);
+}
+
+/* 5. Editorial Feature Card Elevate on Hover */
+.editorial-card-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.editorial-card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(32, 32, 32, 0.14);
+}
+
+/* 6. Rotating Word Transition */
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUpFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 7. Modal Scale-In Spring */
+@keyframes springModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-spring {
+  animation: springModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
