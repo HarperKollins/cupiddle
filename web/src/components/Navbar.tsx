@@ -22,47 +22,58 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
 }) => {
   return (
-    <header style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '16px 24px',
-      backgroundColor: 'rgba(24, 16, 36, 0.85)',
-      backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid var(--color-surface-border)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-    }}>
+    <header
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '16px 28px',
+        backgroundColor: 'var(--color-paper-white, #ffffff)',
+        borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+      }}
+    >
       {/* Brand */}
-      <div 
+      <div
         onClick={() => setActiveTab('stream')}
         style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
       >
-        <div style={{
-          width: '38px',
-          height: '38px',
-          borderRadius: '12px',
-          background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: 'var(--shadow-glow)',
-        }}>
-          <Sparkles size={22} color="#ffffff" />
+        <div
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Sparkles size={20} color="var(--color-bumble-ink, #202020)" />
         </div>
         <div>
-          <span style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.03em', color: '#ffffff' }}>
+          <span
+            style={{
+              fontSize: '22px',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
+          >
             Cupiddle
           </span>
-          <span style={{
-            display: 'block',
-            fontSize: '10px',
-            color: 'var(--color-text-muted)',
-            fontWeight: 500,
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-          }}>
+          <span
+            style={{
+              display: 'block',
+              fontSize: '11px',
+              color: 'var(--color-graphite, #575656)',
+              fontWeight: 600,
+              letterSpacing: '0.02em',
+            }}
+          >
             Curiosity is attractive
           </span>
         </div>
@@ -70,19 +81,21 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Nav Tabs (Desktop) */}
       {myProfile && (
-        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <button
             onClick={() => setActiveTab('stream')}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-full)',
-              color: activeTab === 'stream' ? '#ffffff' : 'var(--color-text-secondary)',
-              backgroundColor: activeTab === 'stream' ? 'var(--color-violet-800)' : 'transparent',
-              fontWeight: 600,
+              padding: '8px 18px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              color: 'var(--color-bumble-ink, #202020)',
+              backgroundColor: activeTab === 'stream' ? 'var(--color-bumble-honey, #ffdb5b)' : 'transparent',
+              border: activeTab === 'stream' ? '1.5px solid var(--color-bumble-ink, #202020)' : '1.5px solid transparent',
+              fontWeight: 700,
               fontSize: '14px',
+              letterSpacing: '0.01em',
             }}
           >
             <Compass size={17} />
@@ -95,33 +108,38 @@ export const Navbar: React.FC<NavbarProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-full)',
-              color: activeTab === 'sparks' ? '#ffffff' : 'var(--color-text-secondary)',
-              backgroundColor: activeTab === 'sparks' ? 'var(--color-violet-800)' : 'transparent',
-              fontWeight: 600,
+              padding: '8px 18px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              color: 'var(--color-bumble-ink, #202020)',
+              backgroundColor: activeTab === 'sparks' ? 'var(--color-bumble-honey, #ffdb5b)' : 'transparent',
+              border: activeTab === 'sparks' ? '1.5px solid var(--color-bumble-ink, #202020)' : '1.5px solid transparent',
+              fontWeight: 700,
               fontSize: '14px',
               position: 'relative',
+              letterSpacing: '0.01em',
             }}
           >
             <Heart size={17} />
             <span>Sparks</span>
             {unreadSparksCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                width: '18px',
-                height: '18px',
-                backgroundColor: 'var(--color-coral-500)',
-                color: '#ffffff',
-                borderRadius: '50%',
-                fontSize: '11px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '4px',
+                  minWidth: '18px',
+                  height: '18px',
+                  backgroundColor: 'var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-bumble-honey, #ffdb5b)',
+                  borderRadius: '50%',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 4px',
+                }}
+              >
                 {unreadSparksCount}
               </span>
             )}
@@ -133,33 +151,38 @@ export const Navbar: React.FC<NavbarProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-full)',
-              color: activeTab === 'chat' ? '#ffffff' : 'var(--color-text-secondary)',
-              backgroundColor: activeTab === 'chat' ? 'var(--color-violet-800)' : 'transparent',
-              fontWeight: 600,
+              padding: '8px 18px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              color: 'var(--color-bumble-ink, #202020)',
+              backgroundColor: activeTab === 'chat' ? 'var(--color-bumble-honey, #ffdb5b)' : 'transparent',
+              border: activeTab === 'chat' ? '1.5px solid var(--color-bumble-ink, #202020)' : '1.5px solid transparent',
+              fontWeight: 700,
               fontSize: '14px',
               position: 'relative',
+              letterSpacing: '0.01em',
             }}
           >
             <MessageCircle size={17} />
             <span>Conversations</span>
             {unreadChatCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                width: '18px',
-                height: '18px',
-                backgroundColor: 'var(--color-violet-500)',
-                color: '#ffffff',
-                borderRadius: '50%',
-                fontSize: '11px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '4px',
+                  minWidth: '18px',
+                  height: '18px',
+                  backgroundColor: 'var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-paper-white, #ffffff)',
+                  borderRadius: '50%',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 4px',
+                }}
+              >
                 {unreadChatCount}
               </span>
             )}
@@ -171,12 +194,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-full)',
-              color: activeTab === 'communities' ? '#ffffff' : 'var(--color-text-secondary)',
-              backgroundColor: activeTab === 'communities' ? 'var(--color-violet-800)' : 'transparent',
-              fontWeight: 600,
+              padding: '8px 18px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              color: 'var(--color-bumble-ink, #202020)',
+              backgroundColor: activeTab === 'communities' ? 'var(--color-bumble-honey, #ffdb5b)' : 'transparent',
+              border: activeTab === 'communities' ? '1.5px solid var(--color-bumble-ink, #202020)' : '1.5px solid transparent',
+              fontWeight: 700,
               fontSize: '14px',
+              letterSpacing: '0.01em',
             }}
           >
             <Users size={17} />
@@ -187,15 +212,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* User Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{
-          fontSize: '11px',
-          fontWeight: 600,
-          padding: '4px 10px',
-          borderRadius: 'var(--radius-full)',
-          backgroundColor: 'rgba(124, 58, 237, 0.15)',
-          color: 'var(--color-violet-400)',
-          border: '1px solid rgba(124, 58, 237, 0.3)',
-        }}>
+        <span
+          style={{
+            fontSize: '12px',
+            fontWeight: 700,
+            padding: '5px 12px',
+            borderRadius: 'var(--radius-badges, 1000px)',
+            backgroundColor: 'var(--color-pollen, #fff386)',
+            color: 'var(--color-bumble-ink, #202020)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            letterSpacing: '0.02em',
+          }}
+        >
           100% Free
         </span>
 
@@ -207,13 +235,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: activeTab === 'profile' ? 'var(--color-violet-800)' : 'var(--color-surface-card)',
-                border: '1px solid var(--color-surface-border)',
-                color: '#ffffff',
-                fontSize: '13px',
-                fontWeight: 600,
+                padding: '8px 16px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                backgroundColor: activeTab === 'profile' ? 'var(--color-bumble-honey, #ffdb5b)' : 'var(--color-mist, #f3f3f3)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                color: 'var(--color-bumble-ink, #202020)',
+                fontSize: '14px',
+                fontWeight: 700,
               }}
             >
               <UserIcon size={16} />
@@ -225,7 +253,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 padding: '8px',
                 borderRadius: '50%',
-                color: 'var(--color-text-muted)',
+                color: 'var(--color-graphite, #575656)',
+                border: '1px solid #e0e0e0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <LogOut size={18} />
@@ -235,13 +267,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenAuth}
             style={{
-              padding: '8px 20px',
-              borderRadius: 'var(--radius-full)',
-              background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-              color: '#ffffff',
+              padding: '10px 24px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              backgroundColor: 'var(--color-bumble-ink, #202020)',
+              color: 'var(--color-paper-white, #ffffff)',
               fontWeight: 700,
-              fontSize: '14px',
-              boxShadow: 'var(--shadow-glow)',
+              fontSize: '15px',
+              letterSpacing: '0.015em',
+              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
             }}
           >
             Sign In / Join
@@ -251,4 +284,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
-

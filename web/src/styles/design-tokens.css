@@ -1,45 +1,107 @@
 :root {
-  /* Cupiddle Brand Palette */
-  --color-violet-950: #1e0b36;
-  --color-violet-900: #2e1065;
-  --color-violet-800: #4c1d95;
-  --color-violet-700: #6d28d9;
-  --color-violet-600: #7c3aed;
-  --color-violet-500: #8b5cf6;
-  --color-violet-400: #a78bfa;
-  --color-lavender-200: #ddd6fe;
-  --color-lavender-100: #ede9fe;
-  --color-lavender-50: #f5f3ff;
+  /* Bumble — Sunlit Honey Editorial Tokens */
+  --color-bumble-honey: #ffdb5b;
+  --color-pollen: #fff386;
+  --color-bumble-ink: #202020;
+  --color-paper-white: #ffffff;
+  --color-mist: #f3f3f3;
+  --color-charcoal: #3b3b3b;
+  --color-graphite: #575656;
+  --color-onyx: #343333;
 
-  --color-coral-500: #f43f5e;
-  --color-coral-400: #fb7185;
-  --color-coral-300: #fda4af;
-  --color-coral-50: #fff1f2;
+  /* Typography */
+  --font-bumblesans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  --color-amber-500: #f59e0b;
-  --color-amber-50: #fffbeb;
+  /* Type Scale */
+  --text-caption: 15px;
+  --leading-caption: 1.5;
+  --tracking-caption: 0.11px;
+  --text-body: 17px;
+  --leading-body: 1.5;
+  --tracking-body: 0.2px;
+  --text-subheading: 20px;
+  --leading-subheading: 1.33;
+  --tracking-subheading: 0.32px;
+  --text-heading-sm: 24px;
+  --leading-heading-sm: 1.25;
+  --tracking-heading-sm: 0.43px;
+  --text-heading: 32px;
+  --leading-heading: 1.2;
+  --tracking-heading: 0.64px;
+  --text-heading-lg: 40px;
+  --leading-heading-lg: 1.18;
+  --tracking-heading-lg: 0.8px;
+  --text-display: 68px;
+  --leading-display: 1;
+  --tracking-display: 1.36px;
 
-  --color-surface-bg: #0d0814;
-  --color-surface-card: #181024;
-  --color-surface-card-hover: #221733;
-  --color-surface-border: #2d1f45;
-  --color-surface-input: #1f1430;
+  /* Typography — Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
-  --color-text-primary: #fdfbf7;
-  --color-text-secondary: #c4b5fd;
-  --color-text-muted: #8b7aa6;
+  /* Spacing */
+  --spacing-unit: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-36: 36px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
 
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  /* Layout */
+  --page-max-width: 1200px;
+  --section-gap: 64px;
+  --card-padding: 32px;
+  --element-gap: 24px;
 
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
+  /* Border Radius */
+  --radius-lg: 9px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-full: 1000px;
 
-  --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.35);
-  --shadow-glow: 0 0 25px rgba(124, 58, 237, 0.25);
-  --shadow-coral-glow: 0 0 20px rgba(244, 63, 94, 0.3);
+  /* Named Radii */
+  --radius-nav: 16px;
+  --radius-cards: 24px;
+  --radius-badges: 1000px;
+  --radius-buttons: 16px;
+  --radius-small-elements: 9px;
+
+  /* Shadows */
+  --shadow-sm: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
+
+  /* Surfaces */
+  --surface-page-canvas: #ffffff;
+  --surface-soft-card: #f3f3f3;
+  --surface-pollen-frame: #fff386;
+  --surface-honey-band: #ffdb5b;
+
+  /* Theme Compatibility Tokens (Light Editorial) */
+  --color-surface-card: #ffffff;
+  --color-surface-border: #202020;
+  --color-surface-input: #f3f3f3;
+  --color-surface-canvas: #ffffff;
+  --color-surface-nav: #ffffff;
+  --color-text-primary: #202020;
+  --color-text-secondary: #575656;
+  --color-text-muted: #757575;
+  --color-violet-400: #202020;
+  --color-violet-500: #202020;
+  --color-violet-600: #202020;
+  --color-violet-700: #202020;
+  --color-violet-800: #ffdb5b;
+  --color-coral-300: #202020;
+  --color-coral-400: #202020;
+  --color-coral-500: #ffdb5b;
+  --color-coral-600: #202020;
+  --shadow-coral-glow: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
+  --shadow-glow: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
+  --shadow-subtle: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
 }
 
 * {
@@ -49,21 +111,23 @@
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--color-surface-bg);
-  color: var(--color-text-primary);
-  line-height: 1.5;
+  font-family: var(--font-bumblesans);
+  background-color: var(--surface-page-canvas);
+  color: var(--color-bumble-ink);
+  line-height: var(--leading-body);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: 0.01em;
 }
 
-h1, h2, h3, h4, .brand-font {
-  font-family: var(--font-display);
-  letter-spacing: -0.02em;
+h1, h2, h3, h4 {
+  font-family: var(--font-bumblesans);
+  color: var(--color-bumble-ink);
+  letter-spacing: 0.015em;
 }
 
 button {
-  font-family: var(--font-sans);
+  font-family: var(--font-bumblesans);
   cursor: pointer;
   border: none;
   background: none;
@@ -71,19 +135,21 @@ button {
 }
 
 input, textarea, select {
-  font-family: var(--font-sans);
-  background-color: var(--color-surface-input);
-  border: 1px solid var(--color-surface-border);
-  color: var(--color-text-primary);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  font-family: var(--font-bumblesans);
+  background-color: var(--color-paper-white);
+  border: 1.5px solid var(--color-bumble-ink);
+  color: var(--color-bumble-ink);
+  border-radius: var(--radius-buttons);
+  padding: 12px 16px;
   outline: none;
-  transition: border-color 0.2s;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: var(--color-violet-500);
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+  border-color: var(--color-bumble-ink);
+  box-shadow: 0 0 0 3px rgba(255, 219, 91, 0.5);
 }
 
 /* Custom scrollbars */
@@ -92,19 +158,17 @@ input:focus, textarea:focus, select:focus {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-bg);
+  background: var(--surface-soft-card);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-surface-border);
+  background: var(--color-graphite);
   border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-violet-700);
+  background: var(--color-bumble-ink);
 }
 
-
-
-/* Mobile First Responsive Navigation */
+/* Responsive Navigation */
 @media (max-width: 768px) {
   .desktop-nav {
     display: none !important;

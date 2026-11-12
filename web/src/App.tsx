@@ -7,9 +7,10 @@ import { ChatRoom } from './components/ChatRoom';
 import { CommunitiesView } from './components/CommunitiesView';
 import { ProfileEditor } from './components/ProfileEditor';
 import { AuthModal } from './components/AuthModal';
+import { SunlitLandingPage } from './components/SunlitLandingPage';
 import { User, Profile, DiscoveryCandidate, Spark, Conversation } from './types';
 import { api } from './api';
-import { Sparkles, Compass, ArrowRight, Heart, MessageCircle, Users, User as UserIcon } from 'lucide-react';
+import { Compass, Heart, MessageCircle, Users, User as UserIcon } from 'lucide-react';
 import './styles/design-tokens.css';
 
 export const App: React.FC = () => {
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authInitialState, setAuthInitialState] = useState<string | undefined>(undefined);
   const [sparkModalData, setSparkModalData] = useState<{
     isOpen: boolean;
     receiverId: string;
@@ -192,10 +194,35 @@ export const App: React.FC = () => {
     }
   };
 
+  // Unauthenticated visitors see the Bumble Sunlit Honey Editorial Landing Page
+  if (!currentUser) {
+    return (
+      <div style={{ backgroundColor: 'var(--surface-page-canvas, #ffffff)', minHeight: '100vh' }}>
+        <SunlitLandingPage
+          onOpenAuth={(preselectedState) => {
+            setAuthInitialState(preselectedState);
+            setIsAuthOpen(true);
+          }}
+        />
+        <AuthModal
+          isOpen={isAuthOpen}
+          initialState={authInitialState}
+          onClose={() => setIsAuthOpen(false)}
+          onSuccess={async () => {
+            const me = await api.getMe();
+            setCurrentUser(me.user);
+            setMyProfile(me.profile);
+            api.connectWebSocket();
+          }}
+        />
+      </div>
+    );
+  }
+
   const currentCandidate = candidates[candidateIndex];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-surface-bg)' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--surface-page-canvas, #ffffff)', color: 'var(--color-bumble-ink, #202020)' }}>
       {/* Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -208,68 +235,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container */}
-      <main style={{ padding: '28px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Unauthenticated Landing Hero */}
-        {!currentUser && (
-          <div style={{ textAlign: 'center', padding: '40px 16px 60px', maxWidth: '780px', margin: '0 auto' }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 16px',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'rgba(124, 58, 237, 0.15)',
-              border: '1px solid rgba(124, 58, 237, 0.3)',
-              color: 'var(--color-lavender-100)',
-              fontSize: '13px',
-              fontWeight: 700,
-              marginBottom: '20px',
-            }}>
-              <Sparkles size={16} color="var(--color-coral-400)" />
-              100% Free Curiosity-First Dating & Social Discovery
-            </span>
-
-            <h1 style={{
-              fontSize: '48px',
-              fontWeight: 800,
-              lineHeight: 1.15,
-              letterSpacing: '-0.03em',
-              color: '#ffffff',
-              marginBottom: '20px',
-            }}>
-              Curiosity is attractive.
-            </h1>
-
-            <p style={{
-              fontSize: '18px',
-              color: 'var(--color-text-secondary)',
-              lineHeight: 1.6,
-              marginBottom: '32px',
-            }}>
-              Tired of superficial swipes and repetitive introductions? Cupiddle introduces you to people through their obsessions, opinions they're ready to defend, and ideas worth exploring.
-            </p>
-
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                style={{
-                  padding: '14px 36px',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-                  color: '#ffffff',
-                  fontSize: '16px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: 'var(--shadow-coral-glow)',
-                }}
-              >
-                Join Cupiddle Free <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
-        )}
+      <main style={{ padding: '32px 20px', maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Tab 1: The Idea Stream */}
         {activeTab === 'stream' && (
@@ -286,49 +252,47 @@ export const App: React.FC = () => {
                 margin: '40px auto',
                 padding: '40px 24px',
                 textAlign: 'center',
-                backgroundColor: 'var(--color-surface-card)',
-                borderRadius: 'var(--radius-lg)',
-                border: '1px solid var(--color-surface-border)',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                borderRadius: 'var(--radius-cards, 24px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
               }}>
-                <Compass size={36} color="var(--color-violet-400)" style={{ margin: '0 auto 16px' }} />
-                <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
-                  {currentUser ? "You've Explored All Current Recommendations" : "Curiosity Feed Preview"}
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                }}>
+                  <Compass size={28} color="var(--color-bumble-ink, #202020)" />
+                </div>
+                <h3 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+                  You've Explored All Current Recommendations
                 </h3>
-                <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
-                  {currentUser
-                    ? "You can reset your discovery feed to rediscover passed profiles or widen your distance preference."
-                    : "Create a free account to unlock your personalized Idea Stream, send contextual Sparks, and connect."}
+                <p style={{ fontSize: '15px', color: 'var(--color-graphite, #575656)', lineHeight: 1.5, marginBottom: '24px' }}>
+                  Cupiddle is nationwide across all 36 Nigerian states and Abuja. You can reset your feed to rediscover profiles or explore communities.
                 </p>
-                {currentUser ? (
-                  <button
-                    onClick={async () => {
-                      await api.resetPasses();
-                      await loadDiscoveryFeed();
-                    }}
-                    style={{
-                      padding: '10px 24px',
-                      borderRadius: 'var(--radius-full)',
-                      backgroundColor: 'var(--color-violet-600)',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                    }}
-                  >
-                    Reset Discovery Feed
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsAuthOpen(true)}
-                    style={{
-                      padding: '12px 28px',
-                      borderRadius: 'var(--radius-full)',
-                      background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                    }}
-                  >
-                    Get Started Free
-                  </button>
-                )}
+                <button
+                  onClick={async () => {
+                    await api.resetPasses();
+                    await loadDiscoveryFeed();
+                  }}
+                  style={{
+                    padding: '14px 28px',
+                    borderRadius: 'var(--radius-buttons, 16px)',
+                    backgroundColor: 'var(--color-bumble-ink, #202020)',
+                    color: 'var(--color-paper-white, #ffffff)',
+                    fontWeight: 700,
+                    fontSize: '15px',
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  Reset Discovery Feed
+                </button>
               </div>
             )}
           </div>
@@ -396,9 +360,8 @@ export const App: React.FC = () => {
             left: 0,
             right: 0,
             height: '64px',
-            backgroundColor: 'rgba(24, 16, 36, 0.95)',
-            backdropFilter: 'blur(16px)',
-            borderTop: '1px solid var(--color-surface-border)',
+            backgroundColor: 'var(--color-paper-white, #ffffff)',
+            borderTop: '1.5px solid var(--color-bumble-ink, #202020)',
             display: 'none',
             justifyContent: 'space-around',
             alignItems: 'center',
@@ -413,8 +376,8 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: activeTab === 'stream' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
-              fontSize: '10px',
+              color: activeTab === 'stream' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
+              fontSize: '11px',
               fontWeight: 700,
             }}
           >
@@ -429,8 +392,8 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: activeTab === 'sparks' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
-              fontSize: '10px',
+              color: activeTab === 'sparks' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
+              fontSize: '11px',
               fontWeight: 700,
               position: 'relative',
             }}
@@ -442,12 +405,13 @@ export const App: React.FC = () => {
                 position: 'absolute',
                 top: '-4px',
                 right: '4px',
-                width: '14px',
-                height: '14px',
-                backgroundColor: 'var(--color-coral-500)',
-                color: '#fff',
+                width: '16px',
+                height: '16px',
+                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                color: 'var(--color-bumble-ink, #202020)',
+                border: '1px solid var(--color-bumble-ink, #202020)',
                 borderRadius: '50%',
-                fontSize: '9px',
+                fontSize: '10px',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
@@ -465,8 +429,8 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: activeTab === 'chat' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
-              fontSize: '10px',
+              color: activeTab === 'chat' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
+              fontSize: '11px',
               fontWeight: 700,
             }}
           >
@@ -481,8 +445,8 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: activeTab === 'communities' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
-              fontSize: '10px',
+              color: activeTab === 'communities' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
+              fontSize: '11px',
               fontWeight: 700,
             }}
           >
@@ -497,8 +461,8 @@ export const App: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: activeTab === 'profile' ? 'var(--color-coral-400)' : 'var(--color-text-muted)',
-              fontSize: '10px',
+              color: activeTab === 'profile' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
+              fontSize: '11px',
               fontWeight: 700,
             }}
           >
@@ -511,6 +475,7 @@ export const App: React.FC = () => {
       {/* Auth Modal */}
       <AuthModal
         isOpen={isAuthOpen}
+        initialState={authInitialState}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={async () => {
           const me = await api.getMe();

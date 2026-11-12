@@ -1,4 +1,4 @@
-﻿# Cupiddle All-in-One Startup Script
+# Cupiddle All-in-One Startup Script
 
 Write-Host "========================================================" -ForegroundColor Magenta
 Write-Host "   CUPIDDLE — Curiosity-First Social Discovery" -ForegroundColor Magenta
@@ -27,3 +27,4 @@ Write-Host "`nAll Cupiddle servers launched successfully!" -ForegroundColor Gree
 Write-Host "  - Web App (PWA Mobile/Desktop): http://localhost:3000" -ForegroundColor White
 Write-Host "  - Staff Console:                http://localhost:3001 (admin@cupiddle.com / CupiddleAdmin2026!)" -ForegroundColor White
 Write-Host "  - Go Low-Latency API:           http://localhost:8080" -ForegroundColor White
+

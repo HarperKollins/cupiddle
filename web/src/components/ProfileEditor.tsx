@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Camera, Plus, Trash2, Check, ShieldAlert, Sparkles, Compass, Flame, Lightbulb } from 'lucide-react';
 import { Profile } from '../types';
 import { api } from '../api';
+import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
 interface ProfileEditorProps {
   profile: Profile;
@@ -346,14 +347,19 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
 
         <div>
           <label style={{ display: 'block', fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
-            City
+            State / Location (Nigeria)
           </label>
-          <input
-            type="text"
+          <select
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            style={{ width: '100%' }}
-          />
+            style={{ width: '100%', fontSize: '14px' }}
+          >
+            {NIGERIAN_STATES.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
