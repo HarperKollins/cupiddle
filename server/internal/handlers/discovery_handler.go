@@ -70,7 +70,7 @@ func (h *DiscoveryHandler) GetIdeaStream(w http.ResponseWriter, r *http.Request)
 	}
 	defer rows.Close()
 
-	var candidates []models.DiscoveryCandidate
+	candidates := make([]models.DiscoveryCandidate, 0)
 
 	for rows.Next() {
 		var p models.Profile

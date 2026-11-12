@@ -245,7 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
             >
               <UserIcon size={16} />
-              <span>{myProfile.display_name}</span>
+              <span>{myProfile.display_name || 'My Profile'}</span>
             </button>
             <button
               onClick={onLogout}

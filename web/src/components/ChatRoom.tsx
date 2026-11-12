@@ -24,22 +24,23 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const [radarData, setRadarData] = useState<{ shared_interests: string[]; shared_tags: string[]; suggestions: string[] } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const selectedConv = conversations.find((c) => c.id === selectedConvId);
+  const convList = conversations || [];
+  const selectedConv = convList.find((c) => c.id === selectedConvId);
 
   // Load conversation details, messages, and radar
   useEffect(() => {
     if (!selectedConvId) return;
 
     api.getMessages(selectedConvId).then((res) => {
-      setMessages(res.messages);
+      setMessages(res?.messages || []);
     }).catch(console.error);
 
     api.getActiveCoopGame(selectedConvId).then((res) => {
-      setActiveGame(res.active_game);
+      setActiveGame(res?.active_game || null);
     }).catch(console.error);
 
     api.getConversationRadar(selectedConvId).then((res) => {
-      setRadarData(res);
+      setRadarData(res || null);
     }).catch(console.error);
   }, [selectedConvId]);
 
@@ -165,12 +166,12 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto' }}>
-          {conversations.length === 0 ? (
+          {convList.length === 0 ? (
             <div style={{ padding: '36px 20px', textAlign: 'center', color: 'var(--color-graphite, #575656)', fontSize: '14px', lineHeight: 1.5 }}>
               No matches yet. Spark interesting perspectives in the Idea Stream!
             </div>
           ) : (
-            conversations.map((conv) => {
+            convList.map((conv) => {
               const partner = conv.partner;
               const photo = partner?.photos && partner.photos.length > 0
                 ? partner.photos[0].url

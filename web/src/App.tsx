@@ -81,10 +81,11 @@ export const App: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.getDiscoveryFeed(10);
-      setCandidates(res.candidates);
+      setCandidates(res?.candidates || []);
       setCandidateIndex(0);
     } catch (err) {
       console.error('Failed to load feed', err);
+      setCandidates([]);
     } finally {
       setLoading(false);
     }
@@ -93,21 +94,24 @@ export const App: React.FC = () => {
   const loadSparks = async () => {
     try {
       const res = await api.getIncomingSparks();
-      setSparks(res.sparks);
+      setSparks(res?.sparks || []);
     } catch (err) {
       console.error('Failed to load sparks', err);
+      setSparks([]);
     }
   };
 
   const loadConversations = async () => {
     try {
       const res = await api.getConversations();
-      setConversations(res.conversations);
-      if (res.conversations.length > 0 && !selectedConvId) {
-        setSelectedConvId(res.conversations[0].id);
+      const list = res?.conversations || [];
+      setConversations(list);
+      if (list.length > 0 && !selectedConvId) {
+        setSelectedConvId(list[0].id);
       }
     } catch (err) {
       console.error('Failed to load conversations', err);
+      setConversations([]);
     }
   };
 
@@ -228,8 +232,8 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         myProfile={myProfile}
-        unreadSparksCount={sparks.length}
-        unreadChatCount={conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0)}
+        unreadSparksCount={(sparks || []).length}
+        unreadChatCount={(conversations || []).reduce((sum, c) => sum + (c.unread_count || 0), 0)}
         onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
       />
@@ -400,7 +404,7 @@ export const App: React.FC = () => {
           >
             <Heart size={20} />
             <span>Sparks</span>
-            {sparks.length > 0 && (
+            {(sparks || []).length > 0 && (
               <span style={{
                 position: 'absolute',
                 top: '-4px',
@@ -417,7 +421,7 @@ export const App: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                {sparks.length}
+                {(sparks || []).length}
               </span>
             )}
           </button>

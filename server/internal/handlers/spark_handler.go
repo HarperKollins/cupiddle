@@ -126,7 +126,7 @@ func (h *SparkHandler) GetIncomingSparks(w http.ResponseWriter, r *http.Request)
 	}
 	defer rows.Close()
 
-	var sparks []models.Spark
+	sparks := make([]models.Spark, 0)
 	for rows.Next() {
 		var s models.Spark
 		var p models.Profile

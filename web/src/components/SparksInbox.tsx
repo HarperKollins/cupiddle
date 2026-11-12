@@ -36,6 +36,8 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
     }
   };
 
+  const sparkList = sparks || [];
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-graphite, #575656)' }}>
@@ -45,7 +47,7 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
     );
   }
 
-  if (sparks.length === 0) {
+  if (sparkList.length === 0) {
     return (
       <div
         className="editorial-card-lift"
@@ -122,11 +124,11 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
             fontWeight: 800,
           }}
         >
-          {sparks.length} Pending
+          {sparkList.length} Pending
         </span>
       </div>
 
-      {sparks.map((spark) => {
+      {sparkList.map((spark) => {
         const sender = spark.sender_profile;
         const photo = sender?.photos && sender.photos.length > 0
           ? sender.photos[0].url

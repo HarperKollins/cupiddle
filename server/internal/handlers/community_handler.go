@@ -52,7 +52,7 @@ func (h *CommunityHandler) GetCommunities(w http.ResponseWriter, r *http.Request
 	}
 	defer rows.Close()
 
-	var communities []models.Community
+	communities := make([]models.Community, 0)
 	for rows.Next() {
 		var c models.Community
 		var isMemberInt int
@@ -94,7 +94,7 @@ func (h *CommunityHandler) GetCommunityPosts(w http.ResponseWriter, r *http.Requ
 	}
 	defer rows.Close()
 
-	var posts []models.CommunityPost
+	posts := make([]models.CommunityPost, 0)
 	for rows.Next() {
 		var post models.CommunityPost
 		var author models.Profile
@@ -229,7 +229,7 @@ func (h *CommunityHandler) GetPostComments(w http.ResponseWriter, r *http.Reques
 	}
 	defer rows.Close()
 
-	var comments []models.PostComment
+	comments := make([]models.PostComment, 0)
 	for rows.Next() {
 		var c models.PostComment
 		var author models.Profile

@@ -56,7 +56,7 @@ func (h *ChatHandler) GetConversations(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	var conversations []models.Conversation
+	conversations := make([]models.Conversation, 0)
 
 	for rows.Next() {
 		var c models.Conversation
@@ -142,7 +142,7 @@ func (h *ChatHandler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	var messages []models.Message
+	messages := make([]models.Message, 0)
 	now := time.Now()
 
 	for rows.Next() {
