@@ -6,14 +6,14 @@ import { api } from '../api';
 interface ChatRoomProps {
   conversations: Conversation[];
   selectedConvId: string | null;
-  onSelectConv: (id: string) => void;
+  onSelectConversation: (id: string) => void;
   currentUserId: string;
 }
 
 export const ChatRoom: React.FC<ChatRoomProps> = ({
   conversations,
   selectedConvId,
-  onSelectConv,
+  onSelectConversation,
   currentUserId,
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -99,7 +99,6 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const handleReaction = async (messageId: string, emoji: string) => {
     try {
       await api.addReaction(messageId, emoji);
-      // Locally update reactions
       setMessages((prev) =>
         prev.map((m) => {
           if (m.id === messageId) {
@@ -120,35 +119,55 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   };
 
   return (
-    <div style={{
-      maxWidth: '1040px',
-      margin: '0 auto',
-      height: 'calc(100vh - 120px)',
-      display: 'grid',
-      gridTemplateColumns: '320px 1fr',
-      backgroundColor: 'var(--color-surface-card)',
-      borderRadius: 'var(--radius-lg)',
-      border: '1px solid var(--color-surface-border)',
-      overflow: 'hidden',
-      boxShadow: 'var(--shadow-subtle)',
-    }}>
+    <div
+      style={{
+        maxWidth: '1080px',
+        margin: '0 auto',
+        height: 'calc(100vh - 130px)',
+        display: 'grid',
+        gridTemplateColumns: '320px 1fr',
+        backgroundColor: 'var(--color-paper-white, #ffffff)',
+        borderRadius: 'var(--radius-cards, 24px)',
+        border: '1.5px solid var(--color-bumble-ink, #202020)',
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+      }}
+    >
       {/* Left Column: Conversations List */}
-      <div style={{
-        borderRight: '1px solid var(--color-surface-border)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
-        <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--color-surface-border)' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff' }}>Connections</h3>
-          <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-            Curious matches & active conversations
+      <div
+        style={{
+          borderRight: '1.5px solid var(--color-bumble-ink, #202020)',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: 'var(--color-paper-white, #ffffff)',
+        }}
+      >
+        <div
+          style={{
+            padding: '20px',
+            borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
+            backgroundColor: 'var(--color-mist, #f3f3f3)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: 800,
+              color: 'var(--color-bumble-ink, #202020)',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            Curious Connections
+          </h3>
+          <span style={{ fontSize: '13px', color: 'var(--color-graphite, #575656)' }}>
+            Active sparks & matches
           </span>
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {conversations.length === 0 ? (
-            <div style={{ padding: '30px 20px', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '14px' }}>
-              No matches yet. Spark interesting people in the Idea Stream!
+            <div style={{ padding: '36px 20px', textAlign: 'center', color: 'var(--color-graphite, #575656)', fontSize: '14px', lineHeight: 1.5 }}>
+              No matches yet. Spark interesting perspectives in the Idea Stream!
             </div>
           ) : (
             conversations.map((conv) => {
@@ -161,49 +180,67 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
               return (
                 <div
                   key={conv.id}
-                  onClick={() => onSelectConv(conv.id)}
+                  onClick={() => onSelectConversation(conv.id)}
                   style={{
                     padding: '16px 20px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '12px',
                     cursor: 'pointer',
-                    backgroundColor: isSelected ? 'rgba(124, 58, 237, 0.15)' : 'transparent',
-                    borderLeft: isSelected ? '4px solid var(--color-violet-500)' : '4px solid transparent',
-                    transition: 'background-color 0.2s',
+                    backgroundColor: isSelected ? 'var(--color-bumble-honey, #ffdb5b)' : 'transparent',
+                    borderLeft: isSelected ? '5px solid var(--color-bumble-ink, #202020)' : '5px solid transparent',
+                    borderBottom: '1px solid #f0f0f0',
+                    transition: 'all 0.15s ease',
                   }}
                 >
                   <img
                     src={photo}
                     alt={partner?.display_name || 'Match'}
-                    style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    }}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, fontSize: '15px', color: '#ffffff' }}>
+                      <span
+                        style={{
+                          fontWeight: 700,
+                          fontSize: '15px',
+                          color: 'var(--color-bumble-ink, #202020)',
+                        }}
+                      >
                         {partner?.display_name || 'Curious Mind'}
                       </span>
                       {conv.unread_count > 0 && (
-                        <span style={{
-                          backgroundColor: 'var(--color-coral-500)',
-                          color: '#ffffff',
-                          borderRadius: '50%',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          padding: '2px 6px',
-                        }}>
+                        <span
+                          style={{
+                            backgroundColor: 'var(--color-bumble-ink, #202020)',
+                            color: 'var(--color-bumble-honey, #ffdb5b)',
+                            borderRadius: 'var(--radius-badges, 1000px)',
+                            fontSize: '11px',
+                            fontWeight: 800,
+                            padding: '2px 8px',
+                          }}
+                        >
                           {conv.unread_count}
                         </span>
                       )}
                     </div>
-                    <p style={{
-                      fontSize: '13px',
-                      color: 'var(--color-text-muted)',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      marginTop: '3px',
-                    }}>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        color: isSelected ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        marginTop: '3px',
+                        fontWeight: isSelected ? 600 : 400,
+                      }}
+                    >
                       {conv.last_message?.content || 'Conversation sparked!'}
                     </p>
                   </div>
@@ -216,29 +253,53 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
 
       {/* Right Column: Active Conversation */}
       {selectedConv ? (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'var(--color-paper-white, #ffffff)' }}>
           {/* Header */}
-          <div style={{
-            padding: '16px 24px',
-            borderBottom: '1px solid var(--color-surface-border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: 'rgba(24, 16, 36, 0.5)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{
+              padding: '16px 24px',
+              borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <img
                 src={selectedConv.partner?.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'}
                 alt={selectedConv.partner?.display_name || 'Partner'}
-                style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }}
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                }}
               />
               <div>
-                <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff' }}>
+                <h4
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: 800,
+                    color: 'var(--color-bumble-ink, #202020)',
+                    letterSpacing: '-0.01em',
+                  }}
+                >
                   {selectedConv.partner?.display_name}, {selectedConv.partner?.age}
                 </h4>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                  <MapPin size={13} />
-                  <span>{selectedConv.partner?.city || 'Nigeria'}</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    fontSize: '12px',
+                    color: 'var(--color-graphite, #575656)',
+                    fontWeight: 600,
+                  }}
+                >
+                  <MapPin size={13} color="var(--color-bumble-ink, #202020)" />
+                  <span>{selectedConv.partner?.city ? `${selectedConv.partner.city}, Nigeria` : 'Nigeria'}</span>
                 </div>
               </div>
             </div>
@@ -247,63 +308,77 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowGameMenu(!showGameMenu)}
+                className="pill-interactive"
                 style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '7px 14px',
-                  borderRadius: 'var(--radius-full)',
-                  backgroundColor: 'rgba(124, 58, 237, 0.2)',
-                  border: '1px solid rgba(124, 58, 237, 0.4)',
-                  color: 'var(--color-lavender-100)',
+                  padding: '8px 16px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-bumble-ink, #202020)',
                   fontSize: '13px',
-                  fontWeight: 600,
+                  fontWeight: 700,
                 }}
               >
-                <Gamepad2 size={16} color="var(--color-violet-400)" />
+                <Gamepad2 size={16} />
                 <span>Co-op Corner</span>
               </button>
 
               {showGameMenu && (
-                <div style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: '110%',
-                  width: '240px',
-                  backgroundColor: 'var(--color-surface-card)',
-                  borderRadius: 'var(--radius-md)',
-                  border: '1px solid var(--color-surface-border)',
-                  boxShadow: 'var(--shadow-subtle)',
-                  padding: '8px',
-                  zIndex: 20,
-                }}>
-                  <div style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>
-                    Choose Co-op Activity
+                <div
+                  className="animate-modal-spring"
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: '115%',
+                    width: '260px',
+                    backgroundColor: 'var(--color-paper-white, #ffffff)',
+                    borderRadius: 'var(--radius-buttons, 16px)',
+                    border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    boxShadow: '0 12px 32px rgba(32, 32, 32, 0.16)',
+                    padding: '8px',
+                    zIndex: 20,
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '8px 10px',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      color: 'var(--color-graphite, #575656)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                    }}
+                  >
+                    Play Together Asynchronously
                   </div>
-                  <button
-                    onClick={() => handleStartGame('logic_riddle')}
-                    style={{ width: '100%', textAlign: 'left', padding: '8px', borderRadius: 'var(--radius-sm)', color: '#ffffff', fontSize: '13px', display: 'block' }}
-                  >
-                    🧩 Two-Player Logic Riddle
-                  </button>
-                  <button
-                    onClick={() => handleStartGame('would_you_rather')}
-                    style={{ width: '100%', textAlign: 'left', padding: '8px', borderRadius: 'var(--radius-sm)', color: '#ffffff', fontSize: '13px', display: 'block' }}
-                  >
-                    ⚖️ Would You Rather?
-                  </button>
-                  <button
-                    onClick={() => handleStartGame('two_truths_lie')}
-                    style={{ width: '100%', textAlign: 'left', padding: '8px', borderRadius: 'var(--radius-sm)', color: '#ffffff', fontSize: '13px', display: 'block' }}
-                  >
-                    🎭 Two Truths and a Lie
-                  </button>
-                  <button
-                    onClick={() => handleStartGame('ai_or_human')}
-                    style={{ width: '100%', textAlign: 'left', padding: '8px', borderRadius: 'var(--radius-sm)', color: '#ffffff', fontSize: '13px', display: 'block' }}
-                  >
-                    🤖 AI or Human Prose
-                  </button>
+                  {[
+                    { type: 'logic_riddle', label: '🧩 Two-Player Logic Riddle' },
+                    { type: 'would_you_rather', label: '⚖️ Would You Rather?' },
+                    { type: 'two_truths_lie', label: '🎭 Two Truths and a Lie' },
+                    { type: 'ai_or_human', label: '🤖 AI or Human Prose' },
+                  ].map((item) => (
+                    <button
+                      key={item.type}
+                      onClick={() => handleStartGame(item.type)}
+                      style={{
+                        width: '100%',
+                        textAlign: 'left',
+                        padding: '10px 12px',
+                        borderRadius: '10px',
+                        color: 'var(--color-bumble-ink, #202020)',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        display: 'block',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-mist, #f3f3f3)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -311,17 +386,20 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
 
           {/* Spark Origin Context Banner */}
           {selectedConv.origin_spark && (
-            <div style={{
-              padding: '10px 20px',
-              backgroundColor: 'rgba(76, 29, 149, 0.25)',
-              borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '12px',
-              color: 'var(--color-lavender-200)',
-            }}>
-              <Sparkles size={14} color="var(--color-coral-400)" />
+            <div
+              style={{
+                padding: '10px 20px',
+                backgroundColor: 'var(--color-pollen, #fff386)',
+                borderBottom: '1px solid var(--color-bumble-ink, #202020)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '13px',
+                color: 'var(--color-bumble-ink, #202020)',
+                fontWeight: 600,
+              }}
+            >
+              <Sparkles size={15} color="var(--color-bumble-ink, #202020)" />
               <span>
                 <strong>Conversation Spark:</strong> "{selectedConv.origin_spark.comment}" (re: {selectedConv.origin_spark.target_content.slice(0, 60)}...)
               </span>
@@ -329,40 +407,47 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           )}
 
           {/* RabbitHole Radar Topic Suggestion */}
-          {radarData && radarData.suggestions.length > 0 && (
-            <div style={{
-              padding: '8px 20px',
-              backgroundColor: 'rgba(244, 63, 94, 0.08)',
-              borderBottom: '1px solid rgba(244, 63, 94, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '12px',
-              color: 'var(--color-coral-300)',
-            }}>
-              <Compass size={14} />
-              <span><strong>Radar Suggestion:</strong> {radarData.suggestions[0]}</span>
+          {radarData && radarData.suggestions && radarData.suggestions.length > 0 && (
+            <div
+              style={{
+                padding: '10px 20px',
+                backgroundColor: 'var(--color-mist, #f3f3f3)',
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '13px',
+                color: 'var(--color-bumble-ink, #202020)',
+              }}
+            >
+              <Compass size={15} color="var(--color-bumble-ink, #202020)" />
+              <span>
+                <strong>Radar Topic:</strong> {radarData.suggestions[0]}
+              </span>
             </div>
           )}
 
-          {/* Co-op Corner Active Game Card (if in progress) */}
+          {/* Co-op Corner Active Game Box */}
           {activeGame && activeGame.status === 'in_progress' && (
-            <div style={{
-              margin: '12px 20px',
-              padding: '16px',
-              backgroundColor: 'rgba(34, 23, 51, 0.95)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-violet-500)',
-            }}>
+            <div
+              style={{
+                margin: '14px 20px',
+                padding: '18px 20px',
+                backgroundColor: 'var(--color-pollen, #fff386)',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-violet-400)', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   🎮 Co-op Corner: {activeGame.title}
                 </span>
-                <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                  {activeGame.user1_answer && activeGame.user2_answer ? 'Done!' : 'Turn in progress'}
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-graphite, #575656)' }}>
+                  {activeGame.user1_answer && activeGame.user2_answer ? 'Completed!' : 'Turn in progress'}
                 </span>
               </div>
-              <p style={{ fontSize: '13px', color: '#ffffff', marginBottom: '12px', lineHeight: 1.5 }}>
+              <p style={{ fontSize: '14px', color: 'var(--color-bumble-ink, #202020)', marginBottom: '14px', lineHeight: 1.5, fontWeight: 600 }}>
                 {(() => {
                   try {
                     const data = JSON.parse(activeGame.prompt_data);
@@ -378,17 +463,25 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                   placeholder="Your answer or reasoning..."
                   value={gameAnswerInput}
                   onChange={(e) => setGameAnswerInput(e.target.value)}
-                  style={{ flex: 1, fontSize: '13px' }}
+                  style={{
+                    flex: 1,
+                    fontSize: '14px',
+                    padding: '10px 14px',
+                    borderRadius: 'var(--radius-buttons, 16px)',
+                    border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  }}
                 />
                 <button
                   onClick={handleSubmitAnswer}
+                  className="btn-bumble-action"
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: 'var(--radius-sm)',
-                    backgroundColor: 'var(--color-violet-600)',
-                    color: '#ffffff',
-                    fontSize: '13px',
-                    fontWeight: 600,
+                    padding: '10px 20px',
+                    borderRadius: 'var(--radius-buttons, 16px)',
+                    backgroundColor: 'var(--color-bumble-ink, #202020)',
+                    color: 'var(--color-paper-white, #ffffff)',
+                    fontSize: '14px',
+                    fontWeight: 700,
                   }}
                 >
                   Submit
@@ -398,7 +491,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           )}
 
           {/* Messages Scroll Area */}
-          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {messages.map((msg) => {
               const isMine = msg.sender_id === currentUserId;
 
@@ -407,28 +500,40 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                   key={msg.id}
                   style={{
                     alignSelf: isMine ? 'flex-end' : 'flex-start',
-                    maxWidth: '75%',
+                    maxWidth: '72%',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: isMine ? 'flex-end' : 'flex-start',
                   }}
                 >
-                  <div style={{
-                    padding: '12px 16px',
-                    borderRadius: isMine ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    backgroundColor: isMine ? 'var(--color-violet-700)' : 'var(--color-surface-input)',
-                    color: '#ffffff',
-                    fontSize: '14px',
-                    lineHeight: 1.5,
-                    border: isMine ? 'none' : '1px solid var(--color-surface-border)',
-                  }}>
+                  <div
+                    style={{
+                      padding: '14px 18px',
+                      borderRadius: isMine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                      backgroundColor: isMine ? 'var(--color-bumble-ink, #202020)' : 'var(--color-mist, #f3f3f3)',
+                      color: isMine ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
+                      fontSize: '15px',
+                      lineHeight: 1.5,
+                      border: isMine ? 'none' : '1.5px solid var(--color-bumble-ink, #202020)',
+                      boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+                    }}
+                  >
                     {msg.content}
                   </div>
 
                   {/* Message footer & reactions */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px', fontSize: '11px', color: 'var(--color-text-muted)' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginTop: '6px',
+                      fontSize: '11px',
+                      color: 'var(--color-graphite, #575656)',
+                    }}
+                  >
                     <span>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {isMine && <CheckCheck size={13} color="var(--color-lavender-200)" />}
+                    {isMine && <CheckCheck size={14} color="var(--color-bumble-ink, #202020)" />}
 
                     {/* Quick emoji reactions */}
                     <div style={{ display: 'flex', gap: '4px', marginLeft: '6px' }}>
@@ -437,10 +542,12 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                           key={emoji}
                           onClick={() => handleReaction(msg.id, emoji)}
                           style={{
-                            fontSize: '11px',
-                            padding: '2px 4px',
-                            borderRadius: '4px',
-                            backgroundColor: msg.reactions?.[currentUserId] === emoji ? 'var(--color-violet-800)' : 'transparent',
+                            fontSize: '12px',
+                            padding: '3px 6px',
+                            borderRadius: 'var(--radius-badges, 1000px)',
+                            backgroundColor: msg.reactions?.[currentUserId] === emoji ? 'var(--color-bumble-honey, #ffdb5b)' : 'var(--color-mist, #f3f3f3)',
+                            border: '1px solid #d0d0d0',
+                            cursor: 'pointer',
                           }}
                         >
                           {emoji}
@@ -459,11 +566,11 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
             onSubmit={handleSendMessage}
             style={{
               padding: '16px 20px',
-              borderTop: '1px solid var(--color-surface-border)',
+              borderTop: '1.5px solid var(--color-bumble-ink, #202020)',
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              backgroundColor: 'rgba(24, 16, 36, 0.7)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
             }}
           >
             <input
@@ -471,21 +578,32 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
               value={inputContent}
               onChange={(e) => setInputContent(e.target.value)}
               placeholder="Share a curious thought, question, or response..."
-              style={{ flex: 1, fontSize: '14px' }}
+              style={{
+                flex: 1,
+                fontSize: '15px',
+                padding: '12px 18px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                color: 'var(--color-bumble-ink, #202020)',
+              }}
             />
             <button
               type="submit"
               disabled={!inputContent.trim()}
+              className="btn-bumble-action"
               style={{
-                width: '42px',
-                height: '42px',
+                width: '46px',
+                height: '46px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-                color: '#ffffff',
+                backgroundColor: 'var(--color-bumble-ink, #202020)',
+                color: 'var(--color-paper-white, #ffffff)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                opacity: inputContent.trim() ? 1 : 0.6,
+                opacity: inputContent.trim() ? 1 : 0.5,
+                cursor: inputContent.trim() ? 'pointer' : 'not-allowed',
+                boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
               }}
             >
               <Send size={18} />
@@ -493,7 +611,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           </form>
         </div>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)', fontSize: '15px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-graphite, #575656)', fontSize: '15px', padding: '40px' }}>
           Select a match from the left to start a curious conversation.
         </div>
       )}

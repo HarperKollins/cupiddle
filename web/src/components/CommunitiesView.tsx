@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Sparkles, Plus, Check } from 'lucide-react';
+import { MessageSquare, Sparkles, Plus, Check, Compass, Users, X, Send } from 'lucide-react';
 import { Community, CommunityPost, PostComment } from '../types';
 import { api } from '../api';
 
@@ -57,16 +57,15 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPostTitle.trim() || !newPostContent.trim()) return;
-
+    if (!newPostTitle.trim() || !newPostContent.trim() || !selectedSlug) return;
     try {
-      const created = await api.createPost(selectedSlug, newPostTitle.trim(), newPostContent.trim());
-      setPosts([created, ...posts]);
+      const newPost = await api.createPost(selectedSlug, newPostTitle.trim(), newPostContent.trim());
+      setPosts([newPost, ...posts]);
       setNewPostTitle('');
       setNewPostContent('');
       setShowCreateModal(false);
     } catch (err) {
-      console.error('Failed to create post', err);
+      console.error('Create post error', err);
     }
   };
 
@@ -77,113 +76,196 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
     }
     setExpandedCommentsPostId(postId);
     if (!commentsMap[postId]) {
-      const res = await api.getPostComments(postId);
-      setCommentsMap((prev) => ({ ...prev, [postId]: res.comments }));
+      try {
+        const res = await api.getPostComments(postId);
+        setCommentsMap((prev) => ({ ...prev, [postId]: res.comments }));
+      } catch (err) {
+        console.error('Load comments error', err);
+      }
     }
   };
 
   const handleAddComment = async (postId: string) => {
     if (!commentInput.trim()) return;
     try {
-      const c = await api.addComment(postId, commentInput.trim());
+      const newComment = await api.addComment(postId, commentInput.trim());
       setCommentsMap((prev) => ({
         ...prev,
-        [postId]: [...(prev[postId] || []), c],
+        [postId]: [...(prev[postId] || []), newComment],
       }));
-      setCommentInput('');
       setPosts((prev) =>
         prev.map((p) => (p.id === postId ? { ...p, comment_count: p.comment_count + 1 } : p))
       );
+      setCommentInput('');
     } catch (err) {
-      console.error('Failed to comment', err);
+      console.error('Add comment error', err);
     }
   };
 
   const selectedCommunity = communities.find((c) => c.slug === selectedSlug);
 
   return (
-    <div style={{ maxWidth: '1040px', margin: '0 auto', display: 'grid', gridTemplateColumns: '280px 1fr', gap: '24px' }}>
-      {/* Left: Communities List */}
+    <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '300px 1fr', gap: '32px' }}>
+      {/* Left: Rabbit Holes Community List */}
       <div>
-        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '16px' }}>
-          Rabbit Holes
-        </h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+              color: 'var(--color-bumble-ink, #202020)',
+              fontSize: '12px',
+              fontWeight: 800,
+              letterSpacing: '0.02em',
+              marginBottom: '8px',
+            }}
+          >
+            <Compass size={13} />
+            Shared Obsessions
+          </div>
+          <h2
+            style={{
+              fontSize: '24px',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
+          >
+            Rabbit Holes
+          </h2>
+          <p style={{ fontSize: '14px', color: 'var(--color-graphite, #575656)', marginTop: '4px' }}>
+            Communities built around curiosity, craft, and ideas.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {communities.map((comm) => {
             const isSelected = comm.slug === selectedSlug;
             return (
               <div
                 key={comm.id}
                 onClick={() => setSelectedSlug(comm.slug)}
+                className="editorial-card-lift"
                 style={{
-                  padding: '12px 16px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: isSelected ? 'var(--color-violet-800)' : 'var(--color-surface-card)',
-                  border: '1px solid var(--color-surface-border)',
+                  padding: '16px 20px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: isSelected ? 'var(--color-bumble-honey, #ffdb5b)' : 'var(--color-paper-white, #ffffff)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  transition: 'background-color 0.2s',
+                  boxShadow: isSelected ? '0 4px 12px rgba(32, 32, 32, 0.15)' : 'none',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               >
                 <div>
-                  <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{comm.name}</h4>
-                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                    {comm.member_count} members • {comm.post_count} posts
+                  <h3
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: 800,
+                      color: 'var(--color-bumble-ink, #202020)',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    {comm.name}
+                  </h3>
+                  <span style={{ fontSize: '12px', color: 'var(--color-graphite, #575656)', fontWeight: 600 }}>
+                    {comm.member_count} curious minds • {comm.post_count} threads
                   </span>
                 </div>
+                {comm.is_member && (
+                  <span
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--color-bumble-ink, #202020)',
+                    }}
+                  />
+                )}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Right: Posts Feed */}
+      {/* Right: Selected Community Feed */}
       <div>
         {selectedCommunity && (
-          <div style={{
-            padding: '24px',
-            backgroundColor: 'var(--color-surface-card)',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-surface-border)',
-            marginBottom: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            <div>
-              <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
+          <div
+            style={{
+              padding: '28px 32px',
+              backgroundColor: 'var(--color-pollen, #fff386)',
+              borderRadius: 'var(--radius-cards, 24px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+              marginBottom: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '20px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div style={{ maxWidth: '480px' }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 12px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  border: '1px solid var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  marginBottom: '8px',
+                }}
+              >
+                <Users size={12} />
+                {selectedCommunity.member_count} Members Nationwide
+              </div>
+              <h1
+                style={{
+                  fontSize: '28px',
+                  fontWeight: 800,
+                  color: 'var(--color-bumble-ink, #202020)',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.15,
+                }}
+              >
                 {selectedCommunity.name}
-              </h2>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+              </h1>
+              <p
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--color-charcoal, #3b3b3b)',
+                  marginTop: '6px',
+                  lineHeight: 1.4,
+                }}
+              >
                 {selectedCommunity.description}
               </p>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
+
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <button
                 onClick={() => handleToggleJoin(selectedCommunity)}
+                className="btn-bumble-action"
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  backgroundColor: selectedCommunity.is_member ? 'rgba(76, 29, 149, 0.4)' : 'var(--color-violet-600)',
-                  color: '#ffffff',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                {selectedCommunity.is_member ? <><Check size={14} /> Joined</> : 'Join Community'}
-              </button>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-                  color: '#ffffff',
+                  padding: '10px 18px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: selectedCommunity.is_member ? 'var(--color-paper-white, #ffffff)' : 'transparent',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-bumble-ink, #202020)',
                   fontSize: '13px',
                   fontWeight: 700,
                   display: 'flex',
@@ -191,7 +273,32 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
                   gap: '6px',
                 }}
               >
-                <Plus size={16} /> New Post
+                {selectedCommunity.is_member ? (
+                  <>
+                    <Check size={14} /> Joined Hole
+                  </>
+                ) : (
+                  'Join Hole Free'
+                )}
+              </button>
+
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="btn-bumble-action"
+                style={{
+                  padding: '10px 22px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: 'var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-paper-white, #ffffff)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                <Plus size={16} /> Start Thread
               </button>
             </div>
           </div>
@@ -199,61 +306,179 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
 
         {/* Create Post Modal */}
         {showCreateModal && (
-          <div style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(10, 5, 18, 0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-            padding: '16px',
-          }}>
-            <div style={{
-              backgroundColor: 'var(--color-surface-card)',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--color-surface-border)',
-              padding: '24px',
-              maxWidth: '520px',
-              width: '100%',
-            }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '16px' }}>
-                Start a Discussion in {selectedCommunity?.name}
-              </h3>
-              <form onSubmit={handleCreatePost} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <input
-                  type="text"
-                  placeholder="Post title or provocative question..."
-                  value={newPostTitle}
-                  onChange={(e) => setNewPostTitle(e.target.value)}
-                  required
-                />
-                <textarea
-                  rows={5}
-                  placeholder="Elaborate on your idea, analysis, or curious inquiry..."
-                  value={newPostContent}
-                  onChange={(e) => setNewPostContent(e.target.value)}
-                  required
-                />
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(32, 32, 32, 0.55)',
+              backdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              padding: '20px',
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowCreateModal(false);
+            }}
+          >
+            <div
+              className="animate-modal-spring"
+              style={{
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                borderRadius: 'var(--radius-cards, 24px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                padding: '36px',
+                maxWidth: '540px',
+                width: '100%',
+                boxShadow: '0 20px 48px rgba(32, 32, 32, 0.18)',
+                position: 'relative',
+              }}
+            >
+              <button
+                onClick={() => setShowCreateModal(false)}
+                aria-label="Close"
+                style={{
+                  position: 'absolute',
+                  top: '20px',
+                  right: '20px',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--color-mist, #f3f3f3)',
+                  border: '1px solid #d4d4d4',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              >
+                <X size={16} />
+              </button>
+
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 12px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  marginBottom: '10px',
+                }}
+              >
+                <Compass size={12} />
+                {selectedCommunity?.name}
+              </div>
+
+              <h2
+                style={{
+                  fontSize: '22px',
+                  fontWeight: 800,
+                  color: 'var(--color-bumble-ink, #202020)',
+                  marginBottom: '6px',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                Start a Discussion
+              </h2>
+              <p style={{ fontSize: '14px', color: 'var(--color-graphite, #575656)', marginBottom: '20px' }}>
+                Ask a provocative question, share an obsession, or spark a new perspective.
+              </p>
+
+              <form onSubmit={handleCreatePost} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      color: 'var(--color-bumble-ink, #202020)',
+                      marginBottom: '6px',
+                    }}
+                  >
+                    Discussion Title or Provocative Question
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Why doesn't Nigerian architecture borrow from pre-colonial thermodynamics?"
+                    value={newPostTitle}
+                    onChange={(e) => setNewPostTitle(e.target.value)}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '15px',
+                      borderRadius: 'var(--radius-buttons, 16px)',
+                      border: '1.5px solid var(--color-bumble-ink, #202020)',
+                      backgroundColor: 'var(--color-paper-white, #ffffff)',
+                      color: 'var(--color-bumble-ink, #202020)',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      color: 'var(--color-bumble-ink, #202020)',
+                      marginBottom: '6px',
+                    }}
+                  >
+                    Elaborate on your idea
+                  </label>
+                  <textarea
+                    rows={5}
+                    placeholder="Elaborate on your inquiry, provide context or share what made you think about this..."
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      borderRadius: 'var(--radius-buttons, 16px)',
+                      border: '1.5px solid var(--color-bumble-ink, #202020)',
+                      backgroundColor: 'var(--color-paper-white, #ffffff)',
+                      color: 'var(--color-bumble-ink, #202020)',
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
                   <button
                     type="button"
                     onClick={() => setShowCreateModal(false)}
-                    style={{ padding: '8px 16px', color: 'var(--color-text-muted)' }}
+                    style={{
+                      padding: '10px 18px',
+                      color: 'var(--color-graphite, #575656)',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                    }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
+                    className="btn-bumble-action"
                     style={{
-                      padding: '8px 20px',
-                      borderRadius: 'var(--radius-full)',
-                      background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-                      color: '#ffffff',
-                      fontWeight: 700,
+                      padding: '12px 26px',
+                      borderRadius: 'var(--radius-buttons, 16px)',
+                      backgroundColor: 'var(--color-bumble-ink, #202020)',
+                      color: 'var(--color-paper-white, #ffffff)',
+                      fontWeight: 800,
+                      fontSize: '14px',
+                      letterSpacing: '0.01em',
                     }}
                   >
-                    Publish
+                    Publish Discussion
                   </button>
                 </div>
               </form>
@@ -261,121 +486,273 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
           </div>
         )}
 
-        {/* Posts List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Posts Feed */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>
-              Loading posts...
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-graphite, #575656)', fontSize: '15px' }}>
+              Loading discussions...
             </div>
           ) : posts.length === 0 ? (
-            <div style={{
-              padding: '40px',
-              textAlign: 'center',
-              backgroundColor: 'var(--color-surface-card)',
-              borderRadius: 'var(--radius-lg)',
-              color: 'var(--color-text-muted)',
-            }}>
-              No posts in this community yet. Be the first to start a conversation!
+            <div
+              style={{
+                padding: '48px 24px',
+                textAlign: 'center',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                borderRadius: 'var(--radius-cards, 24px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                color: 'var(--color-graphite, #575656)',
+              }}
+            >
+              <Compass size={32} style={{ margin: '0 auto 12px', color: 'var(--color-bumble-ink, #202020)' }} />
+              <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
+                No discussions in this Hole yet
+              </h3>
+              <p style={{ fontSize: '14px', marginBottom: '18px' }}>
+                Be the pioneer. Start the very first curiosity thread here.
+              </p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="btn-bumble-action"
+                style={{
+                  padding: '10px 22px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: 'var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-paper-white, #ffffff)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                }}
+              >
+                <Plus size={15} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
+                Start First Discussion
+              </button>
             </div>
           ) : (
             posts.map((post) => (
               <div
                 key={post.id}
+                className="editorial-card-lift"
                 style={{
-                  backgroundColor: 'var(--color-surface-card)',
-                  borderRadius: 'var(--radius-lg)',
-                  border: '1px solid var(--color-surface-border)',
-                  padding: '20px',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  borderRadius: 'var(--radius-cards, 24px)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  padding: '28px 32px',
+                  boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-violet-400)' }}>
-                    {post.author?.display_name || 'Member'}, {post.author?.age} • {post.author?.city || 'Nigeria'}
-                  </span>
-                  {/* Community Spark Action (Part 12.2) */}
-                  {post.user_id && (
-                    <button
-                      onClick={() => onSparkAuthor(
-                        post.user_id,
-                        post.author?.display_name || 'Author',
-                        post.title,
-                        post.content.slice(0, 100)
-                      )}
+                {/* Header Author Row */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
                       style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                        border: '1px solid var(--color-bumble-ink, #202020)',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        color: 'var(--color-coral-400)',
-                        backgroundColor: 'rgba(244, 63, 94, 0.12)',
-                        padding: '4px 10px',
-                        borderRadius: 'var(--radius-full)',
+                        justifyContent: 'center',
+                        fontWeight: 800,
+                        fontSize: '13px',
+                        color: 'var(--color-bumble-ink, #202020)',
                       }}
                     >
-                      <Sparkles size={13} /> Spark Author
+                      {(post.author?.display_name || 'M')[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)' }}>
+                        {post.author?.display_name || 'Member'}, {post.author?.age}
+                      </span>
+                      <span style={{ fontSize: '12px', color: 'var(--color-graphite, #575656)', marginLeft: '6px' }}>
+                        • {post.author?.city || 'Nigeria'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Contextual Spark Author Button (Part 12.2) */}
+                  {post.user_id && (
+                    <button
+                      onClick={() =>
+                        onSparkAuthor(
+                          post.user_id,
+                          post.author?.display_name || 'Author',
+                          post.title,
+                          post.content.slice(0, 100)
+                        )
+                      }
+                      className="pill-interactive"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '12px',
+                        fontWeight: 800,
+                        color: 'var(--color-bumble-ink, #202020)',
+                        backgroundColor: 'var(--color-pollen, #fff386)',
+                        border: '1px solid var(--color-bumble-ink, #202020)',
+                        padding: '6px 14px',
+                        borderRadius: 'var(--radius-badges, 1000px)',
+                      }}
+                    >
+                      <Sparkles size={13} color="var(--color-bumble-ink, #202020)" />
+                      Spark Author Free
                     </button>
                   )}
                 </div>
 
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 800,
+                    color: 'var(--color-bumble-ink, #202020)',
+                    marginBottom: '10px',
+                    lineHeight: 1.3,
+                  }}
+                >
                   {post.title}
                 </h3>
-                <p style={{ fontSize: '14px', color: 'var(--color-text-primary)', lineHeight: 1.6, marginBottom: '14px' }}>
+
+                <p
+                  style={{
+                    fontSize: '15px',
+                    color: 'var(--color-charcoal, #3b3b3b)',
+                    lineHeight: 1.6,
+                    marginBottom: '18px',
+                    whiteSpace: 'pre-wrap',
+                  }}
+                >
                   {post.content}
                 </p>
 
-                {/* Footer with comment toggle */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', borderTop: '1px solid var(--color-surface-border)', paddingTop: '12px' }}>
+                {/* Footer / Comments Toggle */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid #e5e5e5',
+                    paddingTop: '14px',
+                  }}
+                >
                   <button
                     onClick={() => handleToggleComments(post.id)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
+                      gap: '8px',
                       fontSize: '13px',
-                      color: 'var(--color-text-secondary)',
+                      fontWeight: 700,
+                      color: 'var(--color-bumble-ink, #202020)',
+                      backgroundColor: 'var(--color-mist, #f3f3f3)',
+                      padding: '6px 14px',
+                      borderRadius: 'var(--radius-badges, 1000px)',
                     }}
                   >
-                    <MessageSquare size={15} />
-                    <span>{post.comment_count} Comments</span>
+                    <MessageSquare size={14} />
+                    <span>{post.comment_count} Curious Replies</span>
                   </button>
+
+                  <span style={{ fontSize: '12px', color: 'var(--color-graphite, #575656)' }}>
+                    {new Date(post.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  </span>
                 </div>
 
-                {/* Expanded Comments */}
+                {/* Expanded Comments Drawer */}
                 {expandedCommentsPostId === post.id && (
-                  <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--color-surface-border)' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '14px' }}>
-                      {(commentsMap[post.id] || []).map((comm) => (
-                        <div key={comm.id} style={{ padding: '8px 12px', backgroundColor: 'var(--color-surface-bg)', borderRadius: 'var(--radius-sm)' }}>
-                          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-lavender-200)', display: 'block' }}>
-                            {comm.author?.display_name || 'Member'}:
-                          </span>
-                          <span style={{ fontSize: '13px', color: '#ffffff' }}>{comm.content}</span>
-                        </div>
-                      ))}
+                  <div
+                    style={{
+                      marginTop: '20px',
+                      padding: '20px',
+                      backgroundColor: 'var(--color-mist, #f3f3f3)',
+                      borderRadius: 'var(--radius-buttons, 16px)',
+                      border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 800,
+                        color: 'var(--color-bumble-ink, #202020)',
+                        marginBottom: '14px',
+                      }}
+                    >
+                      Curious Responses
+                    </h4>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+                      {(commentsMap[post.id] || []).length === 0 ? (
+                        <p style={{ fontSize: '13px', color: 'var(--color-graphite, #575656)', fontStyle: 'italic' }}>
+                          No responses yet. Add your curious perspective below!
+                        </p>
+                      ) : (
+                        (commentsMap[post.id] || []).map((comm) => (
+                          <div
+                            key={comm.id}
+                            style={{
+                              padding: '12px 16px',
+                              backgroundColor: 'var(--color-paper-white, #ffffff)',
+                              borderRadius: 'var(--radius-buttons, 16px)',
+                              border: '1px solid #d4d4d4',
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: 800,
+                                color: 'var(--color-bumble-ink, #202020)',
+                                display: 'block',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              {comm.author?.display_name || 'Member'}:
+                            </span>
+                            <span style={{ fontSize: '14px', color: 'var(--color-charcoal, #3b3b3b)', lineHeight: 1.4 }}>
+                              {comm.content}
+                            </span>
+                          </div>
+                        ))
+                      )}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '8px' }}>
+                    {/* Reply Input */}
+                    <div style={{ display: 'flex', gap: '10px' }}>
                       <input
                         type="text"
-                        placeholder="Add a curious reply..."
+                        placeholder="Add a curious perspective..."
                         value={commentInput}
                         onChange={(e) => setCommentInput(e.target.value)}
-                        style={{ flex: 1, fontSize: '13px' }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddComment(post.id);
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          fontSize: '14px',
+                          padding: '10px 14px',
+                          borderRadius: 'var(--radius-buttons, 16px)',
+                          border: '1.5px solid var(--color-bumble-ink, #202020)',
+                          backgroundColor: 'var(--color-paper-white, #ffffff)',
+                          color: 'var(--color-bumble-ink, #202020)',
+                        }}
                       />
                       <button
                         onClick={() => handleAddComment(post.id)}
+                        className="btn-bumble-action"
                         style={{
-                          padding: '6px 14px',
-                          borderRadius: 'var(--radius-sm)',
-                          backgroundColor: 'var(--color-violet-600)',
-                          color: '#ffffff',
+                          padding: '10px 20px',
+                          borderRadius: 'var(--radius-buttons, 16px)',
+                          backgroundColor: 'var(--color-bumble-ink, #202020)',
+                          color: 'var(--color-paper-white, #ffffff)',
                           fontSize: '13px',
-                          fontWeight: 600,
+                          fontWeight: 700,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
                         }}
                       >
-                        Reply
+                        <Send size={14} /> Reply
                       </button>
                     </div>
                   </div>

@@ -314,7 +314,7 @@ export const App: React.FC = () => {
           <ChatRoom
             conversations={conversations}
             selectedConvId={selectedConvId}
-            onSelectConv={setSelectedConvId}
+            onSelectConversation={setSelectedConvId}
             currentUserId={currentUser.id}
           />
         )}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Plus, Trash2, Check, ShieldAlert, Sparkles, Compass, Flame, Lightbulb } from 'lucide-react';
+import { Camera, Plus, Trash2, Check, ShieldAlert, Sparkles, Compass, Flame, Lightbulb, MapPin, Tag, Heart } from 'lucide-react';
 import { Profile } from '../types';
 import { api } from '../api';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
@@ -13,7 +13,7 @@ interface ProfileEditorProps {
 export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate, onDeleteAccount }) => {
   const [displayName, setDisplayName] = useState(profile.display_name);
   const [bio, setBio] = useState(profile.bio || '');
-  const [city, setCity] = useState(profile.city || '');
+  const [city, setCity] = useState(profile.city || 'Lagos');
   const [datingIntentions, setDatingIntentions] = useState(profile.dating_intentions || '');
   const [rabbitHole, setRabbitHole] = useState(profile.rabbit_hole || '');
   const [defendTake, setDefendTake] = useState(profile.defend_take || '');
@@ -100,100 +100,246 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
   };
 
   return (
-    <div style={{ maxWidth: '780px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ maxWidth: '820px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          backgroundColor: 'var(--color-pollen, #fff386)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          padding: '28px 32px',
+          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+        }}
+      >
         <div>
-          <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#ffffff' }}>Your Curiosity Profile</h2>
-          <p style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>
-            Curiosity is attractive. Share what you think about, not just how you look.
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+              border: '1px solid var(--color-bumble-ink, #202020)',
+              color: 'var(--color-bumble-ink, #202020)',
+              fontSize: '12px',
+              fontWeight: 800,
+              letterSpacing: '0.02em',
+              marginBottom: '10px',
+            }}
+          >
+            <Sparkles size={13} />
+            Editorial Profile Studio
+          </div>
+          <h1
+            style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: 'var(--color-bumble-ink, #202020)',
+              lineHeight: 1.15,
+            }}
+          >
+            Your Curiosity Profile
+          </h1>
+          <p
+            style={{
+              fontSize: '16px',
+              color: 'var(--color-charcoal, #3b3b3b)',
+              marginTop: '6px',
+              lineHeight: 1.4,
+            }}
+          >
+            Curiosity is attractive. Share what you genuinely think about, not just how you look.
           </p>
         </div>
+
         {savedSuccess && (
-          <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            backgroundColor: 'rgba(34, 197, 94, 0.2)',
-            color: '#4ade80',
-            padding: '6px 14px',
-            borderRadius: 'var(--radius-full)',
-            fontSize: '13px',
-            fontWeight: 700,
-          }}>
-            <Check size={16} /> Saved!
+          <span
+            className="animate-pulse-gentle"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              backgroundColor: 'var(--color-bumble-ink, #202020)',
+              color: 'var(--color-paper-white, #ffffff)',
+              padding: '8px 18px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              fontSize: '13px',
+              fontWeight: 700,
+              boxShadow: '0 4px 12px rgba(32, 32, 32, 0.18)',
+            }}
+          >
+            <Check size={16} /> Changes Saved!
           </span>
         )}
       </div>
 
-      {/* Photographs Section */}
-      <div style={{
-        padding: '24px',
-        backgroundColor: 'var(--color-surface-card)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-surface-border)',
-      }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Camera size={20} color="var(--color-violet-400)" />
-          Profile Photographs
-        </h3>
+      {/* 1. Photographs Section */}
+      <div
+        style={{
+          padding: '32px',
+          backgroundColor: 'var(--color-paper-white, #ffffff)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div>
+            <h2
+              style={{
+                fontSize: '22px',
+                fontWeight: 800,
+                color: 'var(--color-bumble-ink, #202020)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+            >
+              <Camera size={22} color="var(--color-bumble-ink, #202020)" />
+              Profile Photographs
+            </h2>
+            <p style={{ fontSize: '14px', color: 'var(--color-graphite, #575656)', marginTop: '4px' }}>
+              High-clarity, authentic portraits lead your discovery card.
+            </p>
+          </div>
 
-        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '16px' }}>
+          <span
+            style={{
+              padding: '6px 14px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              backgroundColor: 'var(--color-mist, #f3f3f3)',
+              border: '1px solid #d4d4d4',
+              color: 'var(--color-bumble-ink, #202020)',
+              fontSize: '12px',
+              fontWeight: 700,
+            }}
+          >
+            {profile.photos?.length || 0} of 6 Photos
+          </span>
+        </div>
+
+        {/* Photos Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           {(profile.photos || []).map((photo) => (
-            <div key={photo.id} style={{ position: 'relative', width: '130px', height: '170px', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-              <img src={photo.url} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div
+              key={photo.id}
+              className="editorial-card-lift"
+              style={{
+                position: 'relative',
+                height: '180px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                overflow: 'hidden',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: 'var(--color-mist, #f3f3f3)',
+              }}
+            >
+              <img
+                src={photo.url}
+                alt="Profile"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
               {photo.is_primary && (
-                <span style={{
-                  position: 'absolute',
-                  top: '6px',
-                  left: '6px',
-                  backgroundColor: 'var(--color-violet-600)',
-                  color: '#ffffff',
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  padding: '2px 6px',
-                  borderRadius: '4px',
-                }}>
-                  Primary
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '8px',
+                    left: '8px',
+                    backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                    border: '1px solid var(--color-bumble-ink, #202020)',
+                    color: 'var(--color-bumble-ink, #202020)',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    padding: '3px 8px',
+                    borderRadius: 'var(--radius-badges, 1000px)',
+                  }}
+                >
+                  Hero Photo
                 </span>
               )}
               <button
                 onClick={() => handleDeletePhoto(photo.id)}
+                aria-label="Delete photo"
                 style={{
                   position: 'absolute',
-                  top: '6px',
-                  right: '6px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                  color: '#ffffff',
+                  top: '8px',
+                  right: '8px',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-bumble-ink, #202020)',
                   borderRadius: '50%',
-                  padding: '4px',
+                  width: '28px',
+                  height: '28px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(32, 32, 32, 0.2)',
                 }}
               >
-                <Trash2 size={14} />
+                <Trash2 size={13} />
               </button>
             </div>
           ))}
+
+          {/* Empty Add Placeholder */}
+          {(profile.photos?.length || 0) < 6 && (
+            <div
+              style={{
+                height: '180px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                border: '1.5px dashed var(--color-graphite, #575656)',
+                backgroundColor: 'var(--color-mist, #f3f3f3)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                color: 'var(--color-graphite, #575656)',
+                padding: '16px',
+                textAlign: 'center',
+              }}
+            >
+              <Camera size={24} />
+              <span style={{ fontSize: '12px', fontWeight: 600 }}>Add next portrait</span>
+            </div>
+          )}
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        {/* Add Photo Input */}
+        <div style={{ display: 'flex', gap: '12px' }}>
           <input
             type="text"
-            placeholder="Image URL (e.g. Unsplash or hosted photo link)..."
+            placeholder="Paste public image link (Unsplash, Cloudinary, etc.)..."
             value={newPhotoURL}
             onChange={(e) => setNewPhotoURL(e.target.value)}
-            style={{ flex: 1, fontSize: '13px' }}
+            style={{
+              flex: 1,
+              fontSize: '14px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
           />
           <button
             onClick={handleAddPhoto}
+            className="btn-bumble-action"
             style={{
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-sm)',
-              backgroundColor: 'var(--color-violet-600)',
-              color: '#ffffff',
-              fontSize: '13px',
-              fontWeight: 600,
+              padding: '12px 22px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              backgroundColor: 'var(--color-bumble-ink, #202020)',
+              color: 'var(--color-paper-white, #ffffff)',
+              fontSize: '14px',
+              fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
+              letterSpacing: '0.01em',
             }}
           >
             <Plus size={16} /> Add Photo
@@ -201,105 +347,272 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         </div>
       </div>
 
-      {/* Curiosity Prompts Section */}
-      <form onSubmit={handleSaveCuriosity} style={{
-        padding: '24px',
-        backgroundColor: 'var(--color-surface-card)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-surface-border)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-      }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={20} color="var(--color-coral-400)" />
-          Curiosity Sections (What Sparks Conversations)
-        </h3>
-
-        {/* 1. Rabbit Hole */}
+      {/* 2. Curiosity Prompts Section */}
+      <form
+        onSubmit={handleSaveCuriosity}
+        style={{
+          padding: '32px',
+          backgroundColor: 'var(--color-paper-white, #ffffff)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+        }}
+      >
         <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 700, color: 'var(--color-violet-400)', marginBottom: '6px', textTransform: 'uppercase' }}>
-            <Compass size={16} /> My Rabbit Hole — What are you currently obsessed with?
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+              color: 'var(--color-bumble-ink, #202020)',
+              fontSize: '12px',
+              fontWeight: 800,
+              letterSpacing: '0.02em',
+              marginBottom: '10px',
+            }}
+          >
+            <Sparkles size={13} />
+            Contextual Sparks Engine
+          </div>
+          <h2
+            style={{
+              fontSize: '22px',
+              fontWeight: 800,
+              color: 'var(--color-bumble-ink, #202020)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Curiosity Prompts (What People Spark)
+          </h2>
+          <p style={{ fontSize: '14px', color: 'var(--color-graphite, #575656)', marginTop: '4px' }}>
+            People don't swipe blindly on Cupiddle. They spark specific ideas and answers below.
+          </p>
+        </div>
+
+        {/* 1. Rabbit Hole (Pollen Accent Frame) */}
+        <div
+          style={{
+            padding: '20px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-pollen, #fff386)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              fontWeight: 800,
+              color: 'var(--color-bumble-ink, #202020)',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}
+          >
+            <Compass size={17} /> My Rabbit Hole — What are you currently obsessed with?
           </label>
           <textarea
             rows={2}
             value={rabbitHole}
             onChange={(e) => setRabbitHole(e.target.value)}
-            placeholder="e.g. Cellular automata, Nigerian indie film grammar, quantum cryptography..."
-            style={{ width: '100%', fontSize: '14px' }}
+            placeholder="e.g. Cellular automata, Nigerian indie film grammar, quantum cryptography, Lagos architecture..."
+            style={{
+              width: '100%',
+              fontSize: '14px',
+              padding: '12px 14px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
           />
         </div>
 
-        {/* 2. Defend This Take */}
-        <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 700, color: 'var(--color-coral-400)', marginBottom: '6px', textTransform: 'uppercase' }}>
-            <Flame size={16} /> Defend This Take — An opinion you're willing to defend
+        {/* 2. Defend This Take (Mist Accent Frame) */}
+        <div
+          style={{
+            padding: '20px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-mist, #f3f3f3)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              fontWeight: 800,
+              color: 'var(--color-bumble-ink, #202020)',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}
+          >
+            <Flame size={17} /> Defend This Take — An opinion you're willing to defend
           </label>
           <textarea
             rows={2}
             value={defendTake}
             onChange={(e) => setDefendTake(e.target.value)}
-            placeholder="e.g. Streaming algorithms have flattened narrative bravery; video games are the supreme medium..."
-            style={{ width: '100%', fontSize: '14px' }}
+            placeholder="e.g. Streaming algorithms flattened narrative bravery; video games are 21st century high art..."
+            style={{
+              width: '100%',
+              fontSize: '14px',
+              padding: '12px 14px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
           />
         </div>
 
-        {/* 3. Teach Me Something */}
-        <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 700, color: 'var(--color-amber-500)', marginBottom: '6px', textTransform: 'uppercase' }}>
-            <Lightbulb size={16} /> Teach Me Something — What could you teach someone for hours?
+        {/* 3. Teach Me Something (Paper White Frame) */}
+        <div
+          style={{
+            padding: '20px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-paper-white, #ffffff)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              fontWeight: 800,
+              color: 'var(--color-bumble-ink, #202020)',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}
+          >
+            <Lightbulb size={17} /> Teach Me Something — What could you teach someone for hours?
           </label>
           <textarea
             rows={2}
             value={teachMe}
             onChange={(e) => setTeachMe(e.target.value)}
-            placeholder="e.g. How CRISPR gene editing works without media hype, how to brew single-origin coffee..."
-            style={{ width: '100%', fontSize: '14px' }}
+            placeholder="e.g. How CRISPR gene editing works without hype; why sourdough fermentation behaves like an ecosystem..."
+            style={{
+              width: '100%',
+              fontSize: '14px',
+              padding: '12px 14px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
           />
         </div>
 
         {/* My World Tags */}
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
-            My World Tags (Favourite books, authors, anime, games, code, artists)
+        <div
+          style={{
+            padding: '20px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-mist, #f3f3f3)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              fontWeight: 800,
+              color: 'var(--color-bumble-ink, #202020)',
+              marginBottom: '10px',
+              letterSpacing: '0.01em',
+            }}
+          >
+            <Tag size={16} /> My World Tags (Books, films, anime, games, code, artists)
           </label>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
             {myWorldTags.map((tag) => (
               <span
                 key={tag}
+                className="pill-interactive"
                 style={{
-                  padding: '4px 10px',
-                  backgroundColor: 'rgba(124, 58, 237, 0.2)',
-                  borderRadius: 'var(--radius-full)',
-                  fontSize: '12px',
-                  color: 'var(--color-lavender-100)',
-                  display: 'flex',
+                  padding: '6px 14px',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  borderRadius: 'var(--radius-badges, 1000px)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: 'var(--color-bumble-ink, #202020)',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '8px',
                 }}
               >
                 {tag}
-                <button type="button" onClick={() => handleRemoveTag(tag)} style={{ color: 'var(--color-text-muted)' }}>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  style={{
+                    color: 'var(--color-graphite, #575656)',
+                    fontWeight: 800,
+                    fontSize: '14px',
+                    lineHeight: 1,
+                  }}
+                >
                   ×
                 </button>
               </span>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
             <input
               type="text"
-              placeholder="Add tag (e.g. Dune, Disco Elysium, Rust, Wong Kar-wai)..."
+              placeholder="Add tag (e.g. Dune, Disco Elysium, Rust, Wong Kar-wai, Afrobeats)..."
               value={newTagInput}
               onChange={(e) => setNewTagInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); } }}
-              style={{ flex: 1, fontSize: '13px' }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddTag();
+                }
+              }}
+              style={{
+                flex: 1,
+                fontSize: '14px',
+                padding: '10px 14px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                color: 'var(--color-bumble-ink, #202020)',
+              }}
             />
             <button
               type="button"
               onClick={handleAddTag}
-              style={{ padding: '8px 16px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-surface-border)', color: '#ffffff', fontSize: '13px' }}
+              className="btn-bumble-action"
+              style={{
+                padding: '10px 20px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                backgroundColor: 'var(--color-bumble-ink, #202020)',
+                color: 'var(--color-paper-white, #ffffff)',
+                fontSize: '14px',
+                fontWeight: 700,
+              }}
             >
-              Add
+              Add Tag
             </button>
           </div>
         </div>
@@ -307,139 +620,266 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         <button
           type="submit"
           disabled={loading}
+          className="btn-bumble-action"
           style={{
             alignSelf: 'flex-end',
-            padding: '10px 24px',
-            borderRadius: 'var(--radius-full)',
-            background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-            color: '#ffffff',
-            fontWeight: 700,
-            fontSize: '14px',
+            padding: '14px 32px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-bumble-ink, #202020)',
+            color: 'var(--color-paper-white, #ffffff)',
+            fontWeight: 800,
+            fontSize: '15px',
+            letterSpacing: '0.01em',
           }}
         >
           {loading ? 'Saving...' : 'Save Curiosity Profile'}
         </button>
       </form>
 
-      {/* Basic Identity & Settings */}
-      <form onSubmit={handleSaveBasic} style={{
-        padding: '24px',
-        backgroundColor: 'var(--color-surface-card)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--color-surface-border)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-      }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff' }}>Basic Identity & City</h3>
+      {/* 3. Basic Identity & Location Form (All 37 Nigerian States) */}
+      <form
+        onSubmit={handleSaveBasic}
+        style={{
+          padding: '32px',
+          backgroundColor: 'var(--color-paper-white, #ffffff)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
+        <h2
+          style={{
+            fontSize: '22px',
+            fontWeight: 800,
+            color: 'var(--color-bumble-ink, #202020)',
+            letterSpacing: '-0.02em',
+          }}
+        >
+          Basic Identity & Location
+        </h2>
 
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
-            Display Name
-          </label>
-          <input
-            type="text"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            style={{ width: '100%' }}
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '13px',
+                fontWeight: 700,
+                color: 'var(--color-bumble-ink, #202020)',
+                marginBottom: '6px',
+              }}
+            >
+              Display Name
+            </label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                fontSize: '15px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                color: 'var(--color-bumble-ink, #202020)',
+              }}
+            />
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '13px',
+                fontWeight: 700,
+                color: 'var(--color-bumble-ink, #202020)',
+                marginBottom: '6px',
+              }}
+            >
+              <MapPin size={14} color="var(--color-bumble-ink, #202020)" />
+              State / Location (All 36 States + Abuja)
+            </label>
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                fontSize: '14px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                color: 'var(--color-bumble-ink, #202020)',
+                fontWeight: 600,
+              }}
+            >
+              {NIGERIAN_STATES.map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
-            State / Location (Nigeria)
-          </label>
-          <select
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            style={{ width: '100%', fontSize: '14px' }}
+          <label
+            style={{
+              display: 'block',
+              fontSize: '13px',
+              fontWeight: 700,
+              color: 'var(--color-bumble-ink, #202020)',
+              marginBottom: '6px',
+            }}
           >
-            {NIGERIAN_STATES.map((state) => (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label style={{ display: 'block', fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
-            Bio / About You
+            Bio / Introduction
           </label>
           <textarea
             rows={3}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            style={{ width: '100%' }}
+            placeholder="Tell us what excites you or how you spend your unstructured time..."
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              fontSize: '15px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              fontWeight: 700,
+              color: 'var(--color-bumble-ink, #202020)',
+              marginBottom: '6px',
+            }}
+          >
+            <Heart size={14} color="var(--color-bumble-ink, #202020)" />
             Dating Intentions
           </label>
           <input
             type="text"
             value={datingIntentions}
             onChange={(e) => setDatingIntentions(e.target.value)}
-            placeholder="e.g. Deep conversations & long-term connection"
-            style={{ width: '100%' }}
+            placeholder="e.g. Deep conversations & long-term connection, intellectual spark..."
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              fontSize: '15px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
+          className="btn-bumble-action"
           style={{
             alignSelf: 'flex-end',
-            padding: '10px 24px',
-            borderRadius: 'var(--radius-full)',
-            backgroundColor: 'var(--color-violet-600)',
-            color: '#ffffff',
-            fontWeight: 700,
-            fontSize: '14px',
+            padding: '14px 32px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-bumble-ink, #202020)',
+            color: 'var(--color-paper-white, #ffffff)',
+            fontWeight: 800,
+            fontSize: '15px',
+            letterSpacing: '0.01em',
           }}
         >
           Update Identity
         </button>
       </form>
 
-      {/* Account Safety & Deletion (GDPR / NDPA) */}
-      <div style={{
-        padding: '24px',
-        backgroundColor: 'rgba(244, 63, 94, 0.05)',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid rgba(244, 63, 94, 0.2)',
-      }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-coral-400)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <ShieldAlert size={18} />
-          Account & Privacy Controls
+      {/* 4. Account Safety & Deletion (GDPR / NDPA Compliance) */}
+      <div
+        style={{
+          padding: '28px 32px',
+          backgroundColor: 'var(--color-mist, #f3f3f3)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '18px',
+            fontWeight: 800,
+            color: 'var(--color-bumble-ink, #202020)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '8px',
+          }}
+        >
+          <ShieldAlert size={20} color="var(--color-bumble-ink, #202020)" />
+          Account & Privacy Rights (NDPA 2023)
         </h3>
-        <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '14px', lineHeight: 1.5 }}>
-          Under Nigerian Data Protection Act (NDPA) and global privacy standards, you can permanently erase your profile, photos, matches, and chat history.
+        <p
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-graphite, #575656)',
+            marginBottom: '16px',
+            lineHeight: 1.5,
+          }}
+        >
+          Under the Nigerian Data Protection Act (NDPA) and global privacy standards, you maintain absolute sovereignty over your identity. You can permanently erase your profile, photos, matches, and chat history anytime with zero retention.
         </p>
 
         {showDeleteConfirm ? (
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <span style={{ fontSize: '13px', color: 'var(--color-coral-300)', fontWeight: 600 }}>
-              Are you completely sure? This action is irreversible.
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              backgroundColor: '#fff1f2',
+              padding: '16px 20px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid #f43f5e',
+            }}
+          >
+            <span style={{ fontSize: '13px', color: '#9f1239', fontWeight: 700 }}>
+              Are you completely sure? This action is permanent and irreversible.
             </span>
             <button
               onClick={onDeleteAccount}
+              className="btn-bumble-action"
               style={{
-                padding: '6px 14px',
-                backgroundColor: 'var(--color-coral-500)',
+                padding: '8px 18px',
+                backgroundColor: '#e11d48',
                 color: '#ffffff',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '12px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                fontSize: '13px',
                 fontWeight: 700,
               }}
             >
-              Permanently Delete
+              Permanently Delete Account
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              style={{ padding: '6px 12px', color: 'var(--color-text-muted)', fontSize: '12px' }}
+              style={{
+                padding: '8px 14px',
+                color: 'var(--color-graphite, #575656)',
+                fontSize: '13px',
+                fontWeight: 600,
+              }}
             >
               Cancel
             </button>
@@ -448,12 +888,13 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           <button
             onClick={() => setShowDeleteConfirm(true)}
             style={{
-              padding: '8px 16px',
-              borderRadius: 'var(--radius-sm)',
-              border: '1px solid var(--color-coral-500)',
-              color: 'var(--color-coral-400)',
+              padding: '10px 20px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
               fontSize: '13px',
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
             Request Account Deletion
@@ -463,4 +904,3 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
     </div>
   );
 };
-

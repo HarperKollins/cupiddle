@@ -25,120 +25,229 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
   };
 
   return (
-    <div style={{
-      maxWidth: '680px',
-      margin: '0 auto',
-      backgroundColor: 'var(--color-surface-card)',
-      borderRadius: 'var(--radius-lg)',
-      border: '1px solid var(--color-surface-border)',
-      boxShadow: 'var(--shadow-subtle)',
-      overflow: 'hidden',
-      position: 'relative',
-    }}>
+    <div
+      className="editorial-card-lift"
+      style={{
+        maxWidth: '680px',
+        margin: '0 auto',
+        backgroundColor: 'var(--color-paper-white, #ffffff)',
+        borderRadius: 'var(--radius-cards, 24px)',
+        border: '1.5px solid var(--color-bumble-ink, #202020)',
+        boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
       {/* Photo & Header */}
-      <div style={{ position: 'relative', height: '380px', backgroundColor: '#100a1c' }}>
+      <div style={{ position: 'relative', height: '420px', backgroundColor: '#e5e5e5' }}>
         <img
           src={primaryPhoto}
           alt={profile.display_name}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: '24px',
-          background: 'linear-gradient(to top, rgba(13, 8, 20, 0.95), transparent)',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff' }}>
-              {profile.display_name}, {profile.age}
-            </h2>
-            {profile.is_verified && (
-              <span title={profile.verification_badge || "Verified Human"}>
-                <CheckCircle size={22} color="var(--color-violet-400)" />
-              </span>
-            )}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', color: 'var(--color-text-secondary)', fontSize: '14px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <MapPin size={16} />
-              {profile.city ? `${profile.city}, Nigeria` : 'Nigeria'}
-            </span>
-            <span>•</span>
-            <span>Approx. {distance_km > 0 ? `${distance_km} km away` : 'Nearby'}</span>
-            {profile.dating_intentions && (
-              <>
-                <span>•</span>
-                <span style={{ color: 'var(--color-coral-300)' }}>{profile.dating_intentions}</span>
-              </>
-            )}
-          </div>
+
+        {/* Verification Badge (Top Left) */}
+        <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px' }}>
+          <span
+            className="animate-pulse-gentle"
+            style={{
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              color: 'var(--color-bumble-ink, #202020)',
+              fontSize: '12px',
+              fontWeight: 700,
+              padding: '6px 14px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(32, 32, 32, 0.15)',
+            }}
+          >
+            <CheckCircle size={14} color="var(--color-bumble-ink, #202020)" />
+            {profile.verification_badge || 'Verified Human'}
+          </span>
         </div>
 
-        {/* Spark photo action */}
+        {/* Spark Photo Action (Top Right) */}
         <button
           onClick={() => onSpark('photo', `Photo of ${profile.display_name}`)}
+          className="pill-interactive"
           style={{
             position: 'absolute',
             top: '16px',
             right: '16px',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            backdropFilter: 'blur(8px)',
-            color: '#ffffff',
-            padding: '8px 14px',
-            borderRadius: 'var(--radius-full)',
-            fontSize: '12px',
-            fontWeight: 600,
+            backgroundColor: 'var(--color-paper-white, #ffffff)',
+            color: 'var(--color-bumble-ink, #202020)',
+            padding: '8px 16px',
+            borderRadius: 'var(--radius-badges, 1000px)',
+            fontSize: '13px',
+            fontWeight: 700,
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            boxShadow: '0 2px 8px rgba(32, 32, 32, 0.15)',
           }}
         >
-          <Sparkles size={14} color="var(--color-coral-400)" />
+          <Sparkles size={14} color="var(--color-bumble-ink, #202020)" />
           Spark Photo
         </button>
+
+        {/* Bottom Photo Overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '24px',
+            background: 'linear-gradient(to top, rgba(32, 32, 32, 0.88) 0%, rgba(32, 32, 32, 0.4) 65%, transparent 100%)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h2
+              style={{
+                fontSize: '32px',
+                fontWeight: 800,
+                color: '#ffffff',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+              }}
+            >
+              {profile.display_name}, {profile.age}
+            </h2>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginTop: '8px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                fontSize: '12px',
+                fontWeight: 600,
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              <MapPin size={13} />
+              {profile.city ? `${profile.city}, Nigeria` : 'Nigeria'}
+            </span>
+
+            <span
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                fontSize: '12px',
+                fontWeight: 600,
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              {distance_km > 0 ? `${distance_km} km away` : 'Nearby'}
+            </span>
+
+            {profile.dating_intentions && (
+              <span
+                style={{
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  padding: '4px 12px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                }}
+              >
+                {profile.dating_intentions}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Profile Details & Curiosity Prompts */}
-      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
         {/* Bio */}
         {profile.bio && (
-          <p style={{ fontSize: '16px', color: 'var(--color-text-primary)', lineHeight: 1.6 }}>
+          <p
+            style={{
+              fontSize: '17px',
+              color: 'var(--color-bumble-ink, #202020)',
+              lineHeight: 1.6,
+              letterSpacing: '0.01em',
+            }}
+          >
             {profile.bio}
           </p>
         )}
 
         {/* Audio Rant (if available) */}
         {profile.audio_intro_url && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '12px 18px',
-            backgroundColor: 'rgba(124, 58, 237, 0.1)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid rgba(124, 58, 237, 0.25)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Volume2 size={20} color="var(--color-violet-400)" />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '14px 20px',
+              backgroundColor: 'var(--color-mist, #f3f3f3)',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid var(--color-bumble-ink, #202020)',
+                }}
+              >
+                <Volume2 size={18} color="var(--color-bumble-ink, #202020)" />
+              </div>
               <div>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>30-Sec Audio Rant</span>
-                <span style={{ display: 'block', fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                  A fascinating idea explained in their voice
+                <span
+                  style={{
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    color: 'var(--color-bumble-ink, #202020)',
+                    display: 'block',
+                  }}
+                >
+                  30-Sec Audio Rant
+                </span>
+                <span style={{ fontSize: '12px', color: 'var(--color-graphite, #575656)' }}>
+                  A fascinating idea explained in their own voice
                 </span>
               </div>
             </div>
             <button
               onClick={handlePlayAudio}
+              className="btn-bumble-action"
               style={{
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--color-violet-600)',
-                color: '#ffffff',
+                padding: '8px 18px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                backgroundColor: 'var(--color-bumble-ink, #202020)',
+                color: 'var(--color-paper-white, #ffffff)',
                 fontSize: '13px',
-                fontWeight: 600,
+                fontWeight: 700,
               }}
             >
               {isPlayingAudio ? 'Playing...' : 'Listen'}
@@ -146,139 +255,180 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
           </div>
         )}
 
-        {/* 1. Rabbit Hole Prompt */}
+        {/* 1. Rabbit Hole Prompt (Pollen #fff386 Frame) */}
         {profile.rabbit_hole && (
-          <div style={{
-            padding: '18px',
-            backgroundColor: 'rgba(76, 29, 149, 0.2)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid rgba(139, 92, 246, 0.25)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '12px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-                color: 'var(--color-violet-400)',
-              }}>
+          <div
+            style={{
+              padding: '20px',
+              backgroundColor: 'var(--color-pollen, #fff386)',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              >
                 <Compass size={15} />
                 My Rabbit Hole
               </span>
               <button
                 onClick={() => onSpark('rabbit_hole', profile.rabbit_hole)}
+                className="pill-interactive"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   fontSize: '12px',
                   fontWeight: 700,
-                  color: 'var(--color-coral-400)',
-                  backgroundColor: 'rgba(244, 63, 94, 0.12)',
-                  padding: '4px 10px',
-                  borderRadius: 'var(--radius-full)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  border: '1px solid var(--color-bumble-ink, #202020)',
+                  padding: '5px 12px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
                 }}
               >
                 <Sparkles size={13} />
                 Spark This
               </button>
             </div>
-            <p style={{ fontSize: '15px', color: '#ffffff', lineHeight: 1.5, fontWeight: 500 }}>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'var(--color-bumble-ink, #202020)',
+                lineHeight: 1.5,
+                fontWeight: 600,
+              }}
+            >
               "{profile.rabbit_hole}"
             </p>
           </div>
         )}
 
-        {/* 2. Defend This Take Prompt */}
+        {/* 2. Defend This Take Prompt (Mist #f3f3f3 Frame) */}
         {profile.defend_take && (
-          <div style={{
-            padding: '18px',
-            backgroundColor: 'rgba(244, 63, 94, 0.08)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid rgba(244, 63, 94, 0.25)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '12px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-                color: 'var(--color-coral-400)',
-              }}>
+          <div
+            style={{
+              padding: '20px',
+              backgroundColor: 'var(--color-mist, #f3f3f3)',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              >
                 <Flame size={15} />
                 Defend This Take
               </span>
               <button
                 onClick={() => onSpark('defend_take', profile.defend_take)}
+                className="pill-interactive"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   fontSize: '12px',
                   fontWeight: 700,
-                  color: 'var(--color-coral-400)',
-                  backgroundColor: 'rgba(244, 63, 94, 0.12)',
-                  padding: '4px 10px',
-                  borderRadius: 'var(--radius-full)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  border: '1px solid var(--color-bumble-ink, #202020)',
+                  padding: '5px 12px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
                 }}
               >
                 <Sparkles size={13} />
                 Challenge / Spark
               </button>
             </div>
-            <p style={{ fontSize: '15px', color: '#ffffff', lineHeight: 1.5, fontWeight: 500 }}>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'var(--color-bumble-ink, #202020)',
+                lineHeight: 1.5,
+                fontWeight: 600,
+                fontStyle: 'italic',
+              }}
+            >
               "{profile.defend_take}"
             </p>
           </div>
         )}
 
-        {/* 3. Teach Me Something Prompt */}
+        {/* 3. Teach Me Something Prompt (Paper White #ffffff Frame) */}
         {profile.teach_me && (
-          <div style={{
-            padding: '18px',
-            backgroundColor: 'rgba(245, 158, 11, 0.08)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid rgba(245, 158, 11, 0.25)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '12px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-                color: 'var(--color-amber-500)',
-              }}>
+          <div
+            style={{
+              padding: '20px',
+              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              >
                 <Lightbulb size={15} />
                 Teach Me Something
               </span>
               <button
                 onClick={() => onSpark('teach_me', profile.teach_me)}
+                className="pill-interactive"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
                   fontSize: '12px',
                   fontWeight: 700,
-                  color: 'var(--color-coral-400)',
-                  backgroundColor: 'rgba(244, 63, 94, 0.12)',
-                  padding: '4px 10px',
-                  borderRadius: 'var(--radius-full)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  border: '1px solid var(--color-bumble-ink, #202020)',
+                  padding: '5px 12px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
                 }}
               >
                 <Sparkles size={13} />
                 Spark This
               </button>
             </div>
-            <p style={{ fontSize: '15px', color: '#ffffff', lineHeight: 1.5, fontWeight: 500 }}>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'var(--color-bumble-ink, #202020)',
+                lineHeight: 1.5,
+                fontWeight: 600,
+              }}
+            >
               "{profile.teach_me}"
             </p>
           </div>
@@ -287,17 +437,19 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
         {/* My World Tags */}
         {profile.my_world_tags && profile.my_world_tags.length > 0 && (
           <div>
-            <span style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              color: 'var(--color-text-muted)',
-              marginBottom: '10px',
-            }}>
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '12px',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: 'var(--color-graphite, #575656)',
+                marginBottom: '10px',
+              }}
+            >
               <BookOpen size={14} />
               My World (Books, Music, Games, Arts)
             </span>
@@ -305,13 +457,15 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
               {profile.my_world_tags.map((tag) => (
                 <span
                   key={tag}
+                  className="pill-interactive"
                   style={{
-                    padding: '6px 12px',
-                    backgroundColor: 'rgba(45, 31, 69, 0.6)',
-                    borderRadius: 'var(--radius-full)',
-                    fontSize: '13px',
-                    color: 'var(--color-lavender-200)',
-                    border: '1px solid var(--color-surface-border)',
+                    padding: '8px 16px',
+                    backgroundColor: 'var(--color-mist, #f3f3f3)',
+                    borderRadius: 'var(--radius-badges, 1000px)',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: 'var(--color-bumble-ink, #202020)',
+                    border: '1px solid var(--color-bumble-ink, #202020)',
                   }}
                 >
                   {tag}
@@ -323,67 +477,81 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
 
         {/* Shared Interests Overlap */}
         {shared_interests && shared_interests.length > 0 && (
-          <div style={{
-            fontSize: '13px',
-            color: 'var(--color-violet-400)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            paddingTop: '6px',
-          }}>
-            <Sparkles size={14} />
-            <span>You both share interest in: <strong>{shared_interests.join(', ')}</strong></span>
+          <div
+            style={{
+              padding: '12px 16px',
+              backgroundColor: 'var(--color-pollen, #fff386)',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1px solid var(--color-bumble-ink, #202020)',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: 'var(--color-bumble-ink, #202020)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <Sparkles size={16} />
+            <span>
+              Shared Passions: <strong>{shared_interests.join(', ')}</strong>
+            </span>
           </div>
         )}
 
         {/* Pass and General Spark Controls */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '24px',
-          paddingTop: '16px',
-          borderTop: '1px solid var(--color-surface-border)',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '24px',
+            paddingTop: '20px',
+            borderTop: '1.5px solid #e0e0e0',
+          }}
+        >
           <button
             onClick={onPass}
+            className="btn-bumble-action"
             style={{
-              width: '54px',
-              height: '54px',
+              width: '56px',
+              height: '56px',
               borderRadius: '50%',
-              backgroundColor: 'var(--color-surface-bg)',
-              border: '1px solid var(--color-surface-border)',
+              backgroundColor: 'var(--color-mist, #f3f3f3)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--color-text-muted)',
+              color: 'var(--color-bumble-ink, #202020)',
+              cursor: 'pointer',
+              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
             }}
-            title="Pass"
+            title="Pass (Discover next profile)"
           >
-            <X size={24} />
+            <X size={26} />
           </button>
 
           <button
             onClick={() => onSpark('general', `Curiosity Profile of ${profile.display_name}`)}
+            className="btn-bumble-action"
             style={{
-              padding: '14px 32px',
-              borderRadius: 'var(--radius-full)',
-              background: 'linear-gradient(135deg, var(--color-violet-600), var(--color-coral-500))',
-              color: '#ffffff',
-              fontSize: '15px',
+              padding: '16px 36px',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              backgroundColor: 'var(--color-bumble-ink, #202020)',
+              color: 'var(--color-paper-white, #ffffff)',
+              fontSize: '16px',
               fontWeight: 700,
+              letterSpacing: '0.015em',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              boxShadow: 'var(--shadow-coral-glow)',
+              gap: '10px',
+              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
             }}
           >
-            <Sparkles size={18} />
-            Send a Spark
+            <Sparkles size={20} color="var(--color-bumble-honey, #ffdb5b)" />
+            Send a Spark Free
           </button>
         </div>
       </div>
     </div>
   );
 };
-
