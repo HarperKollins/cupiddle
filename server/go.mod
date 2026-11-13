@@ -1,6 +1,6 @@
 module github.com/cupiddle/server
 
-go 1.26.4
+go 1.23
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.48.0 // indirect
