@@ -1,8 +1,17 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "http://13.60.65.63/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "http://13.60.65.63/uploads/:path*"
+    },
+    {
       "source": "/((?!api|uploads|sw.js|manifest.json|cupiddle-icon|assets).*)",
       "destination": "/index.html"
     }
   ]
 }
+
