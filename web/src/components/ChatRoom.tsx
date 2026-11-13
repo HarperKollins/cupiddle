@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Gamepad2, Compass, CheckCheck, MapPin } from 'lucide-react';
+import { Send, Gamepad2, Compass, CheckCheck, MapPin, ArrowLeft } from 'lucide-react';
 import { CupiddleIcon } from './CupiddleLogo';
 import { Conversation, Message, CoopGame } from '../types';
 import { api } from '../api';
@@ -7,7 +7,7 @@ import { api } from '../api';
 interface ChatRoomProps {
   conversations: Conversation[];
   selectedConvId: string | null;
-  onSelectConversation: (id: string) => void;
+  onSelectConversation: (id: string | null) => void;
   currentUserId: string;
 }
 
@@ -23,7 +23,14 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const [gameAnswerInput, setGameAnswerInput] = useState('');
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [radarData, setRadarData] = useState<{ shared_interests: string[]; shared_tags: string[]; suggestions: string[] } | null>(null);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const convList = conversations || [];
   const selectedConv = convList.find((c) => c.id === selectedConvId);
@@ -125,25 +132,28 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
       style={{
         maxWidth: '1080px',
         margin: '0 auto',
-        height: 'calc(100vh - 130px)',
-        display: 'grid',
-        gridTemplateColumns: '320px 1fr',
+        height: isMobile ? 'calc(100vh - 125px)' : 'calc(100vh - 130px)',
+        display: isMobile ? 'flex' : 'grid',
+        flexDirection: 'column',
+        gridTemplateColumns: isMobile ? undefined : '320px 1fr',
         backgroundColor: 'var(--color-paper-white, #ffffff)',
-        borderRadius: 'var(--radius-cards, 24px)',
+        borderRadius: isMobile ? '16px' : 'var(--radius-cards, 24px)',
         border: '1.5px solid var(--color-bumble-ink, #202020)',
         overflow: 'hidden',
         boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
       }}
     >
-      {/* Left Column: Conversations List */}
-      <div
-        style={{
-          borderRight: '1.5px solid var(--color-bumble-ink, #202020)',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-        }}
-      >
+      {/* Left Column: Conversations List (Hidden on mobile if a conversation is open) */}
+      {(!isMobile || !selectedConvId) && (
+        <div
+          style={{
+            borderRight: isMobile ? 'none' : '1.5px solid var(--color-bumble-ink, #202020)',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            backgroundColor: 'var(--color-paper-white, #ffffff)',
+          }}
+        >
         <div
           style={{
             padding: '20px',
@@ -252,14 +262,15 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           )}
         </div>
       </div>
+      )}
 
-      {/* Right Column: Active Conversation */}
-      {selectedConv ? (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'var(--color-paper-white, #ffffff)' }}>
+      {/* Right Column: Active Conversation (Shown if desktop, or if mobile and selectedConvId is active) */}
+      {(!isMobile || selectedConvId) && selectedConv ? (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'var(--color-paper-white, #ffffff)', flex: 1 }}>
           {/* Header */}
           <div
             style={{
-              padding: '16px 24px',
+              padding: isMobile ? '12px 16px' : '16px 24px',
               borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
               display: 'flex',
               alignItems: 'center',
@@ -267,13 +278,32 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
               backgroundColor: 'var(--color-paper-white, #ffffff)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '14px' }}>
+              {isMobile && (
+                <button
+                  onClick={() => onSelectConversation(null)}
+                  title="Back to matches"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: '6px',
+                    marginRight: '2px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-bumble-ink, #202020)',
+                  }}
+                >
+                  <ArrowLeft size={22} />
+                </button>
+              )}
               <img
                 src={selectedConv.partner?.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'}
                 alt={selectedConv.partner?.display_name || 'Partner'}
                 style={{
-                  width: '46px',
-                  height: '46px',
+                  width: isMobile ? '40px' : '46px',
+                  height: isMobile ? '40px' : '46px',
                   borderRadius: '50%',
                   objectFit: 'cover',
                   border: '1.5px solid var(--color-bumble-ink, #202020)',
@@ -282,7 +312,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
               <div>
                 <h4
                   style={{
-                    fontSize: '18px',
+                    fontSize: isMobile ? '16px' : '18px',
                     fontWeight: 800,
                     color: 'var(--color-bumble-ink, #202020)',
                     letterSpacing: '-0.01em',

@@ -53,6 +53,7 @@ func main() {
 	safetyH := handlers.NewSafetyHandler(db)
 	adminH := handlers.NewAdminHandler(db)
 	mediaH := handlers.NewMediaHandler(cfg)
+	suggestionH := handlers.NewSuggestionHandler(db)
 
 	// Router setup
 	r := chi.NewRouter()
@@ -90,6 +91,9 @@ func main() {
 	r.Route("/api", func(r chi.Router) {
 		r.Post("/auth/register", authH.Register)
 		r.Post("/auth/login", authH.Login)
+		r.Post("/auth/forgot-password", authH.ForgotPassword)
+		r.Post("/auth/reset-password", authH.ResetPassword)
+		r.Post("/suggestions", suggestionH.SubmitSuggestion)
 		r.Get("/communities", commH.GetCommunities)
 		r.Get("/communities/{slug}/posts", commH.GetCommunityPosts)
 		r.Get("/profiles/{id}", profileH.GetPublicProfile)
@@ -167,6 +171,7 @@ func main() {
 				r.Get("/admin/reports", adminH.GetReportsQueue)
 				r.Put("/admin/reports/{id}/resolve", adminH.ResolveReport)
 				r.Get("/admin/audit-logs", adminH.GetAuditLogs)
+				r.Get("/admin/suggestions", suggestionH.GetSuggestions)
 			})
 		})
 	})

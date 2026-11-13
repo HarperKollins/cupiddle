@@ -243,6 +243,26 @@ func (db *DB) RunMigrations() error {
 		created_at TIMESTAMP NOT NULL
 	);
 
+	CREATE TABLE IF NOT EXISTS suggestions (
+		id TEXT PRIMARY KEY,
+		user_id TEXT DEFAULT '',
+		email TEXT DEFAULT '',
+		category TEXT NOT NULL DEFAULT 'General',
+		title TEXT NOT NULL,
+		content TEXT NOT NULL,
+		status TEXT NOT NULL DEFAULT 'pending',
+		created_at TIMESTAMP NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS password_resets (
+		id TEXT PRIMARY KEY,
+		email TEXT NOT NULL,
+		code TEXT NOT NULL,
+		expires_at TIMESTAMP NOT NULL,
+		used BOOLEAN DEFAULT FALSE,
+		created_at TIMESTAMP NOT NULL
+	);
+
 	CREATE INDEX IF NOT EXISTS idx_sparks_receiver ON sparks(receiver_id, status);
 	CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id, created_at);
 	CREATE INDEX IF NOT EXISTS idx_posts_comm ON community_posts(community_id, created_at);

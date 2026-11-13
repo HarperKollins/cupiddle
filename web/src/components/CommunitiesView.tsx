@@ -23,6 +23,13 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
   const [expandedCommentsPostId, setExpandedCommentsPostId] = useState<string | null>(null);
   const [commentsMap, setCommentsMap] = useState<Record<string, PostComment[]>>({});
   const [commentInput, setCommentInput] = useState('');
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     api.getCommunities().then((res) => {
@@ -133,7 +140,16 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
   const selectedCommunity = communities.find((c) => c.slug === selectedSlug);
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '300px 1fr', gap: '32px' }}>
+    <div
+      style={{
+        maxWidth: '1100px',
+        margin: '0 auto',
+        display: isMobile ? 'flex' : 'grid',
+        flexDirection: isMobile ? 'column' : undefined,
+        gridTemplateColumns: isMobile ? undefined : '300px 1fr',
+        gap: isMobile ? '24px' : '32px',
+      }}
+    >
       {/* Left: Rabbit Holes Community List */}
       <div>
         <div style={{ marginBottom: '16px' }}>

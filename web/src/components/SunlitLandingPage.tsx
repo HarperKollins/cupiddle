@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Compass, Gamepad2, Users, MapPin } from 'lucide-react';
+import { ArrowRight, Compass, Gamepad2, Users, MapPin, Lightbulb } from 'lucide-react';
 import { CupiddleIcon, CupiddleAppBadge } from './CupiddleLogo';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
 interface SunlitLandingPageProps {
   onOpenAuth: (preselectedState?: string) => void;
+  onOpenSuggestion?: () => void;
 }
 
 const ROTATING_CURIOSITIES = [
@@ -20,7 +21,7 @@ const ROTATING_CURIOSITIES = [
   'Chess Tactics & Sicilian Defenses',
 ];
 
-export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth }) => {
+export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth, onOpenSuggestion }) => {
   const [activeNav, setActiveNav] = useState<'why' | 'stream' | 'sparks' | 'coop' | 'states'>('why');
   const [topicIndex, setTopicIndex] = useState(0);
 
@@ -41,7 +42,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
       {/* 1. FLOATING BORDERLESS NAV OVER HONEY SECTION */}
       <header style={{
         backgroundColor: 'var(--color-bumble-honey)',
-        padding: '20px 32px',
+        padding: '16px clamp(16px, 4vw, 32px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -161,7 +162,30 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
         </nav>
 
         {/* Action Button with Spring Physics */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {onOpenSuggestion && (
+            <button
+              onClick={onOpenSuggestion}
+              className="pill-interactive"
+              style={{
+                backgroundColor: 'var(--color-paper-white)',
+                color: 'var(--color-bumble-ink)',
+                borderRadius: 'var(--radius-buttons)',
+                padding: '10px 18px',
+                fontSize: '14px',
+                fontWeight: 700,
+                border: '1.5px solid var(--color-bumble-ink)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: 'var(--shadow-sm)',
+              }}
+            >
+              <Lightbulb size={16} />
+              <span className="desktop-nav">Suggestions</span>
+            </button>
+          )}
+
           <button
             onClick={() => onOpenAuth()}
             className="btn-bumble-action"
@@ -169,8 +193,8 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
               backgroundColor: 'var(--color-bumble-ink)',
               color: 'var(--color-paper-white)',
               borderRadius: 'var(--radius-buttons)',
-              padding: '14px 26px',
-              fontSize: '16px',
+              padding: '12px 22px',
+              fontSize: '15px',
               fontWeight: 700,
               letterSpacing: '0.016em',
               boxShadow: 'var(--shadow-sm)',
@@ -286,18 +310,22 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           </div>
 
           {/* TILTED PHONE MOCKUPS COLLAGE (SMOOTH FLOATING ANIMATIONS + INTERACTIVE HOVER STRAIGHTEN) */}
-          <div style={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '24px',
-            flexWrap: 'nowrap',
-            paddingTop: '20px',
-          }}>
-            {/* Left Card: Tunde (Port Harcourt) — Smooth Float -7° Tilt */}
+          <div
+            style={{
+              position: 'relative',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '24px',
+              flexWrap: 'wrap',
+              paddingTop: '20px',
+              maxWidth: '100%',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Left Card: Tunde (Port Harcourt) — Hidden on mobile phones, shown on tablet/desktop */}
             <div
-              className="interactive-card-hover animate-float-left"
+              className="interactive-card-hover animate-float-left desktop-nav"
               style={{
                 width: '310px',
                 backgroundColor: 'var(--color-paper-white)',
@@ -349,6 +377,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
               className="interactive-card-hover animate-float-center"
               style={{
                 width: '330px',
+                maxWidth: 'calc(100vw - 40px)',
                 backgroundColor: 'var(--color-paper-white)',
                 borderRadius: 'var(--radius-cards)',
                 boxShadow: '0 8px 30px rgba(32,32,32,0.14)',
@@ -401,9 +430,9 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
               </div>
             </div>
 
-            {/* Right Card: Chidi (Abuja) — Smooth Float +7° Tilt */}
+            {/* Right Card: Chidi (Abuja) — Hidden on mobile phones, shown on tablet/desktop */}
             <div
-              className="interactive-card-hover animate-float-right"
+              className="interactive-card-hover animate-float-right desktop-nav"
               style={{
                 width: '310px',
                 backgroundColor: 'var(--color-paper-white)',

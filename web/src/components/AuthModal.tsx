@@ -17,15 +17,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onSuccess,
   initialState,
 }) => {
-  const [mode, setMode] = useState<'login' | 'register'>('register');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'reset'>('register');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetCode, setResetCode] = useState('');
+  const [generatedCodeNotice, setGeneratedCodeNotice] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [birthdate, setBirthdate] = useState('2000-01-01');
   const [gender, setGender] = useState('Woman');
   const [city, setCity] = useState(initialState || 'Lagos');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialState) {
@@ -39,12 +43,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setInfoMessage(null);
     setLoading(true);
 
     try {
       if (mode === 'login') {
         await api.login({ email, password });
-      } else {
+        onSuccess();
+        onClose();
+      } else if (mode === 'register') {
         // Client-side 18+ verification
         const dob = new Date(birthdate);
         const today = new Date();
@@ -67,12 +74,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           city,
           country: 'Nigeria',
         });
+        onSuccess();
+        onClose();
+      } else if (mode === 'forgot') {
+        if (!email.trim() || !email.includes('@')) {
+          throw new Error('Please enter a valid email address.');
+        }
+        const res = await api.forgotPassword(email);
+        if (res.code) {
+          setResetCode(res.code);
+          setGeneratedCodeNotice(res.code);
+        }
+        setInfoMessage('6-digit code generated! Enter your code and new password.');
+        setMode('reset');
+      } else if (mode === 'reset') {
+        if (!resetCode.trim()) {
+          throw new Error('Please enter the 6-digit reset code.');
+        }
+        if (newPassword.length < 8) {
+          throw new Error('New password must be at least 8 characters.');
+        }
+        await api.resetPassword({
+          email,
+          code: resetCode.trim(),
+          new_password: newPassword,
+        });
+        onSuccess();
+        onClose();
       }
-
-      onSuccess();
-      onClose();
     } catch (err: any) {
-      setError(err.message || 'Authentication failed. Please check your credentials.');
+      setError(err.message || 'Action failed. Please check your inputs.');
     } finally {
       setLoading(false);
     }
@@ -166,7 +197,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               lineHeight: 1.15,
             }}
           >
-            {mode === 'login' ? 'Welcome Back' : 'Create Free Account'}
+            {mode === 'login'
+              ? 'Welcome Back'
+              : mode === 'register'
+              ? 'Create Free Account'
+              : mode === 'forgot'
+              ? 'Reset Password'
+              : 'Set New Password'}
           </h2>
 
           <p
@@ -179,61 +216,117 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           >
             {mode === 'login'
               ? 'Sign in to rediscover your Sparks and conversations.'
-              : 'Join the curiosity-first community. Zero fees, 100% free forever.'}
+              : mode === 'register'
+              ? 'Join the curiosity-first community. Zero fees, 100% free forever.'
+              : mode === 'forgot'
+              ? 'Enter your registered email address to receive your 6-digit reset code.'
+              : 'Enter your 6-digit code and choose a new password.'}
           </p>
         </div>
 
-        {/* Tab Switcher */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            backgroundColor: 'var(--color-mist, #f3f3f3)',
-            borderRadius: 'var(--radius-badges, 1000px)',
-            padding: '4px',
-            marginBottom: '24px',
-            border: '1px solid #e5e5e5',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => {
-              setMode('register');
-              setError(null);
-            }}
+        {/* Tab Switcher (Only shown on Login / Register) */}
+        {(mode === 'login' || mode === 'register') && (
+          <div
             style={{
-              padding: '10px 16px',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              backgroundColor: 'var(--color-mist, #f3f3f3)',
               borderRadius: 'var(--radius-badges, 1000px)',
-              backgroundColor: mode === 'register' ? 'var(--color-bumble-ink, #202020)' : 'transparent',
-              color: mode === 'register' ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
-              fontSize: '14px',
-              fontWeight: 700,
-              letterSpacing: '0.01em',
-              transition: 'all 0.15s ease',
+              padding: '4px',
+              marginBottom: '24px',
+              border: '1px solid #e5e5e5',
             }}
           >
-            Create Account
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setMode('login');
-              setError(null);
-            }}
+            <button
+              type="button"
+              onClick={() => {
+                setMode('register');
+                setError(null);
+                setInfoMessage(null);
+              }}
+              style={{
+                padding: '10px 16px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                backgroundColor: mode === 'register' ? 'var(--color-bumble-ink, #202020)' : 'transparent',
+                color: mode === 'register' ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
+                fontSize: '14px',
+                fontWeight: 700,
+                letterSpacing: '0.01em',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Create Account
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode('login');
+                setError(null);
+                setInfoMessage(null);
+              }}
+              style={{
+                padding: '10px 16px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                backgroundColor: mode === 'login' ? 'var(--color-bumble-ink, #202020)' : 'transparent',
+                color: mode === 'login' ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
+                fontSize: '14px',
+                fontWeight: 700,
+                letterSpacing: '0.01em',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Sign In
+            </button>
+          </div>
+        )}
+
+        {/* Informational Alert / Code Notice */}
+        {generatedCodeNotice && (
+          <div
             style={{
-              padding: '10px 16px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              backgroundColor: mode === 'login' ? 'var(--color-bumble-ink, #202020)' : 'transparent',
-              color: mode === 'login' ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
+              padding: '14px 16px',
+              backgroundColor: '#fff386',
+              border: '2px solid #202020',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              color: '#202020',
               fontSize: '14px',
               fontWeight: 700,
-              letterSpacing: '0.01em',
-              transition: 'all 0.15s ease',
+              marginBottom: '20px',
+              textAlign: 'center',
             }}
           >
-            Sign In
-          </button>
-        </div>
+            Your 6-Digit Password Reset Code:
+            <span
+              style={{
+                display: 'block',
+                fontSize: '24px',
+                fontWeight: 900,
+                letterSpacing: '6px',
+                marginTop: '4px',
+                color: '#202020',
+              }}
+            >
+              {generatedCodeNotice}
+            </span>
+          </div>
+        )}
+
+        {infoMessage && !generatedCodeNotice && (
+          <div
+            style={{
+              padding: '12px 16px',
+              backgroundColor: '#ecfdf5',
+              border: '1.5px solid #10b981',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              color: '#065f46',
+              fontSize: '13px',
+              fontWeight: 600,
+              marginBottom: '20px',
+            }}
+          >
+            {infoMessage}
+          </div>
+        )}
 
         {/* Error Alert */}
         {error && (
@@ -285,37 +378,133 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             />
           </div>
 
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '13px',
-                color: 'var(--color-bumble-ink, #202020)',
-                marginBottom: '6px',
-                fontWeight: 700,
-                letterSpacing: '0.01em',
-              }}
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 8 characters"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                fontSize: '15px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                color: 'var(--color-bumble-ink, #202020)',
-              }}
-            />
-          </div>
+          {/* Login or Register Password */}
+          {(mode === 'login' || mode === 'register') && (
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  color: 'var(--color-bumble-ink, #202020)',
+                  marginBottom: '6px',
+                  fontWeight: 700,
+                  letterSpacing: '0.01em',
+                }}
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  fontSize: '15px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              />
+              {mode === 'login' && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('forgot');
+                      setError(null);
+                      setInfoMessage(null);
+                    }}
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: 'var(--color-graphite, #575656)',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Reset Code & New Password when in Reset mode */}
+          {mode === 'reset' && (
+            <>
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '13px',
+                    color: 'var(--color-bumble-ink, #202020)',
+                    marginBottom: '6px',
+                    fontWeight: 700,
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  6-Digit Recovery Code
+                </label>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  value={resetCode}
+                  onChange={(e) => setResetCode(e.target.value)}
+                  placeholder="e.g. 529183"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '18px',
+                    fontWeight: 800,
+                    letterSpacing: '4px',
+                    textAlign: 'center',
+                    borderRadius: 'var(--radius-buttons, 16px)',
+                    border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    backgroundColor: 'var(--color-paper-white, #ffffff)',
+                    color: 'var(--color-bumble-ink, #202020)',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '13px',
+                    color: 'var(--color-bumble-ink, #202020)',
+                    marginBottom: '6px',
+                    fontWeight: 700,
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  Choose New Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={8}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '15px',
+                    borderRadius: 'var(--radius-buttons, 16px)',
+                    border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    backgroundColor: 'var(--color-paper-white, #ffffff)',
+                    color: 'var(--color-bumble-ink, #202020)',
+                  }}
+                />
+              </div>
+            </>
+          )}
 
           {mode === 'register' && (
             <>
@@ -469,7 +658,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </>
           )}
 
-          {/* Primary Action Button (Bumble Ink filled button, 16px radius, bold) */}
+          {/* Primary Action Button */}
           <button
             type="submit"
             disabled={loading}
@@ -496,12 +685,38 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               'Please wait...'
             ) : mode === 'login' ? (
               'Sign In to Cupiddle'
+            ) : mode === 'register' ? (
+              'Join Cupiddle Free — No Paywalls'
+            ) : mode === 'forgot' ? (
+              'Send 6-Digit Reset Code'
             ) : (
-              <>
-                Join Cupiddle Free — No Paywalls
-              </>
+              'Save New Password & Sign In'
             )}
           </button>
+
+          {/* Back to login option if in forgot or reset mode */}
+          {(mode === 'forgot' || mode === 'reset') && (
+            <div style={{ textAlign: 'center', marginTop: '4px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setError(null);
+                  setInfoMessage(null);
+                  setGeneratedCodeNotice(null);
+                }}
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: 'var(--color-bumble-ink, #202020)',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
+                ← Back to Sign In
+              </button>
+            </div>
+          )}
 
           {/* Under Button Note */}
           <p

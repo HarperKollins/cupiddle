@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, Users, Heart, User as UserIcon, LogOut, Compass } from 'lucide-react';
+import { MessageCircle, Users, Heart, User as UserIcon, LogOut, Compass, Lightbulb } from 'lucide-react';
 import { CupiddleAppBadge } from './CupiddleLogo';
 import { Profile } from '../types';
 
@@ -11,6 +11,7 @@ interface NavbarProps {
   unreadChatCount: number;
   onOpenAuth: () => void;
   onLogout: () => void;
+  onOpenSuggestion?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -21,6 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   unreadChatCount,
   onOpenAuth,
   onLogout,
+  onOpenSuggestion,
 }) => {
   return (
     <header
@@ -28,7 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '16px 28px',
+        padding: '12px clamp(12px, 3vw, 28px)',
         backgroundColor: 'var(--color-paper-white, #ffffff)',
         borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
         position: 'sticky',
@@ -39,13 +41,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Brand */}
       <div
         onClick={() => setActiveTab('stream')}
-        style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+        style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }}
       >
-        <CupiddleAppBadge size={40} />
+        <CupiddleAppBadge size={36} />
         <div>
           <span
             style={{
-              fontSize: '22px',
+              fontSize: '20px',
               fontWeight: 800,
               letterSpacing: '-0.02em',
               color: 'var(--color-bumble-ink, #202020)',
@@ -54,6 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             Cupiddle
           </span>
           <span
+            className="desktop-nav"
             style={{
               display: 'block',
               fontSize: '11px',
@@ -199,8 +202,34 @@ export const Navbar: React.FC<NavbarProps> = ({
       )}
 
       {/* User Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Suggestion Box Trigger */}
+        {onOpenSuggestion && (
+          <button
+            onClick={onOpenSuggestion}
+            className="pill-interactive"
+            title="Suggestion Box - Share feedback or ideas"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              backgroundColor: '#ffffff',
+              color: 'var(--color-bumble-ink, #202020)',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            <Lightbulb size={15} color="#202020" />
+            <span className="desktop-nav">Suggestions</span>
+          </button>
+        )}
+
         <span
+          className="desktop-nav"
           style={{
             fontSize: '12px',
             fontWeight: 700,
@@ -222,45 +251,48 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '8px 16px',
+                gap: '6px',
+                padding: '6px 14px',
                 borderRadius: 'var(--radius-badges, 1000px)',
                 backgroundColor: activeTab === 'profile' ? 'var(--color-bumble-honey, #ffdb5b)' : 'var(--color-mist, #f3f3f3)',
                 border: '1.5px solid var(--color-bumble-ink, #202020)',
                 color: 'var(--color-bumble-ink, #202020)',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: 700,
               }}
             >
-              <UserIcon size={16} />
-              <span>{myProfile.display_name || 'My Profile'}</span>
+              <UserIcon size={15} />
+              <span style={{ maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {myProfile.display_name || 'Profile'}
+              </span>
             </button>
             <button
               onClick={onLogout}
               title="Sign out"
               style={{
-                padding: '8px',
+                padding: '7px',
                 borderRadius: '50%',
                 color: 'var(--color-graphite, #575656)',
-                border: '1px solid #e0e0e0',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                backgroundColor: '#ffffff',
               }}
             >
-              <LogOut size={18} />
+              <LogOut size={16} />
             </button>
           </div>
         ) : (
           <button
             onClick={onOpenAuth}
             style={{
-              padding: '10px 24px',
+              padding: '9px 18px',
               borderRadius: 'var(--radius-buttons, 16px)',
               backgroundColor: 'var(--color-bumble-ink, #202020)',
               color: 'var(--color-paper-white, #ffffff)',
               fontWeight: 700,
-              fontSize: '15px',
+              fontSize: '14px',
               letterSpacing: '0.015em',
               boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
             }}

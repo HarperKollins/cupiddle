@@ -10,6 +10,9 @@ import { AuthModal } from './components/AuthModal';
 import { OnboardingModal } from './components/OnboardingModal';
 import { SunlitLandingPage } from './components/SunlitLandingPage';
 import { PwaInstallBanner } from './components/PwaInstallBanner';
+import { SuggestionModal } from './components/SuggestionModal';
+import { NotificationToast, ToastData } from './components/NotificationToast';
+import { notifications } from './utils/notifications';
 import { User, Profile, DiscoveryCandidate, Spark, Conversation } from './types';
 import { api } from './api';
 import { Compass, Heart, MessageCircle, Users, User as UserIcon } from 'lucide-react';
@@ -27,10 +30,12 @@ export const App: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [toasts, setToasts] = useState<ToastData[]>([]);
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [authInitialState, setAuthInitialState] = useState<string | undefined>(undefined);
   const [sparkModalData, setSparkModalData] = useState<{
     isOpen: boolean;
@@ -62,6 +67,11 @@ export const App: React.FC = () => {
     }
   }, []);
 
+  const addToast = (toast: Omit<ToastData, 'id'>) => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev.slice(-3), { ...toast, id }]);
+  };
+
   // Load Feed, Sparks, Conversations when authenticated
   useEffect(() => {
     if (!currentUser) return;
@@ -70,18 +80,71 @@ export const App: React.FC = () => {
     loadSparks();
     loadConversations();
 
-    // Listen to real-time events
+    // Request notification permission once signed in
+    if (!notifications.isPermissionGranted()) {
+      notifications.requestPermission().catch(() => {});
+    }
+
+    // Listen to real-time events with tactile in-app push and sound alerts
     const unsub = api.onWebSocketEvent((event) => {
       if (event.type === 'spark_received') {
         loadSparks();
+        const senderName = event.payload?.sender_name || 'A curious connection';
+        addToast({
+          type: 'spark',
+          title: '✨ New Spark Received!',
+          body: `${senderName} sparked your perspective!`,
+          onClick: () => setActiveTab('sparks'),
+        });
+        notifications.showPush('✨ New Spark Received!', {
+          body: `${senderName} sparked your perspective!`,
+          onClick: () => setActiveTab('sparks'),
+        });
       }
+
       if (event.type === 'match_created') {
         loadConversations();
+        const partnerName = event.payload?.partner?.display_name || 'A new connection';
+        addToast({
+          type: 'match',
+          title: "💛 It's a Match!",
+          body: `You and ${partnerName} sparked each other! Start chatting.`,
+          onClick: () => setActiveTab('chat'),
+        });
+        notifications.showPush("💛 It's a Match on Cupiddle!", {
+          body: `You and ${partnerName} sparked each other!`,
+          onClick: () => setActiveTab('chat'),
+        });
+      }
+
+      if (event.type === 'new_message') {
+        loadConversations();
+        const senderName = event.payload?.sender_name || 'Your match';
+        const content = event.payload?.content || 'Sent a new message';
+        // Only alert if we aren't currently inside this chat room
+        if (activeTab !== 'chat' || selectedConvId !== event.payload?.conversation_id) {
+          addToast({
+            type: 'message',
+            title: `💬 ${senderName}`,
+            body: content,
+            onClick: () => {
+              setSelectedConvId(event.payload?.conversation_id);
+              setActiveTab('chat');
+            },
+          });
+          notifications.showPush(`💬 Message from ${senderName}`, {
+            body: content,
+            onClick: () => {
+              setSelectedConvId(event.payload?.conversation_id);
+              setActiveTab('chat');
+            },
+          });
+        }
       }
     });
 
     return unsub;
-  }, [currentUser]);
+  }, [currentUser, activeTab, selectedConvId]);
 
   const loadDiscoveryFeed = async () => {
     try {
@@ -213,6 +276,7 @@ export const App: React.FC = () => {
             setAuthInitialState(preselectedState);
             setIsAuthOpen(true);
           }}
+          onOpenSuggestion={() => setIsSuggestionOpen(true)}
         />
         <AuthModal
           isOpen={isAuthOpen}
@@ -225,6 +289,10 @@ export const App: React.FC = () => {
             setIsOnboardingOpen(true);
             api.connectWebSocket();
           }}
+        />
+        <SuggestionModal
+          isOpen={isSuggestionOpen}
+          onClose={() => setIsSuggestionOpen(false)}
         />
       </div>
     );
@@ -243,10 +311,11 @@ export const App: React.FC = () => {
         unreadChatCount={(conversations || []).reduce((sum, c) => sum + (c.unread_count || 0), 0)}
         onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
+        onOpenSuggestion={() => setIsSuggestionOpen(true)}
       />
 
       {/* Main Container */}
-      <main style={{ padding: '32px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <main style={{ padding: 'clamp(16px, 2.5vw, 32px) clamp(12px, 2.5vw, 20px) 96px', maxWidth: '1200px', margin: '0 auto' }}>
 
         {/* Tab 1: The Idea Stream */}
         {activeTab === 'stream' && (
@@ -510,6 +579,20 @@ export const App: React.FC = () => {
           onDismiss={() => setIsOnboardingOpen(false)}
         />
       )}
+
+      {/* Suggestion Box Modal */}
+      <SuggestionModal
+        isOpen={isSuggestionOpen}
+        onClose={() => setIsSuggestionOpen(false)}
+        userEmail={currentUser?.email}
+      />
+
+      {/* Real-Time Push Notification Toasts */}
+      <NotificationToast
+        toasts={toasts}
+        onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+      />
+
       {/* Persistent PWA Install Banner */}
       <PwaInstallBanner />
     </div>

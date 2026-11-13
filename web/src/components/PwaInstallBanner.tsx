@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Download, X, Share2, PlusSquare, Smartphone } from 'lucide-react';
+import { Download, X, Share2, PlusSquare } from 'lucide-react';
 import { CupiddleAppBadge } from './CupiddleLogo';
 
 export const PwaInstallBanner: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
+    return localStorage.getItem('cupiddle_pwa_dismissed') === 'true';
+  });
   const [showIosGuide, setShowIosGuide] = useState(false);
   const [isIos, setIsIos] = useState(false);
 
@@ -61,37 +63,43 @@ export const PwaInstallBanner: React.FC = () => {
     }
   };
 
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    localStorage.setItem('cupiddle_pwa_dismissed', 'true');
+  };
+
   return (
     <>
-      {/* Persistent Docked Install Banner / Trigger */}
-      {!isDismissed ? (
+      {/* Floating Install Banner - only shown if not dismissed */}
+      {!isDismissed && (
         <aside
           aria-label="Install Cupiddle application"
+          className="desktop-nav"
           style={{
             position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            zIndex: 9999,
+            bottom: '24px',
+            right: '24px',
+            zIndex: 9000,
             backgroundColor: '#ffffff',
             borderRadius: '20px',
             border: '2px solid #202020',
             boxShadow: '0 12px 36px rgba(32, 32, 32, 0.25)',
-            padding: '16px 20px',
-            maxWidth: '380px',
-            width: 'calc(100vw - 40px)',
+            padding: '14px 18px',
+            maxWidth: '360px',
+            width: 'calc(100vw - 48px)',
             display: 'flex',
             alignItems: 'center',
-            gap: '14px',
+            gap: '12px',
             animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
-          <CupiddleAppBadge size={44} />
+          <CupiddleAppBadge size={40} />
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span
                 style={{
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: 800,
                   backgroundColor: '#ffdb5b',
                   color: '#202020',
@@ -101,12 +109,12 @@ export const PwaInstallBanner: React.FC = () => {
                   textTransform: 'uppercase',
                 }}
               >
-                Instant PWA
+                PWA
               </span>
             </div>
             <h4
               style={{
-                fontSize: '15px',
+                fontSize: '14px',
                 fontWeight: 800,
                 color: '#202020',
                 margin: '2px 0 0',
@@ -117,7 +125,7 @@ export const PwaInstallBanner: React.FC = () => {
             </h4>
             <p
               style={{
-                fontSize: '12px',
+                fontSize: '11px',
                 color: '#575656',
                 margin: 0,
                 lineHeight: 1.3,
@@ -128,7 +136,7 @@ export const PwaInstallBanner: React.FC = () => {
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <button
               onClick={handleInstallClick}
               className="btn-bumble-action"
@@ -136,23 +144,23 @@ export const PwaInstallBanner: React.FC = () => {
                 backgroundColor: '#ffdb5b',
                 color: '#202020',
                 border: '1.5px solid #202020',
-                padding: '9px 14px',
-                borderRadius: '14px',
-                fontSize: '13px',
+                padding: '7px 12px',
+                borderRadius: '12px',
+                fontSize: '12px',
                 fontWeight: 800,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '4px',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
               }}
             >
-              <Download size={15} /> Install
+              <Download size={13} /> Install
             </button>
 
             <button
-              onClick={() => setIsDismissed(true)}
-              title="Minimize"
+              onClick={handleDismiss}
+              title="Dismiss"
               style={{
                 background: 'none',
                 border: 'none',
@@ -168,33 +176,6 @@ export const PwaInstallBanner: React.FC = () => {
             </button>
           </div>
         </aside>
-      ) : (
-        /* Minimized Persistent Pill (Always accessible) */
-        <button
-          onClick={() => setIsDismissed(false)}
-          className="btn-bumble-action"
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            zIndex: 9999,
-            backgroundColor: '#ffdb5b',
-            color: '#202020',
-            border: '2px solid #202020',
-            borderRadius: '1000px',
-            boxShadow: '0 6px 20px rgba(32, 32, 32, 0.2)',
-            padding: '8px 18px',
-            fontSize: '13px',
-            fontWeight: 800,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-          }}
-        >
-          <Smartphone size={16} />
-          <span>Get Cupiddle App</span>
-        </button>
       )}
 
       {/* Guided Install Modal for iOS & Desktop Fallback */}

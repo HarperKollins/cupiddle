@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"crypto/rand"
 	"encoding/json"
+	"fmt"
+	"math/big"
 	"net/http"
 	"strings"
 	"time"
@@ -255,6 +258,139 @@ func (h *AuthHandler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, http.StatusOK, map[string]string{"message": "account and all associated data permanently deleted"})
+}
+
+type ForgotPasswordRequest struct {
+	Email string `json:"email"`
+}
+
+type ResetPasswordRequest struct {
+	Email       string `json:"email"`
+	Code        string `json:"code"`
+	NewPassword string `json:"new_password"`
+}
+
+// ForgotPassword generates a 6-digit verification code to reset credentials
+func (h *AuthHandler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var req ForgotPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	req.Email = strings.ToLower(strings.TrimSpace(req.Email))
+	if req.Email == "" || !strings.Contains(req.Email, "@") {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "valid email address is required"})
+		return
+	}
+
+	// Verify user exists
+	var userID string
+	err := h.DB.QueryRow("SELECT id FROM users WHERE email = $1", req.Email).Scan(&userID)
+	if err != nil {
+		// Generic response for security
+		respondJSON(w, http.StatusOK, map[string]interface{}{
+			"message": "If this email is registered, a 6-digit reset code has been generated.",
+			"sent":    true,
+		})
+		return
+	}
+
+	// Generate 6-digit numeric code
+	n, _ := rand.Int(rand.Reader, big.NewInt(900000))
+	code := fmt.Sprintf("%06d", n.Int64()+100000)
+
+	resetID := uuid.New().String()
+	now := time.Now()
+	expiresAt := now.Add(15 * time.Minute)
+
+	_, err = h.DB.Exec(
+		`INSERT INTO password_resets (id, email, code, expires_at, used, created_at)
+		 VALUES ($1, $2, $3, $4, false, $5)`,
+		resetID, req.Email, code, expiresAt, now,
+	)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to initialize password reset"})
+		return
+	}
+
+	// Return code directly in response for immediate, seamless verification
+	respondJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "A 6-digit reset code has been created.",
+		"code":    code,
+		"sent":    true,
+	})
+}
+
+// ResetPassword applies the new password using the 6-digit code
+func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var req ResetPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	req.Email = strings.ToLower(strings.TrimSpace(req.Email))
+	req.Code = strings.TrimSpace(req.Code)
+
+	if req.Email == "" || req.Code == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "email and reset code are required"})
+		return
+	}
+
+	if len(req.NewPassword) < 8 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "new password must be at least 8 characters"})
+		return
+	}
+
+	var resetID string
+	err := h.DB.QueryRow(
+		`SELECT id FROM password_resets 
+		 WHERE email = $1 AND code = $2 AND used = false AND expires_at > $3 
+		 ORDER BY created_at DESC LIMIT 1`,
+		req.Email, req.Code, time.Now(),
+	).Scan(&resetID)
+
+	if err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid or expired 6-digit reset code"})
+		return
+	}
+
+	pwHash, err := auth.HashPassword(req.NewPassword)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to secure password"})
+		return
+	}
+
+	now := time.Now()
+	_, err = h.DB.Exec("UPDATE users SET password_hash = $1, updated_at = $2 WHERE email = $3", pwHash, now, req.Email)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to update password"})
+		return
+	}
+
+	// Mark reset code as used
+	_, _ = h.DB.Exec("UPDATE password_resets SET used = true WHERE id = $1", resetID)
+
+	// Fetch user details for instant login
+	var user models.User
+	err = h.DB.QueryRow(
+		`SELECT id, email, role, status, email_verified, created_at, updated_at
+		 FROM users WHERE email = $1`, req.Email,
+	).Scan(&user.ID, &user.Email, &user.Role, &user.Status, &user.EmailVerified, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil {
+		respondJSON(w, http.StatusOK, map[string]string{"message": "password updated successfully. please sign in."})
+		return
+	}
+
+	profile := h.getProfileByUserID(user.ID)
+	token, _ := auth.GenerateJWT(user.ID, user.Email, user.Role, h.Config.JWTSecret)
+
+	respondJSON(w, http.StatusOK, AuthResponse{
+		Token:   token,
+		User:    &user,
+		Profile: profile,
+	})
 }
 
 func (h *AuthHandler) getProfileByUserID(userID string) *models.Profile {

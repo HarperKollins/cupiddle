@@ -79,6 +79,40 @@ class ApiClient {
     return res;
   }
 
+  async forgotPassword(email: string): Promise<{ message: string; code?: string; sent: boolean }> {
+    return this.request<{ message: string; code?: string; sent: boolean }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(body: {
+    email: string;
+    code: string;
+    new_password: string;
+  }): Promise<{ token: string; user: User; profile?: Profile }> {
+    const res = await this.request<{ token: string; user: User; profile?: Profile }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    if (res.token) {
+      this.setToken(res.token);
+    }
+    return res;
+  }
+
+  async submitSuggestion(body: {
+    category: string;
+    title: string;
+    content: string;
+    email?: string;
+  }): Promise<{ success: boolean; message: string; id: string }> {
+    return this.request<{ success: boolean; message: string; id: string }>('/suggestions', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
   async getMe(): Promise<{ user: User; profile: Profile }> {
     return this.request<{ user: User; profile: Profile }>('/auth/me');
   }
