@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!api|uploads|sw.js|manifest.json|cupiddle-icon|assets).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

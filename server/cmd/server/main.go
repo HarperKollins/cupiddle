@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -168,6 +170,45 @@ func main() {
 			})
 		})
 	})
+
+	// Static SPA Serving for Production (Unified single-service deployment)
+	webDistPaths := []string{
+		os.Getenv("WEB_DIST_PATH"),
+		"./web/dist",
+		"../web/dist",
+		"./dist",
+	}
+	var resolvedWebDist string
+	for _, p := range webDistPaths {
+		if p != "" {
+			if info, err := os.Stat(p); err == nil && info.IsDir() {
+				resolvedWebDist = p
+				break
+			}
+		}
+	}
+
+	if resolvedWebDist != "" {
+		fileServer := http.FileServer(http.Dir(resolvedWebDist))
+		r.Get("/*", func(w http.ResponseWriter, r *http.Request) {
+			path := r.URL.Path
+			// Don't intercept API or upload routes
+			if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/uploads") {
+				http.NotFound(w, r)
+				return
+			}
+
+			filePath := filepath.Join(resolvedWebDist, filepath.Clean(path))
+			if info, err := os.Stat(filePath); err == nil && !info.IsDir() {
+				fileServer.ServeHTTP(w, r)
+				return
+			}
+
+			// SPA fallback: return index.html
+			http.ServeFile(w, r, filepath.Join(resolvedWebDist, "index.html"))
+		})
+		log.Printf("[STATIC] Serving Web PWA frontend from %s", resolvedWebDist)
+	}
 
 	serverAddr := ":" + cfg.Port
 	server := &http.Server{

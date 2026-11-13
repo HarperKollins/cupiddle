@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: cupiddle
+    runtime: docker
+    plan: free
+    region: ohio # us-east (close to Neon us-east-2)
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_DRIVER
+        value: postgres
+      - key: AWS_ENDPOINT_URL_S3
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-east-2
+      - key: S3_BUCKET
+        value: photos
+      - key: JWT_SECRET
+        generateValue: true
