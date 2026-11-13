@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
 // ============================================================================
@@ -6,9 +6,25 @@ import { NIGERIAN_STATES } from '../constants/nigerianStates';
 // ============================================================================
 
 const CupiddleIcon: React.FC<{ size?: number; color?: string }> = ({ size = 20, color = '#202020' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={color} fillOpacity="0.18" />
-    <path d="M13 7l-3 5h4l-2 5" />
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0 }}
+  >
+    <path
+      d="M 64 22 C 34 22 18 36 18 50 C 18 64 34 78 64 78"
+      stroke={color}
+      strokeWidth="13"
+      strokeLinecap="round"
+    />
+    <path
+      d="M 66 42 Q 66 48 60 48 Q 66 48 66 54 Q 66 48 72 48 Q 66 48 66 42 Z"
+      fill={color}
+    />
+    <circle cx="66" cy="62" r="3.2" fill={color} />
   </svg>
 );
 
@@ -248,15 +264,7 @@ interface SunlitLandingPageProps {
 
 export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth, onOpenSuggestion }) => {
   const [activeNav, setActiveNav] = useState<'why' | 'stream' | 'sparks' | 'coop' | 'states'>('why');
-  const [topicIndex, setTopicIndex] = useState(0);
   const [activeHoverMind, setActiveHoverMind] = useState<FloatingNigerianMind | null>(null);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTopicIndex((prev) => (prev + 1) % ROTATING_CURIOSITIES.length);
-    }, 2400);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleStateClick = (state: string) => {
     onOpenAuth(state, 'register');
@@ -858,36 +866,6 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           }}
         >
           <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-            {/* Top Dynamic Frosted Pill Tag */}
-            <div
-              className="apple-pill-frosted"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '9px 22px',
-                borderRadius: '999px',
-                marginBottom: '26px',
-              }}
-            >
-              <CupiddleIcon size={18} color="var(--color-bumble-ink)" />
-              <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-bumble-ink)' }}>
-                Sparks flying over:{' '}
-                <strong
-                  key={topicIndex}
-                  className="animate-slide-up"
-                  style={{
-                    display: 'inline-block',
-                    color: 'var(--color-bumble-ink)',
-                    minWidth: '220px',
-                    textAlign: 'left',
-                  }}
-                >
-                  {ROTATING_CURIOSITIES[topicIndex]}
-                </strong>
-              </span>
-            </div>
-
             {/* Massive Apple-Clean Display Headline */}
             <h1
               style={{
