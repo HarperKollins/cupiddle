@@ -47,8 +47,36 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
 
-        {/* Verification Badge (Top Left) */}
-        <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px' }}>
+        {/* Verification and Active Green Light Badges (Top Left) */}
+        <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <span
+            style={{
+              backgroundColor: '#ffffff',
+              color: '#065f46',
+              fontSize: '12px',
+              fontWeight: 800,
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              border: '1.5px solid #10b981',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)',
+            }}
+          >
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#10b981',
+                borderRadius: '50%',
+                display: 'inline-block',
+                boxShadow: '0 0 6px #10b981',
+              }}
+            />
+            Active now
+          </span>
+
           <span
             className="animate-pulse-gentle"
             style={{

@@ -4,7 +4,7 @@ import { CupiddleIcon, CupiddleAppBadge } from './CupiddleLogo';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
 interface SunlitLandingPageProps {
-  onOpenAuth: (preselectedState?: string) => void;
+  onOpenAuth: (preselectedState?: string, mode?: 'login' | 'register') => void;
   onOpenSuggestion?: () => void;
 }
 
@@ -33,7 +33,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
   }, []);
 
   const handleStateClick = (state: string) => {
-    onOpenAuth(state);
+    onOpenAuth(state, 'register');
   };
 
   return (
@@ -261,7 +261,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           {/* Primary Action Button with Spring Physics */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '48px' }}>
             <button
-              onClick={() => onOpenAuth()}
+              onClick={() => onOpenAuth(undefined, 'register')}
               className="btn-bumble-action"
               style={{
                 backgroundColor: 'var(--color-bumble-ink)',

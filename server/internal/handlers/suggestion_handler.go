@@ -101,3 +101,4 @@ func (h *SuggestionHandler) GetSuggestions(w http.ResponseWriter, r *http.Reques
 		"suggestions": list,
 	})
 }
+

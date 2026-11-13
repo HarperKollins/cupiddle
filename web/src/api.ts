@@ -39,17 +39,32 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
 
-    const res = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers,
-    });
+    try {
+      const res = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers,
+      });
 
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || 'Network request failed');
+      let data: any;
+      const text = await res.text();
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = { error: text || 'Unexpected response format' };
+      }
+
+      if (!res.ok) {
+        throw new Error(data.error || data.message || `Request failed (${res.status})`);
+      }
+
+      return data as T;
+    } catch (err: any) {
+      // Intercept and sanitize any Safari WebKit DOMExceptions
+      if (err.message && err.message.includes('did not match the expected pattern')) {
+        throw new Error('Please check your email address and password, then try again.');
+      }
+      throw err;
     }
-
-    return data as T;
   }
 
   // Auth
@@ -323,31 +338,41 @@ class ApiClient {
     });
   }
 
-  // WebSocket Manager
+  // WebSocket Manager (Resilient fail-safe wrapper)
   connectWebSocket() {
     if (!this.token) return;
     if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/api/ws?token=${this.token}`;
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/ws?token=${this.token}`;
 
-    this.ws = new WebSocket(wsUrl);
+      this.ws = new WebSocket(wsUrl);
 
-    this.ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        this.wsListeners.forEach((listener) => listener(data));
-      } catch (e) {
-        console.error('WS Parse Error', e);
-      }
-    };
+      this.ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          this.wsListeners.forEach((listener) => listener(data));
+        } catch (e) {
+          console.error('WS Parse Error', e);
+        }
+      };
 
-    this.ws.onclose = () => {
-      // Reconnect after 3s if still authenticated
-      if (this.token) {
-        setTimeout(() => this.connectWebSocket(), 3000);
-      }
-    };
+      this.ws.onerror = (err) => {
+        // Silently capture WebSocket warnings in restricted environments
+        console.warn('Real-time connection notice:', err);
+      };
+
+      this.ws.onclose = () => {
+        // Reconnect after 5s if still authenticated
+        if (this.token) {
+          setTimeout(() => this.connectWebSocket(), 5000);
+        }
+      };
+    } catch (e) {
+      // Never block login or navigation if WebSockets are restricted in browser
+      console.warn('WebSocket connection not supported by network proxy:', e);
+    }
   }
 
   onWebSocketEvent(listener: (event: { type: string; payload: any }) => void) {

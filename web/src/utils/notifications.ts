@@ -120,3 +120,4 @@ class NotificationManager {
 }
 
 export const notifications = new NotificationManager();
+

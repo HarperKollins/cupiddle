@@ -34,6 +34,7 @@ export const App: React.FC = () => {
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('register');
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [authInitialState, setAuthInitialState] = useState<string | undefined>(undefined);
@@ -272,8 +273,9 @@ export const App: React.FC = () => {
     return (
       <div style={{ backgroundColor: 'var(--surface-page-canvas, #ffffff)', minHeight: '100vh' }}>
         <SunlitLandingPage
-          onOpenAuth={(preselectedState) => {
+          onOpenAuth={(preselectedState, mode) => {
             setAuthInitialState(preselectedState);
+            setAuthMode(mode || 'register');
             setIsAuthOpen(true);
           }}
           onOpenSuggestion={() => setIsSuggestionOpen(true)}
@@ -281,6 +283,7 @@ export const App: React.FC = () => {
         <AuthModal
           isOpen={isAuthOpen}
           initialState={authInitialState}
+          initialMode={authMode}
           onClose={() => setIsAuthOpen(false)}
           onSuccess={async () => {
             const me = await api.getMe();
@@ -556,6 +559,7 @@ export const App: React.FC = () => {
       <AuthModal
         isOpen={isAuthOpen}
         initialState={authInitialState}
+        initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={async () => {
           const me = await api.getMe();

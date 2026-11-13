@@ -205,6 +205,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                     transition: 'all 0.15s ease',
                   }}
                 >
+                <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
                   <img
                     src={photo}
                     alt={partner?.display_name || 'Match'}
@@ -216,6 +217,22 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                       border: '1.5px solid var(--color-bumble-ink, #202020)',
                     }}
                   />
+                  {/* Active Online Indicator */}
+                  <span
+                    style={{
+                      position: 'absolute',
+                      bottom: '2px',
+                      right: '2px',
+                      width: '12px',
+                      height: '12px',
+                      backgroundColor: '#10b981',
+                      border: '2px solid #ffffff',
+                      borderRadius: '50%',
+                      boxShadow: '0 0 6px rgba(16, 185, 129, 0.8)',
+                    }}
+                    title="Active Now"
+                  />
+                </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span
@@ -298,17 +315,34 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                   <ArrowLeft size={22} />
                 </button>
               )}
-              <img
-                src={selectedConv.partner?.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'}
-                alt={selectedConv.partner?.display_name || 'Partner'}
-                style={{
-                  width: isMobile ? '40px' : '46px',
-                  height: isMobile ? '40px' : '46px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                }}
-              />
+              <div style={{ position: 'relative', width: isMobile ? '42px' : '48px', height: isMobile ? '42px' : '48px', flexShrink: 0 }}>
+                <img
+                  src={selectedConv.partner?.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'}
+                  alt={selectedConv.partner?.display_name || 'Partner'}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  }}
+                />
+                {/* Active Green Light */}
+                <span
+                  style={{
+                    position: 'absolute',
+                    bottom: '1px',
+                    right: '1px',
+                    width: '11px',
+                    height: '11px',
+                    backgroundColor: '#10b981',
+                    border: '2px solid #ffffff',
+                    borderRadius: '50%',
+                    boxShadow: '0 0 6px rgba(16, 185, 129, 0.85)',
+                  }}
+                  title="Active now"
+                />
+              </div>
               <div>
                 <h4
                   style={{
@@ -324,14 +358,45 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '12px',
-                    color: 'var(--color-graphite, #575656)',
-                    fontWeight: 600,
+                    gap: '10px',
+                    marginTop: '2px',
                   }}
                 >
-                  <MapPin size={13} color="var(--color-bumble-ink, #202020)" />
-                  <span>{selectedConv.partner?.city ? `${selectedConv.partner.city}, Nigeria` : 'Nigeria'}</span>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      fontSize: '12px',
+                      color: '#059669',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        backgroundColor: '#10b981',
+                        borderRadius: '50%',
+                        display: 'inline-block',
+                        boxShadow: '0 0 6px #10b981',
+                      }}
+                    />
+                    <span>Active now</span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '12px',
+                      color: 'var(--color-graphite, #575656)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    <MapPin size={13} color="var(--color-bumble-ink, #202020)" />
+                    <span>{selectedConv.partner?.city ? `${selectedConv.partner.city}, Nigeria` : 'Nigeria'}</span>
+                  </div>
                 </div>
               </div>
             </div>

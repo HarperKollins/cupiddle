@@ -9,6 +9,7 @@ interface AuthModalProps {
   onClose: () => void;
   onSuccess: () => void;
   initialState?: string;
+  initialMode?: 'login' | 'register' | 'forgot';
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -16,8 +17,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   onSuccess,
   initialState,
+  initialMode,
 }) => {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'reset'>('register');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'reset'>(initialMode || 'register');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -32,9 +34,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (isOpen) {
+      if (initialMode) {
+        setMode(initialMode);
+      } else if (initialState) {
+        setMode('register');
+      }
+      setError(null);
+      setInfoMessage(null);
+    }
+  }, [isOpen, initialMode, initialState]);
+
+  useEffect(() => {
     if (initialState) {
       setCity(initialState);
-      setMode('register');
     }
   }, [initialState]);
 
@@ -46,9 +59,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setInfoMessage(null);
     setLoading(true);
 
+    const cleanEmail = email.trim().toLowerCase();
+
     try {
+      if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+        throw new Error('Please enter a valid email address (e.g. name@gmail.com).');
+      }
+
       if (mode === 'login') {
-        await api.login({ email, password });
+        await api.login({ email: cleanEmail, password });
         onSuccess();
         onClose();
       } else if (mode === 'register') {
@@ -65,10 +84,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           throw new Error('You must be at least 18 years old to join Cupiddle.');
         }
 
+        if (password.length < 8) {
+          throw new Error('Password must be at least 8 characters.');
+        }
+
         await api.register({
-          email,
+          email: cleanEmail,
           password,
-          display_name: displayName,
+          display_name: displayName.trim() || 'Curious Member',
           birthdate,
           gender,
           city,
@@ -77,10 +100,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onSuccess();
         onClose();
       } else if (mode === 'forgot') {
-        if (!email.trim() || !email.includes('@')) {
-          throw new Error('Please enter a valid email address.');
-        }
-        const res = await api.forgotPassword(email);
+        const res = await api.forgotPassword(cleanEmail);
         if (res.code) {
           setResetCode(res.code);
           setGeneratedCodeNotice(res.code);
@@ -95,7 +115,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           throw new Error('New password must be at least 8 characters.');
         }
         await api.resetPassword({
-          email,
+          email: cleanEmail,
           code: resetCode.trim(),
           new_password: newPassword,
         });
@@ -103,7 +123,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onClose();
       }
     } catch (err: any) {
-      setError(err.message || 'Action failed. Please check your inputs.');
+      const msg = err.message || '';
+      if (msg.includes('did not match the expected pattern')) {
+        setError('Please check your email address and password, then try again.');
+      } else {
+        setError(msg || 'Authentication failed. Please check your inputs.');
+      }
     } finally {
       setLoading(false);
     }
