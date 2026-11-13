@@ -7,7 +7,6 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	_ "modernc.org/sqlite"
 )
 
 // DB wraps standard database connection
@@ -21,12 +20,8 @@ func InitDB(driverName, dataSourceName string) (*DB, error) {
 	var db *sql.DB
 	var err error
 
-	if driverName == "postgres" {
-		db, err = sql.Open("postgres", dataSourceName)
-	} else {
-		// Default SQLite driver name for modernc.org/sqlite is "sqlite"
-		db, err = sql.Open("sqlite", dataSourceName)
-	}
+	// Production always uses postgres
+	db, err = sql.Open("postgres", dataSourceName)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
