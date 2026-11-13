@@ -7,6 +7,7 @@ import { ChatRoom } from './components/ChatRoom';
 import { CommunitiesView } from './components/CommunitiesView';
 import { ProfileEditor } from './components/ProfileEditor';
 import { AuthModal } from './components/AuthModal';
+import { OnboardingModal } from './components/OnboardingModal';
 import { SunlitLandingPage } from './components/SunlitLandingPage';
 import { User, Profile, DiscoveryCandidate, Spark, Conversation } from './types';
 import { api } from './api';
@@ -28,6 +29,7 @@ export const App: React.FC = () => {
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [authInitialState, setAuthInitialState] = useState<string | undefined>(undefined);
   const [sparkModalData, setSparkModalData] = useState<{
     isOpen: boolean;
@@ -49,6 +51,9 @@ export const App: React.FC = () => {
       api.getMe().then((res) => {
         setCurrentUser(res.user);
         setMyProfile(res.profile);
+        if (!res.profile?.rabbit_hole && !res.profile?.defend_take && (!res.profile?.photos || res.profile.photos.length === 0)) {
+          setIsOnboardingOpen(true);
+        }
         api.connectWebSocket();
       }).catch(() => {
         api.logout();
@@ -216,6 +221,7 @@ export const App: React.FC = () => {
             const me = await api.getMe();
             setCurrentUser(me.user);
             setMyProfile(me.profile);
+            setIsOnboardingOpen(true);
             api.connectWebSocket();
           }}
         />
@@ -485,9 +491,24 @@ export const App: React.FC = () => {
           const me = await api.getMe();
           setCurrentUser(me.user);
           setMyProfile(me.profile);
+          setIsOnboardingOpen(true);
           api.connectWebSocket();
         }}
       />
+
+      {/* Curiosity Onboarding Modal */}
+      {myProfile && (
+        <OnboardingModal
+          isOpen={isOnboardingOpen}
+          profile={myProfile}
+          onComplete={(updated) => {
+            setMyProfile(updated);
+            setIsOnboardingOpen(false);
+            loadDiscoveryFeed();
+          }}
+          onDismiss={() => setIsOnboardingOpen(false)}
+        />
+      )}
     </div>
   );
 };

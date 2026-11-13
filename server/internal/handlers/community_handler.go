@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/cupiddle/server/internal/database"
@@ -24,6 +26,13 @@ func NewCommunityHandler(db *database.DB, hub *websocket.Hub) *CommunityHandler 
 	return &CommunityHandler{DB: db, Hub: hub}
 }
 
+type CreateCommunityRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
+	Icon        string `json:"icon"`
+}
+
 type CreatePostRequest struct {
 	Title   string   `json:"title"`
 	Content string   `json:"content"`
@@ -32,6 +41,89 @@ type CreatePostRequest struct {
 
 type AddCommentRequest struct {
 	Content string `json:"content"`
+}
+
+// CreateCommunity creates a new user-driven Rabbit Hole community
+func (h *CommunityHandler) CreateCommunity(w http.ResponseWriter, r *http.Request) {
+	currentUserID, _ := r.Context().Value(middleware.UserIDKey).(string)
+	if currentUserID == "" {
+		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	var req CreateCommunityRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	name := strings.TrimSpace(req.Name)
+	if len(name) < 2 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "community name must be at least 2 characters"})
+		return
+	}
+
+	desc := strings.TrimSpace(req.Description)
+	category := strings.TrimSpace(req.Category)
+	if category == "" {
+		category = "Curiosity"
+	}
+
+	icon := strings.TrimSpace(req.Icon)
+	if icon == "" {
+		icon = "compass"
+	}
+
+	// Generate a clean slug
+	baseSlug := strings.ToLower(strings.Map(func(r rune) rune {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			return r
+		}
+		if r == ' ' || r == '-' || r == '_' {
+			return '-'
+		}
+		return -1
+	}, name))
+	baseSlug = strings.Trim(baseSlug, "-")
+	if baseSlug == "" {
+		baseSlug = "rabbit-hole"
+	}
+
+	slug := baseSlug
+	var count int
+	h.DB.QueryRow("SELECT COUNT(*) FROM communities WHERE slug = $1", slug).Scan(&count)
+	if count > 0 {
+		slug = fmt.Sprintf("%s-%d", baseSlug, time.Now().Unix()%10000)
+	}
+
+	commID := uuid.New().String()
+	now := time.Now()
+
+	_, err := h.DB.Exec(
+		`INSERT INTO communities (id, slug, name, description, icon, category, member_count, post_count, created_at)
+		 VALUES ($1, $2, $3, $4, $5, $6, 1, 0, $7)`,
+		commID, slug, name, desc, icon, category, now,
+	)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to create community: " + err.Error()})
+		return
+	}
+
+	// Auto-join creator to the community
+	h.DB.Exec("INSERT INTO community_members (community_id, user_id, joined_at) VALUES ($1, $2, $3)", commID, currentUserID, now)
+
+	respondJSON(w, http.StatusCreated, models.Community{
+		ID:          commID,
+		Slug:        slug,
+		Name:        name,
+		Description: desc,
+		Icon:        icon,
+		Category:    category,
+		MemberCount: 1,
+		PostCount:   0,
+		IsMember:    true,
+		CreatedAt:   now,
+	})
 }
 
 // GetCommunities returns all available Rabbit Hole communities

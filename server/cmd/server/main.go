@@ -143,6 +143,7 @@ func main() {
 			r.Post("/games/{gameId}/answer", coopH.SubmitAnswer)
 
 			// Rabbit Holes Communities
+			r.Post("/communities", commH.CreateCommunity)
 			r.Post("/communities/{slug}/join", commH.JoinCommunity)
 			r.Post("/communities/{slug}/leave", commH.LeaveCommunity)
 			r.Post("/communities/{slug}/posts", commH.CreatePost)

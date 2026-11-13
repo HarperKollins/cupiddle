@@ -258,8 +258,7 @@ func (db *DB) RunMigrations() error {
 		return err
 	}
 
-	// Seed default communities if empty
-	return db.seedDefaultCommunities()
+	return nil
 }
 
 func (db *DB) seedDefaultCommunities() error {

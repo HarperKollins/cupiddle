@@ -215,6 +215,13 @@ class ApiClient {
     return this.request<{ communities: Community[]; count: number }>('/communities');
   }
 
+  async createCommunity(data: { name: string; description: string; category?: string; icon?: string }): Promise<Community> {
+    return this.request<Community>('/communities', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   async getCommunityPosts(slug: string): Promise<{ posts: CommunityPost[]; count: number }> {
     return this.request<{ posts: CommunityPost[]; count: number }>(`/communities/${slug}/posts`);
   }
