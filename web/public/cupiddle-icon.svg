@@ -1,14 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c3aed"/>
-      <stop offset="100%" stop-color="#f43f5e"/>
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="128" fill="url(#grad)"/>
-  <!-- Sparkles / Starburst icon -->
-  <path d="M256 96 L278 200 L384 222 L278 244 L256 348 L234 244 L128 222 L234 200 Z" fill="#ffffff"/>
-  <path d="M370 290 L382 340 L432 352 L382 364 L370 414 L358 364 L308 352 L358 340 Z" fill="#ffffff" opacity="0.9"/>
-  <path d="M140 310 L149 350 L189 360 L149 370 L140 410 L131 370 L91 360 L131 350 Z" fill="#ffffff" opacity="0.8"/>
-</svg>
+  <!-- Dark Rounded Squircle (Bumble Ink #202020) -->
+  <rect width="512" height="512" rx="140" fill="#202020"/>
+  
+  <!-- Smooth Crescent 'C' in Bumble Honey (#ffdb5b) -->
+  <path
+    d="M 330 115 C 180 115 100 185 100 256 C 100 327 180 397 330 397"
+    stroke="#ffdb5b"
+    stroke-width="66"
+    stroke-linecap="round"
+    fill="none"
+  />
 
+  <!-- 4-Point Sparkle Star inside crescent -->
+  <path
+    d="M 340 205 Q 340 240 305 240 Q 340 240 340 275 Q 340 240 375 240 Q 340 240 340 205 Z"
+    fill="#ffdb5b"
+  />
+
+  <!-- Curiosity Focal Dot below star -->
+  <circle cx="340" cy="315" r="16" fill="#ffdb5b" />
+</svg>

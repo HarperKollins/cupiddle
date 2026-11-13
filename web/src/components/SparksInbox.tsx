@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, Heart, Check, X, MapPin } from 'lucide-react';
+import { Heart, Check, X, MapPin } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { Spark } from '../types';
 
 interface SparksInboxProps {
@@ -41,7 +42,7 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-graphite, #575656)' }}>
-        <Sparkles size={32} className="animate-pulse-gentle" style={{ margin: '0 auto 12px', color: 'var(--color-bumble-ink, #202020)' }} />
+        <CupiddleIcon size={36} color="var(--color-bumble-ink, #202020)" style={{ margin: '0 auto 12px' }} />
         <p style={{ fontWeight: 600 }}>Loading your Sparks inbox...</p>
       </div>
     );
@@ -250,7 +251,7 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
                   letterSpacing: '0.04em',
                 }}
               >
-                <Sparkles size={14} color="var(--color-bumble-ink, #202020)" />
+                <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
                 Their Spark Response:
               </span>
               <p

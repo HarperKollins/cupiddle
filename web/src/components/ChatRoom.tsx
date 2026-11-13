@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Sparkles, Gamepad2, Compass, CheckCheck, MapPin } from 'lucide-react';
+import { Send, Gamepad2, Compass, CheckCheck, MapPin } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { Conversation, Message, CoopGame } from '../types';
 import { api } from '../api';
 
@@ -400,7 +401,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                 fontWeight: 600,
               }}
             >
-              <Sparkles size={15} color="var(--color-bumble-ink, #202020)" />
+              <CupiddleIcon size={16} color="var(--color-bumble-ink, #202020)" />
               <span>
                 <strong>Conversation Spark:</strong> "{selectedConv.origin_spark.comment}" (re: {selectedConv.origin_spark.target_content.slice(0, 60)}...)
               </span>

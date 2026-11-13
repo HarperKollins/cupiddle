@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight, Compass, Gamepad2, Users, MapPin } from 'lucide-react';
+import { ArrowRight, Compass, Gamepad2, Users, MapPin } from 'lucide-react';
+import { CupiddleIcon, CupiddleAppBadge } from './CupiddleLogo';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
 interface SunlitLandingPageProps {
@@ -50,17 +51,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
       }}>
         {/* Brand Wordmark */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-          <div style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: 'var(--radius-buttons)',
-            backgroundColor: 'var(--color-bumble-ink)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <Sparkles size={20} color="var(--color-bumble-honey)" />
-          </div>
+          <CupiddleAppBadge size={38} />
           <span style={{
             fontSize: '24px',
             fontWeight: 800,
@@ -201,7 +192,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           
           {/* Top Dynamic Pill Tag with Animated Rotating Curiosities */}
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--color-paper-white)', padding: '8px 20px', borderRadius: 'var(--radius-badges)', marginBottom: '24px', boxShadow: 'var(--shadow-sm)' }}>
-            <Sparkles size={16} color="var(--color-bumble-ink)" className="animate-pulse-gentle" />
+            <CupiddleIcon size={18} color="var(--color-bumble-ink)" />
             <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-bumble-ink)' }}>
               Sparks flying over:{' '}
               <strong
@@ -634,7 +625,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <Sparkles size={20} color="var(--color-bumble-ink)" className="animate-pulse-gentle" />
+              <CupiddleIcon size={20} color="var(--color-bumble-ink)" />
               <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Incoming Spark
               </span>

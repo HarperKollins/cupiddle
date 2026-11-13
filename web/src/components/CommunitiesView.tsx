@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Sparkles, Plus, Check, Compass, Users, X, Send, FolderPlus } from 'lucide-react';
+import { MessageSquare, Plus, Check, Compass, Users, X, Send, FolderPlus } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { Community, CommunityPost, PostComment } from '../types';
 import { api } from '../api';
 
@@ -920,7 +921,7 @@ export const CommunitiesView: React.FC<CommunitiesViewProps> = ({ onSparkAuthor 
                           borderRadius: 'var(--radius-badges, 1000px)',
                         }}
                       >
-                        <Sparkles size={13} color="var(--color-bumble-ink, #202020)" />
+                        <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
                         Spark Author Free
                       </button>
                     )}

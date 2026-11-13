@@ -115,6 +115,28 @@ class ApiClient {
     });
   }
 
+  async uploadPhotoFile(file: File): Promise<{ url: string; file_name: string }> {
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    const headers: Record<string, string> = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    const res = await fetch(`${API_BASE}/media/photo`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to upload photo');
+    }
+    return data as { url: string; file_name: string };
+  }
+
   async deletePhoto(photoId: string) {
     return this.request(`/profile/photos/${photoId}`, {
       method: 'DELETE',

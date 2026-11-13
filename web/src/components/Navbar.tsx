@@ -1,5 +1,6 @@
 import React from 'react';
-import { Sparkles, MessageCircle, Users, Heart, User as UserIcon, LogOut, Compass } from 'lucide-react';
+import { MessageCircle, Users, Heart, User as UserIcon, LogOut, Compass } from 'lucide-react';
+import { CupiddleAppBadge } from './CupiddleLogo';
 import { Profile } from '../types';
 
 interface NavbarProps {
@@ -38,22 +39,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Brand */}
       <div
         onClick={() => setActiveTab('stream')}
-        style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+        style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
       >
-        <div
-          style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Sparkles size={20} color="var(--color-bumble-ink, #202020)" />
-        </div>
+        <CupiddleAppBadge size={40} />
         <div>
           <span
             style={{

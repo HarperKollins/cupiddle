@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Send } from 'lucide-react';
+import { X, Send } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 
 interface SparkModalProps {
   isOpen: boolean;
@@ -144,7 +145,7 @@ export const SparkModal: React.FC<SparkModalProps> = ({
               border: '1px solid var(--color-bumble-ink, #202020)',
             }}
           >
-            <Sparkles size={14} />
+            <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
             {getTargetTitle()}
           </div>
 

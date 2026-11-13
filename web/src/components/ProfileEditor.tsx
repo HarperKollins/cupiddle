@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Camera, Plus, Trash2, Check, ShieldAlert, Sparkles, Compass, Flame, Lightbulb, MapPin, Tag, Heart } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Camera, Plus, Trash2, Check, ShieldAlert, Compass, Flame, Lightbulb, MapPin, Tag, Heart, Upload, Loader2, Link as LinkIcon } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { Profile } from '../types';
 import { api } from '../api';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
@@ -21,6 +22,9 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
   const [myWorldTags, setMyWorldTags] = useState<string[]>(profile.my_world_tags || []);
   const [newTagInput, setNewTagInput] = useState('');
   const [newPhotoURL, setNewPhotoURL] = useState('');
+  const [showUrlPhotoInput, setShowUrlPhotoInput] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -77,6 +81,31 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
     setMyWorldTags(myWorldTags.filter((t) => t !== tag));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Photo size exceeds 10MB limit.');
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      const res = await api.uploadPhotoFile(file);
+      const isPrimary = (profile.photos?.length || 0) === 0;
+      await api.addPhoto(res.url, isPrimary);
+      const me = await api.getMe();
+      onUpdate(me.profile);
+    } catch (err: any) {
+      console.error('File upload failed', err);
+      alert(err.message || 'Failed to upload photo from your device.');
+    } finally {
+      setUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const handleAddPhoto = async () => {
     if (!newPhotoURL.trim()) return;
     try {
@@ -131,7 +160,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               marginBottom: '10px',
             }}
           >
-            <Sparkles size={13} />
+            <CupiddleIcon size={16} color="var(--color-bumble-ink, #202020)" />
             Editorial Profile Studio
           </div>
           <h1
@@ -285,65 +314,159 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
             </div>
           ))}
 
-          {/* Empty Add Placeholder */}
+          {/* Hidden File Input for Device Photo Uploads */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+          />
+
+          {/* Empty Add Placeholder / Device Upload Trigger */}
           {(profile.photos?.length || 0) < 6 && (
-            <div
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingPhoto}
+              className="editorial-card-lift"
               style={{
                 height: '180px',
                 borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px dashed var(--color-graphite, #575656)',
+                border: '2px dashed var(--color-bumble-ink, #202020)',
                 backgroundColor: 'var(--color-mist, #f3f3f3)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                color: 'var(--color-graphite, #575656)',
+                color: 'var(--color-bumble-ink, #202020)',
                 padding: '16px',
                 textAlign: 'center',
+                cursor: uploadingPhoto ? 'wait' : 'pointer',
               }}
             >
-              <Camera size={24} />
-              <span style={{ fontSize: '12px', fontWeight: 600 }}>Add next portrait</span>
-            </div>
+              {uploadingPhoto ? (
+                <>
+                  <Loader2 size={24} className="animate-spin" color="var(--color-bumble-ink, #202020)" />
+                  <span style={{ fontSize: '12px', fontWeight: 700 }}>Uploading portrait...</span>
+                </>
+              ) : (
+                <>
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '1px solid var(--color-bumble-ink, #202020)',
+                    }}
+                  >
+                    <Upload size={18} color="var(--color-bumble-ink, #202020)" />
+                  </div>
+                  <span style={{ fontSize: '13px', fontWeight: 800 }}>Upload Portrait</span>
+                  <span style={{ fontSize: '11px', color: 'var(--color-graphite, #575656)' }}>From phone / PC</span>
+                </>
+              )}
+            </button>
           )}
         </div>
 
-        {/* Add Photo Input */}
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <input
-            type="text"
-            placeholder="Paste public image link (Unsplash, Cloudinary, etc.)..."
-            value={newPhotoURL}
-            onChange={(e) => setNewPhotoURL(e.target.value)}
-            style={{
-              flex: 1,
-              fontSize: '14px',
-              padding: '12px 16px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
-            }}
-          />
-          <button
-            onClick={handleAddPhoto}
-            className="btn-bumble-action"
-            style={{
-              padding: '12px 22px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              backgroundColor: 'var(--color-bumble-ink, #202020)',
-              color: 'var(--color-paper-white, #ffffff)',
-              fontSize: '14px',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              letterSpacing: '0.01em',
-            }}
-          >
-            <Plus size={16} /> Add Photo
-          </button>
+        {/* Action Buttons for Device Upload and Public Link */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingPhoto || (profile.photos?.length || 0) >= 6}
+              className="btn-bumble-action"
+              style={{
+                padding: '12px 24px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                color: 'var(--color-bumble-ink, #202020)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                fontSize: '14px',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+              }}
+            >
+              {uploadingPhoto ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" /> Uploading from Device...
+                </>
+              ) : (
+                <>
+                  <Upload size={16} /> Choose Photo from Device
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowUrlPhotoInput(!showUrlPhotoInput)}
+              style={{
+                padding: '12px 18px',
+                borderRadius: 'var(--radius-buttons, 16px)',
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                color: 'var(--color-graphite, #575656)',
+                border: '1px solid #d4d4d4',
+                fontSize: '13px',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              <LinkIcon size={14} /> {showUrlPhotoInput ? 'Hide Link Input' : 'Or add via image URL'}
+            </button>
+          </div>
+
+          {/* Add Photo URL Input (Optional) */}
+          {showUrlPhotoInput && (
+            <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+              <input
+                type="text"
+                placeholder="Paste public image link (Unsplash, Cloudinary, etc.)..."
+                value={newPhotoURL}
+                onChange={(e) => setNewPhotoURL(e.target.value)}
+                style={{
+                  flex: 1,
+                  fontSize: '14px',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              />
+              <button
+                onClick={handleAddPhoto}
+                className="btn-bumble-action"
+                style={{
+                  padding: '12px 22px',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: 'var(--color-bumble-ink, #202020)',
+                  color: 'var(--color-paper-white, #ffffff)',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  letterSpacing: '0.01em',
+                }}
+              >
+                <Plus size={16} /> Add Link
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -377,7 +500,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               marginBottom: '10px',
             }}
           >
-            <Sparkles size={13} />
+            <CupiddleIcon size={15} color="var(--color-bumble-ink, #202020)" />
             Contextual Sparks Engine
           </div>
           <h2

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, MapPin, CheckCircle, Volume2, X, Compass, Lightbulb, Flame, BookOpen } from 'lucide-react';
+import { MapPin, CheckCircle, Volume2, X, Compass, Lightbulb, Flame, BookOpen } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { DiscoveryCandidate } from '../types';
 
 interface IdeaStreamCardProps {
@@ -90,7 +91,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
             boxShadow: '0 2px 8px rgba(32, 32, 32, 0.15)',
           }}
         >
-          <Sparkles size={14} color="var(--color-bumble-ink, #202020)" />
+          <CupiddleIcon size={16} color="var(--color-bumble-ink, #202020)" />
           Spark Photo
         </button>
 
@@ -297,7 +298,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
                   borderRadius: 'var(--radius-badges, 1000px)',
                 }}
               >
-                <Sparkles size={13} />
+                <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
                 Spark This
               </button>
             </div>
@@ -356,7 +357,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
                   borderRadius: 'var(--radius-badges, 1000px)',
                 }}
               >
-                <Sparkles size={13} />
+                <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
                 Challenge / Spark
               </button>
             </div>
@@ -417,7 +418,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
                   borderRadius: 'var(--radius-badges, 1000px)',
                 }}
               >
-                <Sparkles size={13} />
+                <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
                 Spark This
               </button>
             </div>
@@ -491,7 +492,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
               gap: '8px',
             }}
           >
-            <Sparkles size={16} />
+            <CupiddleIcon size={16} color="var(--color-bumble-ink, #202020)" />
             <span>
               Shared Passions: <strong>{shared_interests.join(', ')}</strong>
             </span>
@@ -547,7 +548,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
               boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
             }}
           >
-            <Sparkles size={20} color="var(--color-bumble-honey, #ffdb5b)" />
+            <CupiddleIcon size={20} color="var(--color-bumble-honey, #ffdb5b)" />
             Send a Spark Free
           </button>
         </div>

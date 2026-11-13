@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, ShieldCheck, MapPin } from 'lucide-react';
+import { X, ShieldCheck, MapPin } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { api } from '../api';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
@@ -152,7 +153,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               marginBottom: '14px',
             }}
           >
-            <Sparkles size={14} color="#202020" />
+            <CupiddleIcon size={14} color="#202020" />
             Curiosity is attractive
           </div>
 

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Sparkles, Compass, Flame, Lightbulb, Check, Tag, ArrowRight, ArrowLeft } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Compass, Flame, Lightbulb, Check, Tag, ArrowRight, ArrowLeft, Upload, Trash2, Loader2, Link as LinkIcon } from 'lucide-react';
+import { CupiddleIcon } from './CupiddleLogo';
 import { Profile } from '../types';
 import { api } from '../api';
 
@@ -23,6 +24,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   const [myWorldTags, setMyWorldTags] = useState<string[]>(profile.my_world_tags || []);
   const [tagInput, setTagInput] = useState('');
   const [photoURL, setPhotoURL] = useState('');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [bio, setBio] = useState(profile.bio || '');
   const [datingIntentions, setDatingIntentions] = useState(profile.dating_intentions || '');
   const [loading, setLoading] = useState(false);
@@ -48,6 +53,29 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       setMyWorldTags([...myWorldTags, tagInput.trim()]);
     }
     setTagInput('');
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Image size must be less than 10MB.');
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      setUploadError('');
+      const res = await api.uploadPhotoFile(file);
+      setPhotoURL(res.url);
+    } catch (err: any) {
+      console.error('Photo upload error', err);
+      setUploadError(err.message || 'Failed to upload photo from your device.');
+    } finally {
+      setUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleFinish = async () => {
@@ -134,7 +162,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 letterSpacing: '0.04em',
               }}
             >
-              <Sparkles size={12} />
+              <CupiddleIcon size={14} color="#202020" />
               Step {step} of 3 • Curiosity Onboarding
             </div>
 
@@ -344,20 +372,208 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {/* Step 3: Identity & Portrait */}
         {step === 3 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* Real File Upload Section */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '6px' }}>
-                Profile Photo (Image URL or Link)
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '8px' }}>
+                Profile Portrait (Upload Image)
               </label>
+
+              {/* Hidden File Input */}
               <input
-                type="text"
-                placeholder="e.g. hosted portrait link (Unsplash, Cloudinary, etc.)..."
-                value={photoURL}
-                onChange={(e) => setPhotoURL(e.target.value)}
-                style={{ width: '100%', fontSize: '14px' }}
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
               />
-              <span style={{ fontSize: '12px', color: '#575656', display: 'block', marginTop: '4px' }}>
-                You can also add or change photos anytime in your Profile tab.
-              </span>
+
+              {uploadError && (
+                <div
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    backgroundColor: '#ffebeb',
+                    border: '1px solid #ff4d4d',
+                    color: '#c00000',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    marginBottom: '10px',
+                  }}
+                >
+                  {uploadError}
+                </div>
+              )}
+
+              {photoURL ? (
+                /* Uploaded Photo Preview Card */
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    padding: '12px 16px',
+                    backgroundColor: '#fff386',
+                    borderRadius: '16px',
+                    border: '1.5px solid #202020',
+                  }}
+                >
+                  <img
+                    src={photoURL}
+                    alt="Uploaded Portrait Preview"
+                    style={{
+                      width: '72px',
+                      height: '72px',
+                      borderRadius: '14px',
+                      objectFit: 'cover',
+                      border: '1.5px solid #202020',
+                      backgroundColor: '#f3f3f3',
+                    }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          backgroundColor: '#202020',
+                          color: '#ffdb5b',
+                          padding: '2px 8px',
+                          borderRadius: '1000px',
+                        }}
+                      >
+                        ✓ Portrait Ready
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#3b3b3b', margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                      {photoURL}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingPhoto}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '1000px',
+                        border: '1px solid #202020',
+                        backgroundColor: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Change
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPhotoURL('')}
+                      style={{
+                        padding: '6px 8px',
+                        borderRadius: '1000px',
+                        border: '1px solid #202020',
+                        backgroundColor: '#ffffff',
+                        color: '#c00000',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Primary Upload Button / Dropzone */
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingPhoto}
+                    className="btn-bumble-action"
+                    style={{
+                      width: '100%',
+                      padding: '20px',
+                      borderRadius: '16px',
+                      border: '2px dashed #202020',
+                      backgroundColor: '#f8f8f8',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      cursor: uploadingPhoto ? 'wait' : 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {uploadingPhoto ? (
+                      <>
+                        <Loader2 size={26} className="animate-spin" color="#202020" />
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#202020' }}>
+                          Uploading from device...
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            borderRadius: '50%',
+                            backgroundColor: '#ffdb5b',
+                            border: '1.5px solid #202020',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Upload size={20} color="#202020" />
+                        </div>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#202020' }}>
+                          Choose Photo from Phone / Laptop
+                        </span>
+                        <span style={{ fontSize: '12px', color: '#575656', fontWeight: 500 }}>
+                          Select from Gallery, Files, or Camera (PNG, JPG, WebP up to 10MB)
+                        </span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Optional URL Toggle */}
+                  <div style={{ marginTop: '8px', textAlign: 'right' }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowUrlInput(!showUrlInput)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        fontSize: '12px',
+                        color: '#575656',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <LinkIcon size={12} /> {showUrlInput ? 'Hide image URL link' : 'Or paste an image web link'}
+                    </button>
+                  </div>
+
+                  {showUrlInput && (
+                    <div style={{ marginTop: '6px' }}>
+                      <input
+                        type="text"
+                        placeholder="e.g. https://images.unsplash.com/..."
+                        value={photoURL}
+                        onChange={(e) => setPhotoURL(e.target.value)}
+                        style={{ width: '100%', fontSize: '13px', padding: '8px 12px' }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div>
