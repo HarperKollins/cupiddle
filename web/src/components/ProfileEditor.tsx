@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Plus, Trash2, Check, ShieldAlert, Compass, Flame, Lightbulb, MapPin, Tag, Heart, Upload, Loader2, Link as LinkIcon } from 'lucide-react';
+import { Camera, Plus, Trash2, Check, ShieldAlert, Compass, Flame, Lightbulb, MapPin, Tag, Heart, Upload, Loader2, Link as LinkIcon, Smartphone, Download } from 'lucide-react';
 import { CupiddleIcon } from './CupiddleLogo';
 import { Profile } from '../types';
 import { api } from '../api';
@@ -85,8 +85,8 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Photo size exceeds 10MB limit.');
+    if (file.size > 35 * 1024 * 1024) {
+      alert('Photo is too large (max 35MB). Please select a standard camera photo.');
       return;
     }
 
@@ -99,7 +99,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
       onUpdate(me.profile);
     } catch (err: any) {
       console.error('File upload failed', err);
-      alert(err.message || 'Failed to upload photo from your device.');
+      alert(err.message || 'Failed to upload photo from your device. Please try again.');
     } finally {
       setUploadingPhoto(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -318,7 +318,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/*"
             onChange={handleFileUpload}
             style={{ display: 'none' }}
           />
@@ -930,6 +930,70 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           Update Identity
         </button>
       </form>
+
+      {/* Install Cupiddle on your Phone (PWA) */}
+      <div
+        className="editorial-card-lift"
+        style={{
+          backgroundColor: 'var(--color-pollen, #fff386)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          padding: '24px',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: '240px' }}>
+          <div
+            style={{
+              width: '46px',
+              height: '46px',
+              borderRadius: '14px',
+              backgroundColor: 'var(--color-bumble-ink, #202020)',
+              color: 'var(--color-bumble-honey, #ffdb5b)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <Smartphone size={24} />
+          </div>
+          <div>
+            <h4 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: 'var(--color-bumble-ink, #202020)' }}>
+              Install Cupiddle on Your Phone
+            </h4>
+            <p style={{ fontSize: '13px', color: 'var(--color-charcoal, #3a3a3a)', margin: '4px 0 0', lineHeight: 1.4 }}>
+              Add Cupiddle to your home screen for fullscreen chat, real-time chimes, and zero app store wait.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('cupiddle:open-install'))}
+          className="btn-bumble-action"
+          style={{
+            backgroundColor: 'var(--color-bumble-ink, #202020)',
+            color: 'var(--color-paper-white, #ffffff)',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            padding: '12px 24px',
+            fontSize: '14px',
+            fontWeight: 800,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            border: 'none',
+          }}
+        >
+          <Download size={16} /> Install App
+        </button>
+      </div>
 
       {/* 4. Account Safety & Deletion (GDPR / NDPA Compliance) */}
       <div

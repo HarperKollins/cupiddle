@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, Users, Heart, User as UserIcon, LogOut, Compass, Lightbulb } from 'lucide-react';
+import { MessageCircle, Users, Heart, User as UserIcon, LogOut, Compass, Lightbulb, Download } from 'lucide-react';
 import { CupiddleAppBadge } from './CupiddleLogo';
 import { Profile } from '../types';
 
@@ -203,6 +203,29 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* User Actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Install PWA Button (Mobile & Desktop) */}
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent('cupiddle:open-install'))}
+          className="pill-interactive"
+          title="Install Cupiddle to Phone / Desktop"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '6px 12px',
+            borderRadius: 'var(--radius-badges, 1000px)',
+            backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+            color: 'var(--color-bumble-ink, #202020)',
+            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            fontSize: '12px',
+            fontWeight: 800,
+            cursor: 'pointer',
+          }}
+        >
+          <Download size={13} color="#202020" />
+          <span>Install</span>
+        </button>
+
         {/* Suggestion Box Trigger */}
         {onOpenSuggestion && (
           <button

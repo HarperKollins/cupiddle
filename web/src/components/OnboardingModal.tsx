@@ -59,8 +59,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      setUploadError('Image size must be less than 10MB.');
+    if (file.size > 35 * 1024 * 1024) {
+      setUploadError('Image size must be less than 35MB.');
       return;
     }
 
@@ -382,7 +382,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/*"
                 onChange={handleFileUpload}
                 style={{ display: 'none' }}
               />

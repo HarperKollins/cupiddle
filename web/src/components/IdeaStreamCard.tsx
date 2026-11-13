@@ -40,7 +40,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
       }}
     >
       {/* Photo & Header */}
-      <div style={{ position: 'relative', height: '420px', backgroundColor: '#e5e5e5' }}>
+      <div style={{ position: 'relative', height: 'clamp(300px, 44vh, 440px)', backgroundColor: '#e5e5e5' }}>
         <img
           src={primaryPhoto}
           alt={profile.display_name}

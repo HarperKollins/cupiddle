@@ -80,17 +80,25 @@ func (h *MediaHandler) UploadPhoto(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Verify content type
-	ext := strings.ToLower(filepath.Ext(header.Filename))
-	if ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp" {
-		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "only JPG, PNG, and WebP images are permitted"})
-		return
-	}
-
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read photo file"})
 		return
+	}
+
+	// Verify content type & extension (support iOS Safari HEIC, Android, web camera captures)
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	if ext == "" || (ext != ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".webp" && ext != ".heic" && ext != ".heif") {
+		detectedType := http.DetectContentType(fileBytes)
+		if strings.HasPrefix(detectedType, "image/") {
+			ext = ".jpg"
+		} else {
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "only image files (JPG, PNG, WebP) are permitted"})
+			return
+		}
+	}
+	if ext == ".jpeg" || ext == ".heic" || ext == ".heif" {
+		ext = ".jpg"
 	}
 
 	fileName := fmt.Sprintf("%s_%s%s", userID, uuid.New().String()[:8], ext)

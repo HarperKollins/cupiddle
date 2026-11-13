@@ -31,6 +31,12 @@ export const PwaInstallBanner: React.FC = () => {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
 
+    // Listen for custom trigger from any button across the app
+    const handleCustomOpen = () => {
+      handleInstallClick();
+    };
+    window.addEventListener('cupiddle:open-install', handleCustomOpen);
+
     // Detect app installed
     window.addEventListener('appinstalled', () => {
       setIsStandalone(true);
@@ -39,8 +45,9 @@ export const PwaInstallBanner: React.FC = () => {
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('cupiddle:open-install', handleCustomOpen);
     };
-  }, []);
+  }, [deferredPrompt, isIos]);
 
   if (isStandalone) {
     return null; // Already running as installed app!
@@ -74,19 +81,18 @@ export const PwaInstallBanner: React.FC = () => {
       {!isDismissed && (
         <aside
           aria-label="Install Cupiddle application"
-          className="desktop-nav"
           style={{
             position: 'fixed',
-            bottom: '24px',
-            right: '24px',
-            zIndex: 9000,
+            bottom: '76px', // Clear of mobile bottom tab bar (height 60px)
+            right: '16px',
+            zIndex: 85,
             backgroundColor: '#ffffff',
             borderRadius: '20px',
             border: '2px solid #202020',
             boxShadow: '0 12px 36px rgba(32, 32, 32, 0.25)',
-            padding: '14px 18px',
+            padding: '12px 16px',
             maxWidth: '360px',
-            width: 'calc(100vw - 48px)',
+            width: 'calc(100vw - 32px)',
             display: 'flex',
             alignItems: 'center',
             gap: '12px',

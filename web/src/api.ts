@@ -1,4 +1,5 @@
 import { User, Profile, DiscoveryCandidate, Spark, Conversation, Message, Community, CommunityPost, PostComment, CoopGame } from './types';
+import { compressImageFile } from './utils/imageCompressor';
 
 const API_BASE = '/api';
 
@@ -165,8 +166,16 @@ class ApiClient {
   }
 
   async uploadPhotoFile(file: File): Promise<{ url: string; file_name: string }> {
+    // 1. Compress & format image client-side before sending to server/proxy
+    let uploadFile = file;
+    try {
+      uploadFile = await compressImageFile(file, 1280, 0.82);
+    } catch (compressErr) {
+      console.warn('Pre-upload compression skipped:', compressErr);
+    }
+
     const formData = new FormData();
-    formData.append('photo', file);
+    formData.append('photo', uploadFile);
 
     const headers: Record<string, string> = {};
     if (this.token) {
@@ -179,9 +188,16 @@ class ApiClient {
       body: formData,
     });
 
-    const data = await res.json();
+    const text = await res.text();
+    let data: any = {};
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { error: text || 'Server returned an invalid response' };
+    }
+
     if (!res.ok) {
-      throw new Error(data.error || 'Failed to upload photo');
+      throw new Error(data.error || `Upload failed (${res.status})`);
     }
     return data as { url: string; file_name: string };
   }
