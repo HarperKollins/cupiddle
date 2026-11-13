@@ -1,19 +1,25 @@
 {
   "name": "Cupiddle — Curiosity is attractive",
   "short_name": "Cupiddle",
-  "description": "Curiosity-first dating and social discovery. Discover people through ideas, obsessions, and unexpected perspectives.",
+  "description": "Curiosity-first dating and social discovery. Discover people through ideas, obsessions, and unexpected perspectives across Nigeria and beyond.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0d0814",
-  "theme_color": "#181024",
+  "background_color": "#ffffff",
+  "theme_color": "#ffdb5b",
   "orientation": "portrait-primary",
+  "categories": ["lifestyle", "social"],
   "icons": [
     {
       "src": "/cupiddle-icon.svg",
       "sizes": "192x192 512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/cupiddle-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
-

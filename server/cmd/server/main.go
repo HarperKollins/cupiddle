@@ -75,9 +75,8 @@ func main() {
 	})
 	r.Use(c.Handler)
 
-	// Static file serving for uploads
-	fileServer := http.FileServer(http.Dir(cfg.StoragePath))
-	r.Handle("/uploads/*", http.StripPrefix("/uploads", fileServer))
+	// Media serving (Local disk cache with fallback to Neon S3 Cloud Storage)
+	r.Get("/uploads/*", mediaH.ServeUpload)
 
 	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {

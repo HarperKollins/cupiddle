@@ -1,6 +1,8 @@
 package config
 
 import (
+	"bufio"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -16,10 +18,50 @@ type Config struct {
 	AllowedCORS  []string
 	Environment  string // "development", "staging", "production"
 	RateLimitReq int    // requests per minute
+
+	// S3-Compatible Cloud Storage (e.g. Neon S3)
+	S3Endpoint  string
+	S3AccessKey string
+	S3SecretKey string
+	S3Region    string
+	S3Bucket    string
+}
+
+// loadDotEnv loads environment variables from .env if present
+func loadDotEnv() {
+	paths := []string{".env", "../.env"}
+	for _, p := range paths {
+		f, err := os.Open(p)
+		if err != nil {
+			continue
+		}
+		defer f.Close()
+
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) == 2 {
+				key := strings.TrimSpace(parts[0])
+				val := strings.TrimSpace(parts[1])
+				val = strings.Trim(val, `"'`)
+				if os.Getenv(key) == "" {
+					os.Setenv(key, val)
+				}
+			}
+		}
+		log.Printf("[CONFIG] Loaded environment settings from %s", p)
+		break
+	}
 }
 
 // LoadConfig reads configuration from environment variables with fallbacks
 func LoadConfig() *Config {
+	loadDotEnv()
+
 	port := getEnv("PORT", "8080")
 	dbURL := getEnv("DATABASE_URL", "")
 	if dbURL == "" {
@@ -48,6 +90,12 @@ func LoadConfig() *Config {
 		rateLimit = 120
 	}
 
+	s3Endpoint := getEnv("AWS_ENDPOINT_URL_S3", "")
+	s3AccessKey := getEnv("AWS_ACCESS_KEY_ID", "")
+	s3SecretKey := getEnv("AWS_SECRET_ACCESS_KEY", "")
+	s3Region := getEnv("AWS_REGION", "us-east-2")
+	s3Bucket := getEnv("S3_BUCKET", "assets")
+
 	return &Config{
 		Port:         port,
 		DatabaseURL:  dbURL,
@@ -57,6 +105,11 @@ func LoadConfig() *Config {
 		AllowedCORS:  []string{"*"},
 		Environment:  env,
 		RateLimitReq: rateLimit,
+		S3Endpoint:   s3Endpoint,
+		S3AccessKey:  s3AccessKey,
+		S3SecretKey:  s3SecretKey,
+		S3Region:     s3Region,
+		S3Bucket:     s3Bucket,
 	}
 }
 

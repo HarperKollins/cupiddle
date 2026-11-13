@@ -9,6 +9,7 @@ import { ProfileEditor } from './components/ProfileEditor';
 import { AuthModal } from './components/AuthModal';
 import { OnboardingModal } from './components/OnboardingModal';
 import { SunlitLandingPage } from './components/SunlitLandingPage';
+import { PwaInstallBanner } from './components/PwaInstallBanner';
 import { User, Profile, DiscoveryCandidate, Spark, Conversation } from './types';
 import { api } from './api';
 import { Compass, Heart, MessageCircle, Users, User as UserIcon } from 'lucide-react';
@@ -509,6 +510,8 @@ export const App: React.FC = () => {
           onDismiss={() => setIsOnboardingOpen(false)}
         />
       )}
+      {/* Persistent PWA Install Banner */}
+      <PwaInstallBanner />
     </div>
   );
 };

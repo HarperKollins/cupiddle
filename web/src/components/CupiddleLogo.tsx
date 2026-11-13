@@ -125,3 +125,4 @@ export const CupiddleWordmark: React.FC<{ height?: number; showTagline?: boolean
     </div>
   );
 };
+
