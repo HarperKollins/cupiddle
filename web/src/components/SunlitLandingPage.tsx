@@ -297,15 +297,47 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           border-bottom: 1px solid rgba(32, 32, 32, 0.08);
         }
 
+        /* CINEMATIC DUOTONE PORTRAIT BLEND LAYER (Inspired by Harper Kollins Portfolio) */
+        .cinematic-duotone-wrapper {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          overflow: hidden;
+          background-color: #ffdb5b;
+        }
+
+        .cinematic-duotone-face {
+          position: absolute;
+          background-size: cover;
+          background-repeat: no-repeat;
+          filter: grayscale(100%) contrast(170%) brightness(95%);
+          mix-blend-mode: multiply;
+          opacity: 0.36;
+          transition: transform 0.6s ease-out;
+        }
+
+        @keyframes gazeDrift1 {
+          0%, 100% { transform: scale(1) translate(0px, 0px); }
+          50% { transform: scale(1.04) translate(-6px, -8px); }
+        }
+        @keyframes gazeDrift2 {
+          0%, 100% { transform: scale(1) translate(0px, 0px); }
+          50% { transform: scale(1.03) translate(6px, -6px); }
+        }
+        @keyframes gazeDrift3 {
+          0%, 100% { transform: scale(1) translate(0px, 0px); }
+          50% { transform: scale(1.05) translate(-4px, 6px); }
+        }
+
+        .animate-gaze-1 { animation: gazeDrift1 16s ease-in-out infinite; }
+        .animate-gaze-2 { animation: gazeDrift2 20s ease-in-out infinite -5s; }
+        .animate-gaze-3 { animation: gazeDrift3 18s ease-in-out infinite -10s; }
+
         .apple-honey-glass-layer {
-          background: linear-gradient(
-            180deg,
-            rgba(255, 219, 91, 0.82) 0%,
-            rgba(255, 219, 91, 0.68) 50%,
-            rgba(255, 219, 91, 0.86) 100%
-          );
-          backdrop-filter: saturate(175%) blur(22px);
-          -webkit-backdrop-filter: saturate(175%) blur(22px);
+          position: relative;
+          z-index: 2;
+          background: transparent;
         }
 
         .apple-card-frosted {
@@ -602,53 +634,78 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           minHeight: '860px',
         }}
       >
-        {/* UNDERLAY LAYER: Background portraits of young Nigerians glowing through frosted amber glass */}
-        <div
-          aria-hidden="true"
-          className="hero-faces-grid"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 0,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '12px',
-            padding: '12px',
-            backgroundColor: '#ffdb5b',
-          }}
-        >
-          <div style={{ position: 'relative', height: '100%', borderRadius: '28px', overflow: 'hidden' }}>
-            <img
-              src={NIGERIAN_PORTRAITS.bgWoman1}
-              alt=""
-              className="ambient-face-drift"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', opacity: 0.76 }}
-            />
-          </div>
-          <div style={{ position: 'relative', height: '100%', borderRadius: '28px', overflow: 'hidden' }}>
-            <img
-              src={NIGERIAN_PORTRAITS.bgMan1}
-              alt=""
-              className="ambient-face-drift"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', opacity: 0.72, animationDelay: '-4s' }}
-            />
-          </div>
-          <div style={{ position: 'relative', height: '100%', borderRadius: '28px', overflow: 'hidden' }}>
-            <img
-              src={NIGERIAN_PORTRAITS.bgWoman2}
-              alt=""
-              className="ambient-face-drift"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', opacity: 0.76, animationDelay: '-8s' }}
-            />
-          </div>
-          <div style={{ position: 'relative', height: '100%', borderRadius: '28px', overflow: 'hidden' }}>
-            <img
-              src={NIGERIAN_PORTRAITS.bgMan2}
-              alt=""
-              className="ambient-face-drift"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', opacity: 0.72, animationDelay: '-12s' }}
-            />
-          </div>
+        {/* CINEMATIC DUOTONE UNDERLAY: Multiple bold, sharp portraits of young Nigerians looking deeply beyond the honey canvas */}
+        <div aria-hidden="true" className="cinematic-duotone-wrapper">
+          {/* Face 1: Left Wing — Amina (Intense curious forward gaze) */}
+          <div
+            className="cinematic-duotone-face animate-gaze-1"
+            style={{
+              top: '-4%',
+              left: '-2%',
+              width: '42%',
+              height: '108%',
+              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgWoman1})`,
+              backgroundPosition: 'center 18%',
+              maskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
+            }}
+          />
+
+          {/* Face 2: Center Gaze — Tunde / Harper Style (Direct gaze deeply through the typography) */}
+          <div
+            className="cinematic-duotone-face animate-gaze-2"
+            style={{
+              top: '2%',
+              left: '26%',
+              width: '48%',
+              height: '100%',
+              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgMan1})`,
+              backgroundPosition: 'center 22%',
+              opacity: 0.38,
+              maskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 36%, rgba(0,0,0,0) 78%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 36%, rgba(0,0,0,0) 78%)',
+            }}
+          />
+
+          {/* Face 3: Right Wing — Folake (Confident upward / thoughtful profile) */}
+          <div
+            className="cinematic-duotone-face animate-gaze-3"
+            style={{
+              top: '-4%',
+              right: '-2%',
+              width: '42%',
+              height: '108%',
+              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgWoman2})`,
+              backgroundPosition: 'center 22%',
+              maskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
+            }}
+          />
+
+          {/* Face 4: Lower Center-Right — Chidi (Refined, smart posture) */}
+          <div
+            className="cinematic-duotone-face animate-gaze-1 desktop-nav"
+            style={{
+              top: '18%',
+              right: '20%',
+              width: '36%',
+              height: '85%',
+              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgMan2})`,
+              backgroundPosition: 'center 20%',
+              opacity: 0.32,
+              maskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 74%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 74%)',
+            }}
+          />
+
+          {/* Soft Amber Vignette unifying the background */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(ellipse at 50% 45%, rgba(255, 219, 91, 0.35) 0%, rgba(255, 219, 91, 0.75) 100%)',
+            }}
+          />
         </div>
 
         {/* CASCADING & FLOATING NIGERIAN FACES OVERLAY (DESKTOP / TABLET) */}
@@ -1464,26 +1521,41 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
           overflow: 'hidden',
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 0,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            backgroundColor: '#ffdb5b',
-          }}
-        >
-          <img
-            src={NIGERIAN_PORTRAITS.bgWoman2}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }}
+        <div aria-hidden="true" className="cinematic-duotone-wrapper">
+          <div
+            className="cinematic-duotone-face animate-gaze-2"
+            style={{
+              top: '0%',
+              left: '-5%',
+              width: '50%',
+              height: '100%',
+              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgWoman2})`,
+              backgroundPosition: 'center 20%',
+              opacity: 0.32,
+              maskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
+            }}
           />
-          <img
-            src={NIGERIAN_PORTRAITS.bgMan1}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }}
+          <div
+            className="cinematic-duotone-face animate-gaze-1"
+            style={{
+              top: '0%',
+              right: '-5%',
+              width: '50%',
+              height: '100%',
+              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgMan1})`,
+              backgroundPosition: 'center 20%',
+              opacity: 0.32,
+              maskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 219, 91, 0.4) 0%, rgba(255, 219, 91, 0.8) 100%)',
+            }}
           />
         </div>
 
