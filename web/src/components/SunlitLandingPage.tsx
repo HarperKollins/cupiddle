@@ -501,6 +501,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
       <header
         className="apple-glass-nav"
         style={{
+          backgroundColor: '#ffdb5b',
           padding: '14px clamp(16px, 4vw, 32px)',
           display: 'flex',
           alignItems: 'center',
@@ -629,6 +630,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
       <section
         id="ideastream"
         style={{
+          backgroundColor: '#ffdb5b',
           position: 'relative',
           overflow: 'hidden',
           minHeight: '860px',
@@ -1517,6 +1519,7 @@ export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth
       <section
         id="states"
         style={{
+          backgroundColor: '#ffdb5b',
           position: 'relative',
           overflow: 'hidden',
         }}
