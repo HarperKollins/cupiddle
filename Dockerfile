@@ -15,6 +15,7 @@ RUN npm run build
 # Stage 2: Build Go Server
 FROM golang:1.24-alpine AS backend-builder
 WORKDIR /app/server
+ENV GOTOOLCHAIN=auto
 RUN apk add --no-cache git
 COPY server/go.mod server/go.sum ./
 RUN go mod download
@@ -47,3 +48,4 @@ ENV STORAGE_PATH=/app/uploads
 EXPOSE 8080
 
 CMD ["/app/cupiddle"]
+
