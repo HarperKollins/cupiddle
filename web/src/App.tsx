@@ -319,133 +319,159 @@ export const App: React.FC = () => {
   return (
     <div
       className="secure-student-app"
-      style={{ minHeight: '100vh', backgroundColor: 'var(--surface-page-canvas, #ffffff)', color: 'var(--color-bumble-ink, #202020)' }}
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#0D080A',
+        color: '#FFFFFF',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative',
+        overflowX: 'hidden',
+      }}
     >
-      {/* Anti-Screenshot & Screen Recording Privacy Shield */}
-      {isShieldActive && currentUser && (
-        <div className="privacy-curtain">
-          <ShieldAlert size={52} color="var(--color-bumble-honey, #ffdb5b)" style={{ marginBottom: '16px' }} />
-          <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', color: '#fff' }}>
-            🔒 Student Privacy Shield Active
-          </h2>
-          <p style={{ fontSize: '14px', maxWidth: '420px', color: '#e5e5e5', lineHeight: 1.5, margin: 0 }}>
-            Cupiddle protects student identity and campus chats against screenshots, screen recording, and unauthorized leaks.
-          </p>
-        </div>
-      )}
-
-      {/* Navbar */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        myProfile={myProfile}
-        unreadSparksCount={(sparks || []).length}
-        unreadChatCount={(conversations || []).reduce((sum, c) => sum + (c.unread_count || 0), 0)}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={handleLogout}
-        onOpenSuggestion={() => setIsSuggestionOpen(true)}
-      />
-
-      {/* Main Container */}
-      <main style={{ padding: 'clamp(16px, 2.5vw, 32px) clamp(12px, 2.5vw, 20px) 96px', maxWidth: '1200px', margin: '0 auto' }}>
-
-        {/* Tab 1: The Idea Stream */}
-        {activeTab === 'stream' && (
-          <div>
-            {myProfile && (
-              <div
-                style={{
-                  maxWidth: '680px',
-                  margin: '0 auto 16px',
-                  padding: '12px 18px',
-                  backgroundColor: 'var(--color-paper-white, #ffffff)',
-                  borderRadius: '20px',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-bumble-ink, #202020)' }}>
-                    Your Campus Vibe (Live Broadcast)
-                  </span>
-                  {myProfile.username && (
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1' }}>
-                      @{myProfile.username} · {myProfile.campus || 'EBSU'}
-                    </span>
-                  )}
-                </div>
-                <MoodTagSelector
-                  compact
-                  selectedTag={myProfile.vibe_tag}
-                  onSelectTag={async (tagId) => {
-                    try {
-                      const updated = await api.updateProfile({ vibe_tag: tagId });
-                      setMyProfile(updated);
-                    } catch (err) {
-                      console.error('Failed to update vibe tag', err);
-                    }
-                  }}
-                />
-              </div>
-            )}
-
-            {currentCandidate ? (
-              <IdeaStreamCard
-                candidate={currentCandidate}
-                onSpark={handleSparkCandidate}
-                onPass={handlePassCandidate}
-              />
-            ) : (
-              <div style={{
-                maxWidth: '540px',
-                margin: '40px auto',
-                padding: '40px 24px',
-                textAlign: 'center',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                borderRadius: 'var(--radius-cards, 24px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
-              }}>
-                <div style={{
-                  width: '56px',
-                  height: '56px',
-                  borderRadius: 'var(--radius-buttons, 16px)',
-                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 16px',
-                }}>
-                  <Compass size={28} color="var(--color-bumble-ink, #202020)" />
-                </div>
-                <h3 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-                  You've Explored All Current Recommendations
-                </h3>
-                <p style={{ fontSize: '15px', color: 'var(--color-graphite, #575656)', lineHeight: 1.5, marginBottom: '24px' }}>
-                  Cupiddle is nationwide across all 36 Nigerian states and Abuja. You can reset your feed to rediscover profiles or explore communities.
-                </p>
-                <button
-                  onClick={async () => {
-                    await api.resetPasses();
-                    await loadDiscoveryFeed();
-                  }}
-                  style={{
-                    padding: '14px 28px',
-                    borderRadius: 'var(--radius-buttons, 16px)',
-                    backgroundColor: 'var(--color-bumble-ink, #202020)',
-                    color: 'var(--color-paper-white, #ffffff)',
-                    fontWeight: 700,
-                    fontSize: '15px',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  Reset Discovery Feed
-                </button>
-              </div>
-            )}
+      <div
+        className="mobile-app-viewport"
+        style={{
+          width: '100%',
+          maxWidth: '480px',
+          minHeight: '100vh',
+          backgroundColor: '#0D080A',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          boxShadow: '0 0 60px rgba(0, 0, 0, 0.8)',
+        }}
+      >
+        {/* Anti-Screenshot & Screen Recording Privacy Shield */}
+        {isShieldActive && currentUser && (
+          <div className="privacy-curtain">
+            <ShieldAlert size={52} color="#FF1F6A" style={{ marginBottom: '16px' }} />
+            <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', color: '#fff', fontFamily: "'Playfair Display', serif" }}>
+              🔒 Student Privacy Shield Active
+            </h2>
+            <p style={{ fontSize: '14px', maxWidth: '420px', color: '#E0D4D8', lineHeight: 1.5, margin: 0 }}>
+              Cupiddle protects student identity and campus chats against screenshots, screen recording, and unauthorized leaks.
+            </p>
           </div>
         )}
+
+        {/* Navbar */}
+        <Navbar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          myProfile={myProfile}
+          unreadSparksCount={(sparks || []).length}
+          unreadChatCount={(conversations || []).reduce((sum, c) => sum + (c.unread_count || 0), 0)}
+          onOpenAuth={() => setIsAuthOpen(true)}
+          onLogout={handleLogout}
+          onOpenSuggestion={() => setIsSuggestionOpen(true)}
+        />
+
+        {/* Main Container */}
+        <main style={{ padding: '14px 14px 84px', width: '100%', flex: 1 }}>
+
+          {/* Tab 1: The Idea Stream */}
+          {activeTab === 'stream' && (
+            <div>
+              {myProfile && (
+                <div
+                  style={{
+                    width: '100%',
+                    margin: '0 auto 14px',
+                    padding: '12px 14px',
+                    backgroundColor: '#170E12',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(255, 31, 106, 0.2)',
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#E0D4D8' }}>
+                      Broadcast Your Campus Vibe
+                    </span>
+                    {myProfile.username && (
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#FF1F6A' }}>
+                        @{myProfile.username} · {myProfile.campus || 'EBSU'}
+                      </span>
+                    )}
+                  </div>
+                  <MoodTagSelector
+                    compact
+                    selectedTag={myProfile.vibe_tag}
+                    onSelectTag={async (tagId) => {
+                      try {
+                        const updated = await api.updateProfile({ vibe_tag: tagId });
+                        setMyProfile(updated);
+                      } catch (err) {
+                        console.error('Failed to update vibe tag', err);
+                      }
+                    }}
+                  />
+                </div>
+              )}
+
+              {currentCandidate ? (
+                <IdeaStreamCard
+                  candidate={currentCandidate}
+                  onSpark={handleSparkCandidate}
+                  onPass={handlePassCandidate}
+                />
+              ) : (
+                <div style={{
+                  maxWidth: '420px',
+                  margin: '24px auto',
+                  padding: '36px 20px',
+                  textAlign: 'center',
+                  backgroundColor: '#170E12',
+                  borderRadius: '24px',
+                  border: '1px solid rgba(255, 31, 106, 0.25)',
+                  boxShadow: '0 16px 40px rgba(0, 0, 0, 0.6)',
+                  color: '#FFFFFF',
+                }}>
+                  <div style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    backgroundColor: '#5E081E',
+                    border: '1px solid #FF1F6A',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 16px',
+                    boxShadow: '0 0 16px rgba(255, 31, 106, 0.4)',
+                  }}>
+                    <Compass size={28} color="#FF1F6A" />
+                  </div>
+                  <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px', letterSpacing: '-0.02em', fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}>
+                    All Campus Desires Explored
+                  </h3>
+                  <p style={{ fontSize: '14px', color: '#E0D4D8', lineHeight: 1.5, marginBottom: '24px' }}>
+                    Cupiddle connects students across EBSU, UNN, UNILAG and all 36 states. Rediscover fresh perspectives or explore campus rabbit holes.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      await api.resetPasses();
+                      await loadDiscoveryFeed();
+                    }}
+                    style={{
+                      padding: '12px 28px',
+                      borderRadius: '100px',
+                      backgroundColor: '#FF1F6A',
+                      color: '#ffffff',
+                      fontWeight: 800,
+                      fontSize: '14px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
+                    }}
+                  >
+                    Rediscover Campus Sparks
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
         {/* Tab 2: Sparks Inbox */}
         {activeTab === 'sparks' && (
@@ -501,127 +527,181 @@ export const App: React.FC = () => {
         sendSparkFn={api.sendSpark.bind(api)}
       />
 
-      {/* Mobile App Bottom Navigation Bar */}
-      {myProfile && (
-        <nav
-          className="mobile-bottom-bar"
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '64px',
-            backgroundColor: 'var(--color-paper-white, #ffffff)',
-            borderTop: '1.5px solid var(--color-bumble-ink, #202020)',
-            display: 'none',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            zIndex: 90,
-            paddingBottom: 'env(safe-area-inset-bottom)',
-          }}
-        >
-          <button
-            onClick={() => setActiveTab('stream')}
+        {/* Mobile App Bottom Navigation Bar */}
+        {myProfile && (
+          <nav
+            className="mobile-bottom-bar"
             style={{
+              position: 'fixed',
+              bottom: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '100%',
+              maxWidth: '480px',
+              height: '66px',
+              backgroundColor: 'rgba(13, 8, 10, 0.94)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderTop: '1px solid rgba(255, 31, 106, 0.18)',
               display: 'flex',
-              flexDirection: 'column',
+              justifyContent: 'space-around',
               alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'stream' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
-              fontSize: '11px',
-              fontWeight: 700,
+              zIndex: 900,
+              paddingBottom: 'env(safe-area-inset-bottom)',
+              boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.5)',
             }}
           >
-            <Compass size={20} />
-            <span>Discover</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('sparks')}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'sparks' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
-              fontSize: '11px',
-              fontWeight: 700,
-              position: 'relative',
-            }}
-          >
-            <Heart size={20} />
-            <span>Sparks</span>
-            {(sparks || []).length > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-4px',
-                right: '4px',
-                width: '16px',
-                height: '16px',
-                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-                color: 'var(--color-bumble-ink, #202020)',
-                border: '1px solid var(--color-bumble-ink, #202020)',
-                borderRadius: '50%',
-                fontSize: '10px',
-                fontWeight: 800,
+            <button
+              onClick={() => setActiveTab('stream')}
+              style={{
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                {(sparks || []).length}
-              </span>
-            )}
-          </button>
+                gap: '4px',
+                color: activeTab === 'stream' ? '#FF1F6A' : '#8A7B82',
+                fontSize: '11px',
+                fontWeight: activeTab === 'stream' ? 800 : 600,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 12px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Compass size={21} color={activeTab === 'stream' ? '#FF1F6A' : '#8A7B82'} />
+              <span>Discover</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('chat')}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'chat' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
-              fontSize: '11px',
-              fontWeight: 700,
-            }}
-          >
-            <MessageCircle size={20} />
-            <span>Chats</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('sparks')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                color: activeTab === 'sparks' ? '#FF1F6A' : '#8A7B82',
+                fontSize: '11px',
+                fontWeight: activeTab === 'sparks' ? 800 : 600,
+                position: 'relative',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 12px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Heart size={21} color={activeTab === 'sparks' ? '#FF1F6A' : '#8A7B82'} />
+              <span>Sparks</span>
+              {(sparks || []).length > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '12px',
+                  minWidth: '16px',
+                  height: '16px',
+                  backgroundColor: '#FF1F6A',
+                  color: '#ffffff',
+                  boxShadow: '0 0 8px rgba(255, 31, 106, 0.6)',
+                  borderRadius: '10px',
+                  fontSize: '10px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 4px',
+                }}>
+                  {(sparks || []).length}
+                </span>
+              )}
+            </button>
 
-          <button
-            onClick={() => setActiveTab('communities')}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'communities' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
-              fontSize: '11px',
-              fontWeight: 700,
-            }}
-          >
-            <Users size={20} />
-            <span>Rabbit Holes</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('chat')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                color: activeTab === 'chat' ? '#FF1F6A' : '#8A7B82',
+                fontSize: '11px',
+                fontWeight: activeTab === 'chat' ? 800 : 600,
+                position: 'relative',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 12px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <MessageCircle size={21} color={activeTab === 'chat' ? '#FF1F6A' : '#8A7B82'} />
+              <span>Chats</span>
+              {(conversations || []).reduce((sum, c) => sum + (c.unread_count || 0), 0) > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '12px',
+                  minWidth: '16px',
+                  height: '16px',
+                  backgroundColor: '#FF1F6A',
+                  color: '#ffffff',
+                  boxShadow: '0 0 8px rgba(255, 31, 106, 0.6)',
+                  borderRadius: '10px',
+                  fontSize: '10px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0 4px',
+                }}>
+                  {(conversations || []).reduce((sum, c) => sum + (c.unread_count || 0), 0)}
+                </span>
+              )}
+            </button>
 
-          <button
-            onClick={() => setActiveTab('profile')}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '2px',
-              color: activeTab === 'profile' ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
-              fontSize: '11px',
-              fontWeight: 700,
-            }}
-          >
-            <UserIcon size={20} />
-            <span>Profile</span>
-          </button>
-        </nav>
-      )}
+            <button
+              onClick={() => setActiveTab('communities')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                color: activeTab === 'communities' ? '#FF1F6A' : '#8A7B82',
+                fontSize: '11px',
+                fontWeight: activeTab === 'communities' ? 800 : 600,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 12px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Users size={21} color={activeTab === 'communities' ? '#FF1F6A' : '#8A7B82'} />
+              <span>Rabbit Holes</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('profile')}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                color: activeTab === 'profile' ? '#FF1F6A' : '#8A7B82',
+                fontSize: '11px',
+                fontWeight: activeTab === 'profile' ? 800 : 600,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 12px',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <UserIcon size={21} color={activeTab === 'profile' ? '#FF1F6A' : '#8A7B82'} />
+              <span>Profile</span>
+            </button>
+          </nav>
+        )}
+      </div>
 
       {/* Auth Modal */}
       <AuthModal

@@ -25,14 +25,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [radarData, setRadarData] = useState<{ shared_interests: string[]; shared_tags: string[]; suggestions: string[] } | null>(null);
   const [safetyError, setSafetyError] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const convList = conversations || [];
   const selectedConv = convList.find((c) => c.id === selectedConvId);
@@ -141,192 +134,208 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   return (
     <div
       style={{
-        maxWidth: '1080px',
-        margin: '0 auto',
-        height: isMobile ? 'calc(100vh - 125px)' : 'calc(100vh - 130px)',
-        display: isMobile ? 'flex' : 'grid',
+        width: '100%',
+        minHeight: 'calc(100vh - 160px)',
+        display: 'flex',
         flexDirection: 'column',
-        gridTemplateColumns: isMobile ? undefined : '320px 1fr',
-        backgroundColor: 'var(--color-paper-white, #ffffff)',
-        borderRadius: isMobile ? '16px' : 'var(--radius-cards, 24px)',
-        border: '1.5px solid var(--color-bumble-ink, #202020)',
+        backgroundColor: '#170E12',
+        borderRadius: '24px',
+        border: '1px solid rgba(255, 31, 106, 0.2)',
         overflow: 'hidden',
-        boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.4)',
       }}
     >
-      {/* Left Column: Conversations List (Hidden on mobile if a conversation is open) */}
-      {(!isMobile || !selectedConvId) && (
-        <div
-          style={{
-            borderRight: isMobile ? 'none' : '1.5px solid var(--color-bumble-ink, #202020)',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            backgroundColor: 'var(--color-paper-white, #ffffff)',
-          }}
-        >
-        <div
-          style={{
-            padding: '20px',
-            borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
-            backgroundColor: 'var(--color-mist, #f3f3f3)',
-          }}
-        >
-          <h3
+      {/* View 1: Matches / Conversations List (Shown when no thread is selected) */}
+      {!selectedConvId && (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div
             style={{
-              fontSize: '18px',
-              fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
-              letterSpacing: '-0.01em',
+              padding: '20px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#140B10',
             }}
           >
-            Curious Connections
-          </h3>
-          <span style={{ fontSize: '13px', color: 'var(--color-graphite, #575656)' }}>
-            Active sparks & matches
-          </span>
-        </div>
-
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          {convList.length === 0 ? (
-            <div style={{ padding: '36px 20px', textAlign: 'center', color: 'var(--color-graphite, #575656)', fontSize: '14px', lineHeight: 1.5 }}>
-              No matches yet. Spark interesting perspectives in the Idea Stream!
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 10px',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 31, 106, 0.12)',
+                color: '#FF1F6A',
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                marginBottom: '6px',
+              }}
+            >
+              <CupiddleIcon size={12} color="#FF1F6A" />
+              Connected Desires
             </div>
-          ) : (
-            convList.map((conv) => {
-              const partner = conv.partner;
-              const photo = partner?.photos && partner.photos.length > 0
-                ? partner.photos[0].url
-                : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
-              const isSelected = conv.id === selectedConvId;
+            <h3
+              style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: '22px',
+                fontWeight: 800,
+                color: '#FFFFFF',
+                letterSpacing: '-0.01em',
+                margin: '0 0 2px 0',
+              }}
+            >
+              Conversations
+            </h3>
+            <span style={{ fontSize: '12px', color: '#8A7B82' }}>
+              Active sparks and mutual campus matches
+            </span>
+          </div>
 
-              return (
-                <div
-                  key={conv.id}
-                  onClick={() => onSelectConversation(conv.id)}
-                  style={{
-                    padding: '16px 20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    cursor: 'pointer',
-                    backgroundColor: isSelected ? 'var(--color-bumble-honey, #ffdb5b)' : 'transparent',
-                    borderLeft: isSelected ? '5px solid var(--color-bumble-ink, #202020)' : '5px solid transparent',
-                    borderBottom: '1px solid #f0f0f0',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
-                  <img
-                    src={photo}
-                    alt={partner?.display_name || 'Match'}
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            {convList.length === 0 ? (
+              <div style={{ padding: '48px 20px', textAlign: 'center', color: '#8A7B82', fontSize: '13px', lineHeight: 1.6 }}>
+                <CupiddleIcon size={32} color="#FF1F6A" style={{ margin: '0 auto 12px', opacity: 0.6 }} />
+                <p style={{ margin: '0 0 6px 0', color: '#FFFFFF', fontWeight: 700, fontSize: '15px' }}>
+                  No Conversations Yet
+                </p>
+                Spark intriguing ideas in the Desire Stream to initiate a midnight connection.
+              </div>
+            ) : (
+              convList.map((conv) => {
+                const partner = conv.partner;
+                const photo = partner?.photos && partner.photos.length > 0
+                  ? partner.photos[0].url
+                  : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
+
+                return (
+                  <div
+                    key={conv.id}
+                    onClick={() => onSelectConversation(conv.id)}
                     style={{
-                      width: '50px',
-                      height: '50px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: '1.5px solid var(--color-bumble-ink, #202020)',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      cursor: 'pointer',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                      transition: 'all 0.15s ease',
+                      backgroundColor: 'transparent',
                     }}
-                  />
-                  {/* Active Online Indicator */}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      bottom: '2px',
-                      right: '2px',
-                      width: '12px',
-                      height: '12px',
-                      backgroundColor: '#10b981',
-                      border: '2px solid #ffffff',
-                      borderRadius: '50%',
-                      boxShadow: '0 0 6px rgba(16, 185, 129, 0.8)',
-                    }}
-                    title="Active Now"
-                  />
-                </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 31, 106, 0.06)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                  >
+                    <div style={{ position: 'relative', width: '52px', height: '52px', flexShrink: 0 }}>
+                      <img
+                        src={photo}
+                        alt={partner?.display_name || 'Match'}
+                        style={{
+                          width: '52px',
+                          height: '52px',
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          border: '1.5px solid rgba(255, 31, 106, 0.3)',
+                        }}
+                      />
+                      {/* Active Online Indicator */}
                       <span
                         style={{
-                          fontWeight: 700,
-                          fontSize: '15px',
-                          color: 'var(--color-bumble-ink, #202020)',
+                          position: 'absolute',
+                          bottom: '2px',
+                          right: '2px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: '#10b981',
+                          border: '2px solid #170E12',
+                          borderRadius: '50%',
+                          boxShadow: '0 0 6px rgba(16, 185, 129, 0.85)',
                         }}
-                      >
-                        {partner?.display_name || 'Curious Mind'}
-                      </span>
-                      {conv.unread_count > 0 && (
+                        title="Active Now"
+                      />
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span
                           style={{
-                            backgroundColor: 'var(--color-bumble-ink, #202020)',
-                            color: 'var(--color-bumble-honey, #ffdb5b)',
-                            borderRadius: 'var(--radius-badges, 1000px)',
-                            fontSize: '11px',
-                            fontWeight: 800,
-                            padding: '2px 8px',
+                            fontWeight: 700,
+                            fontSize: '15px',
+                            color: '#FFFFFF',
                           }}
                         >
-                          {conv.unread_count}
+                          {partner?.display_name || 'Curious Mind'}
                         </span>
-                      )}
+                        {conv.unread_count > 0 && (
+                          <span
+                            style={{
+                              backgroundColor: '#FF1F6A',
+                              color: '#FFFFFF',
+                              borderRadius: '9999px',
+                              fontSize: '10px',
+                              fontWeight: 800,
+                              padding: '2px 7px',
+                              boxShadow: '0 2px 8px rgba(255, 31, 106, 0.5)',
+                            }}
+                          >
+                            {conv.unread_count}
+                          </span>
+                        )}
+                      </div>
+
+                      <p
+                        style={{
+                          fontSize: '13px',
+                          color: '#9E8C93',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          marginTop: '3px',
+                          marginBottom: 0,
+                        }}
+                      >
+                        {conv.last_message?.content || 'Spark connected! Say hello.'}
+                      </p>
                     </div>
-                    <p
-                      style={{
-                        fontSize: '13px',
-                        color: isSelected ? 'var(--color-bumble-ink, #202020)' : 'var(--color-graphite, #575656)',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        marginTop: '3px',
-                        fontWeight: isSelected ? 600 : 400,
-                      }}
-                    >
-                      {conv.last_message?.content || 'Conversation sparked!'}
-                    </p>
                   </div>
-                </div>
-              );
-            })
-          )}
+                );
+              })
+            )}
+          </div>
         </div>
-      </div>
       )}
 
-      {/* Right Column: Active Conversation (Shown if desktop, or if mobile and selectedConvId is active) */}
-      {(!isMobile || selectedConvId) && selectedConv ? (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: 'var(--color-paper-white, #ffffff)', flex: 1 }}>
+      {/* View 2: Active Conversation Thread */}
+      {selectedConvId && selectedConv && (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', flex: 1 }}>
           {/* Header */}
           <div
             style={{
-              padding: isMobile ? '12px 16px' : '16px 24px',
-              borderBottom: '1.5px solid var(--color-bumble-ink, #202020)',
+              padding: '14px 18px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              backgroundColor: '#140B10',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '14px' }}>
-              {isMobile && (
-                <button
-                  onClick={() => onSelectConversation(null)}
-                  title="Back to matches"
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: '6px',
-                    marginRight: '2px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--color-bumble-ink, #202020)',
-                  }}
-                >
-                  <ArrowLeft size={22} />
-                </button>
-              )}
-              <div style={{ position: 'relative', width: isMobile ? '42px' : '48px', height: isMobile ? '42px' : '48px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <button
+                onClick={() => onSelectConversation(null)}
+                title="Back to conversations"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '6px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FF1F6A',
+                }}
+              >
+                <ArrowLeft size={20} />
+              </button>
+
+              <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0 }}>
                 <img
                   src={selectedConv.partner?.photos?.[0]?.url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80'}
                   alt={selectedConv.partner?.display_name || 'Partner'}
@@ -335,84 +344,52 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                     height: '100%',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '1.5px solid var(--color-bumble-ink, #202020)',
+                    border: '1.5px solid rgba(255, 31, 106, 0.4)',
                   }}
                 />
-                {/* Active Green Light */}
                 <span
                   style={{
                     position: 'absolute',
                     bottom: '1px',
                     right: '1px',
-                    width: '11px',
-                    height: '11px',
+                    width: '10px',
+                    height: '10px',
                     backgroundColor: '#10b981',
-                    border: '2px solid #ffffff',
+                    border: '2px solid #140B10',
                     borderRadius: '50%',
-                    boxShadow: '0 0 6px rgba(16, 185, 129, 0.85)',
+                    boxShadow: '0 0 6px #10b981',
                   }}
                   title="Active now"
                 />
               </div>
+
               <div>
                 <h4
                   style={{
-                    fontSize: isMobile ? '16px' : '18px',
+                    fontSize: '15px',
                     fontWeight: 800,
-                    color: 'var(--color-bumble-ink, #202020)',
-                    letterSpacing: '-0.01em',
+                    color: '#FFFFFF',
                     margin: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
                   }}
                 >
                   {selectedConv.partner?.display_name}, {selectedConv.partner?.age}
                   {selectedConv.partner?.username && (
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#6366f1', marginLeft: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#FF1F6A', backgroundColor: 'rgba(255, 31, 106, 0.12)', padding: '2px 6px', borderRadius: '6px' }}>
                       @{selectedConv.partner.username}
                     </span>
                   )}
                 </h4>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    marginTop: '2px',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      fontSize: '12px',
-                      color: '#059669',
-                      fontWeight: 700,
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        backgroundColor: '#10b981',
-                        borderRadius: '50%',
-                        display: 'inline-block',
-                        boxShadow: '0 0 6px #10b981',
-                      }}
-                    />
-                    <span>Active now</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#10b981', fontWeight: 600 }}>
+                    <span style={{ width: '6px', height: '6px', backgroundColor: '#10b981', borderRadius: '50%' }} />
+                    Active now
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      fontSize: '12px',
-                      color: 'var(--color-graphite, #575656)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    <MapPin size={13} color="var(--color-bumble-ink, #202020)" />
-                    <span>{selectedConv.partner?.city ? `${selectedConv.partner.city}, Nigeria` : 'Nigeria'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', color: '#8A7B82' }}>
+                    <MapPin size={11} color="#FF1F6A" />
+                    <span>{selectedConv.partner?.city ? `${selectedConv.partner.city}` : 'Nigeria'}</span>
                   </div>
                 </div>
               </div>
@@ -422,22 +399,22 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
             <div style={{ position: 'relative' }}>
               <button
                 onClick={() => setShowGameMenu(!showGameMenu)}
-                className="pill-interactive"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 16px',
-                  borderRadius: 'var(--radius-badges, 1000px)',
-                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  color: 'var(--color-bumble-ink, #202020)',
-                  fontSize: '13px',
+                  gap: '5px',
+                  padding: '6px 12px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(255, 31, 106, 0.15)',
+                  border: '1px solid rgba(255, 31, 106, 0.35)',
+                  color: '#FF1F6A',
+                  fontSize: '12px',
                   fontWeight: 700,
+                  cursor: 'pointer',
                 }}
               >
-                <Gamepad2 size={16} />
-                <span>Co-op Corner</span>
+                <Gamepad2 size={14} />
+                <span>Co-op</span>
               </button>
 
               {showGameMenu && (
@@ -447,31 +424,31 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                     position: 'absolute',
                     right: 0,
                     top: '115%',
-                    width: '260px',
-                    backgroundColor: 'var(--color-paper-white, #ffffff)',
-                    borderRadius: 'var(--radius-buttons, 16px)',
-                    border: '1.5px solid var(--color-bumble-ink, #202020)',
-                    boxShadow: '0 12px 32px rgba(32, 32, 32, 0.16)',
+                    width: '240px',
+                    backgroundColor: '#1E1116',
+                    borderRadius: '16px',
+                    border: '1px solid rgba(255, 31, 106, 0.3)',
+                    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6)',
                     padding: '8px',
                     zIndex: 20,
                   }}
                 >
                   <div
                     style={{
-                      padding: '8px 10px',
-                      fontSize: '11px',
+                      padding: '6px 10px',
+                      fontSize: '10px',
                       fontWeight: 800,
-                      color: 'var(--color-graphite, #575656)',
+                      color: '#FF1F6A',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
                     }}
                   >
-                    Play Together Asynchronously
+                    Play Together
                   </div>
                   {[
-                    { type: 'logic_riddle', label: '🧩 Two-Player Logic Riddle' },
+                    { type: 'logic_riddle', label: '🧩 Logic Riddle' },
                     { type: 'would_you_rather', label: '⚖️ Would You Rather?' },
-                    { type: 'two_truths_lie', label: '🎭 Two Truths and a Lie' },
+                    { type: 'two_truths_lie', label: '🎭 Two Truths & a Lie' },
                     { type: 'ai_or_human', label: '🤖 AI or Human Prose' },
                   ].map((item) => (
                     <button
@@ -480,14 +457,17 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                       style={{
                         width: '100%',
                         textAlign: 'left',
-                        padding: '10px 12px',
+                        padding: '8px 10px',
                         borderRadius: '10px',
-                        color: 'var(--color-bumble-ink, #202020)',
-                        fontSize: '13px',
+                        color: '#FFFFFF',
+                        fontSize: '12px',
                         fontWeight: 600,
                         display: 'block',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-mist, #f3f3f3)')}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 31, 106, 0.15)')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       {item.label}
@@ -502,41 +482,41 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           {selectedConv.origin_spark && (
             <div
               style={{
-                padding: '10px 20px',
-                backgroundColor: 'var(--color-pollen, #fff386)',
-                borderBottom: '1px solid var(--color-bumble-ink, #202020)',
+                padding: '8px 16px',
+                backgroundColor: 'rgba(94, 8, 30, 0.45)',
+                borderBottom: '1px solid rgba(255, 31, 106, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                fontSize: '13px',
-                color: 'var(--color-bumble-ink, #202020)',
+                fontSize: '12px',
+                color: '#E0D4D8',
                 fontWeight: 600,
               }}
             >
-              <CupiddleIcon size={16} color="var(--color-bumble-ink, #202020)" />
+              <CupiddleIcon size={14} color="#FF1F6A" />
               <span>
-                <strong>Conversation Spark:</strong> "{selectedConv.origin_spark.comment}" (re: {selectedConv.origin_spark.target_content.slice(0, 60)}...)
+                <strong style={{ color: '#FF1F6A' }}>Spark Origin:</strong> "{selectedConv.origin_spark.comment}"
               </span>
             </div>
           )}
 
-          {/* RabbitHole Radar Topic Suggestion */}
+          {/* Radar Topic Suggestion */}
           {radarData && radarData.suggestions && radarData.suggestions.length > 0 && (
             <div
               style={{
-                padding: '10px 20px',
-                backgroundColor: 'var(--color-mist, #f3f3f3)',
-                borderBottom: '1px solid #e0e0e0',
+                padding: '8px 16px',
+                backgroundColor: '#1E1116',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                fontSize: '13px',
-                color: 'var(--color-bumble-ink, #202020)',
+                fontSize: '12px',
+                color: '#C7B6BC',
               }}
             >
-              <Compass size={15} color="var(--color-bumble-ink, #202020)" />
+              <Compass size={13} color="#FF1F6A" />
               <span>
-                <strong>Radar Topic:</strong> {radarData.suggestions[0]}
+                <strong style={{ color: '#FF1F6A' }}>Radar Topic:</strong> {radarData.suggestions[0]}
               </span>
             </div>
           )}
@@ -545,23 +525,23 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           {activeGame && activeGame.status === 'in_progress' && (
             <div
               style={{
-                margin: '14px 20px',
-                padding: '18px 20px',
-                backgroundColor: 'var(--color-pollen, #fff386)',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+                margin: '12px 16px',
+                padding: '14px 16px',
+                backgroundColor: '#1A0E14',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 31, 106, 0.3)',
+                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#FF1F6A', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   🎮 Co-op Corner: {activeGame.title}
                 </span>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-graphite, #575656)' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: '#8A7B82' }}>
                   {activeGame.user1_answer && activeGame.user2_answer ? 'Completed!' : 'Turn in progress'}
                 </span>
               </div>
-              <p style={{ fontSize: '14px', color: 'var(--color-bumble-ink, #202020)', marginBottom: '14px', lineHeight: 1.5, fontWeight: 600 }}>
+              <p style={{ fontSize: '13px', color: '#FFFFFF', marginBottom: '10px', lineHeight: 1.45, fontWeight: 600 }}>
                 {(() => {
                   try {
                     const data = JSON.parse(activeGame.prompt_data);
@@ -579,23 +559,26 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                   onChange={(e) => setGameAnswerInput(e.target.value)}
                   style={{
                     flex: 1,
-                    fontSize: '14px',
-                    padding: '10px 14px',
-                    borderRadius: 'var(--radius-buttons, 16px)',
-                    border: '1.5px solid var(--color-bumble-ink, #202020)',
-                    backgroundColor: 'var(--color-paper-white, #ffffff)',
+                    fontSize: '13px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    backgroundColor: '#140B10',
+                    color: '#FFFFFF',
+                    outline: 'none',
                   }}
                 />
                 <button
                   onClick={handleSubmitAnswer}
-                  className="btn-bumble-action"
                   style={{
-                    padding: '10px 20px',
-                    borderRadius: 'var(--radius-buttons, 16px)',
-                    backgroundColor: 'var(--color-bumble-ink, #202020)',
-                    color: 'var(--color-paper-white, #ffffff)',
-                    fontSize: '14px',
+                    padding: '8px 16px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+                    border: 'none',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
                     fontWeight: 700,
+                    cursor: 'pointer',
                   }}
                 >
                   Submit
@@ -607,7 +590,15 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           {/* Messages Scroll Area */}
           <div
             className="secure-student-app"
-            style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{
+              flex: 1,
+              padding: '16px',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              backgroundColor: '#0D080A',
+            }}
           >
             {messages.map((msg) => {
               const isMine = msg.sender_id === currentUserId;
@@ -617,7 +608,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                   key={msg.id}
                   style={{
                     alignSelf: isMine ? 'flex-end' : 'flex-start',
-                    maxWidth: '72%',
+                    maxWidth: '82%',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: isMine ? 'flex-end' : 'flex-start',
@@ -625,14 +616,18 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                 >
                   <div
                     style={{
-                      padding: '14px 18px',
+                      padding: '12px 16px',
                       borderRadius: isMine ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                      backgroundColor: isMine ? 'var(--color-bumble-ink, #202020)' : 'var(--color-mist, #f3f3f3)',
-                      color: isMine ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
-                      fontSize: '15px',
-                      lineHeight: 1.5,
-                      border: isMine ? 'none' : '1.5px solid var(--color-bumble-ink, #202020)',
-                      boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+                      background: isMine
+                        ? 'linear-gradient(135deg, #5E081E 0%, #FF1F6A 100%)'
+                        : '#1E1116',
+                      color: '#ffffff',
+                      fontSize: '14px',
+                      lineHeight: 1.45,
+                      border: isMine ? 'none' : '1px solid rgba(255, 31, 106, 0.2)',
+                      boxShadow: isMine
+                        ? '0 4px 14px rgba(255, 31, 106, 0.3)'
+                        : '0 2px 8px rgba(0, 0, 0, 0.4)',
                     }}
                   >
                     {msg.content}
@@ -643,27 +638,27 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      marginTop: '6px',
-                      fontSize: '11px',
-                      color: 'var(--color-graphite, #575656)',
+                      gap: '6px',
+                      marginTop: '4px',
+                      fontSize: '10px',
+                      color: '#8A7B82',
                     }}
                   >
                     <span>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    {isMine && <CheckCheck size={14} color="var(--color-bumble-ink, #202020)" />}
+                    {isMine && <CheckCheck size={12} color="#FF1F6A" />}
 
                     {/* Quick emoji reactions */}
-                    <div style={{ display: 'flex', gap: '4px', marginLeft: '6px' }}>
+                    <div style={{ display: 'flex', gap: '3px', marginLeft: '4px' }}>
                       {['💡', '✨', '🔥'].map((emoji) => (
                         <button
                           key={emoji}
                           onClick={() => handleReaction(msg.id, emoji)}
                           style={{
-                            fontSize: '12px',
-                            padding: '3px 6px',
-                            borderRadius: 'var(--radius-badges, 1000px)',
-                            backgroundColor: msg.reactions?.[currentUserId] === emoji ? 'var(--color-bumble-honey, #ffdb5b)' : 'var(--color-mist, #f3f3f3)',
-                            border: '1px solid #d0d0d0',
+                            fontSize: '11px',
+                            padding: '2px 5px',
+                            borderRadius: '9999px',
+                            backgroundColor: msg.reactions?.[currentUserId] === emoji ? 'rgba(255, 31, 106, 0.25)' : '#1E1116',
+                            border: msg.reactions?.[currentUserId] === emoji ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.08)',
                             cursor: 'pointer',
                           }}
                         >
@@ -678,21 +673,21 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Safety Error Alert (Anti-Leak & Community Standards) */}
+          {/* Safety Error Alert */}
           {safetyError && (
             <div
               style={{
-                margin: '10px 20px 0',
-                padding: '12px 16px',
-                backgroundColor: '#fff1f2',
-                border: '1.5px solid #f43f5e',
-                borderRadius: '14px',
-                color: '#9f1239',
-                fontSize: '13px',
+                margin: '8px 16px 0',
+                padding: '10px 14px',
+                backgroundColor: 'rgba(225, 29, 72, 0.15)',
+                border: '1px solid rgba(225, 29, 72, 0.4)',
+                borderRadius: '12px',
+                color: '#fda4af',
+                fontSize: '12px',
                 fontWeight: 600,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
               }}
             >
               <span>🔒 {safetyError}</span>
@@ -703,54 +698,52 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           <form
             onSubmit={handleSendMessage}
             style={{
-              padding: '16px 20px',
-              borderTop: '1.5px solid var(--color-bumble-ink, #202020)',
+              padding: '12px 16px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
+              gap: '10px',
+              backgroundColor: '#140B10',
             }}
           >
             <input
               type="text"
               value={inputContent}
               onChange={(e) => setInputContent(e.target.value)}
-              placeholder="Share a curious thought, question, or response..."
+              placeholder="Share a curious thought or question..."
               style={{
                 flex: 1,
-                fontSize: '15px',
-                padding: '12px 18px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                color: 'var(--color-bumble-ink, #202020)',
+                fontSize: '14px',
+                padding: '10px 14px',
+                borderRadius: '14px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#1E1116',
+                color: '#ffffff',
+                outline: 'none',
               }}
             />
             <button
               type="submit"
               disabled={!inputContent.trim()}
-              className="btn-bumble-action"
               style={{
-                width: '46px',
-                height: '46px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--color-bumble-ink, #202020)',
-                color: 'var(--color-paper-white, #ffffff)',
+                background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+                color: '#ffffff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 opacity: inputContent.trim() ? 1 : 0.5,
                 cursor: inputContent.trim() ? 'pointer' : 'not-allowed',
-                boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+                boxShadow: '0 0 14px rgba(255, 31, 106, 0.4)',
+                border: 'none',
+                flexShrink: 0,
               }}
             >
-              <Send size={18} />
+              <Send size={16} />
             </button>
           </form>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-graphite, #575656)', fontSize: '15px', padding: '40px' }}>
-          Select a match from the left to start a curious conversation.
         </div>
       )}
     </div>

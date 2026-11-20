@@ -178,8 +178,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(32, 32, 32, 0.65)',
-        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(13, 8, 10, 0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -191,19 +192,20 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       <div
         className="animate-modal-spring"
         style={{
-          backgroundColor: '#ffffff',
+          backgroundColor: '#170E12',
           borderRadius: '24px',
-          border: '1.5px solid #202020',
-          maxWidth: '580px',
+          border: '1px solid rgba(255, 31, 106, 0.3)',
+          maxWidth: '480px',
           width: '100%',
-          padding: '32px',
-          boxShadow: '0 24px 60px rgba(32, 32, 32, 0.22)',
+          padding: '24px',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
           position: 'relative',
           margin: 'auto',
+          color: '#FFFFFF',
         }}
       >
         {/* Header & Step Tracker */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '18px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <div
               style={{
@@ -212,24 +214,25 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 gap: '6px',
                 padding: '4px 12px',
                 borderRadius: '1000px',
-                backgroundColor: '#ffdb5b',
-                border: '1px solid #202020',
-                color: '#202020',
+                backgroundColor: '#5E081E',
+                border: '1px solid #FF1F6A',
+                color: '#FF1F6A',
                 fontSize: '11px',
                 fontWeight: 800,
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
+                boxShadow: '0 0 10px rgba(255, 31, 106, 0.3)',
               }}
             >
-              <CupiddleIcon size={14} color="#202020" />
+              <CupiddleIcon size={12} color="#FF1F6A" />
               Step {step} of 5 • Campus Onboarding
             </div>
 
             <button
               onClick={onDismiss}
               style={{
-                fontSize: '13px',
-                color: '#575656',
+                fontSize: '12px',
+                color: '#9E8C93',
                 fontWeight: 600,
                 background: 'none',
                 border: 'none',
@@ -240,28 +243,29 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px', marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px', marginBottom: '14px' }}>
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
                 style={{
                   height: '4px',
                   borderRadius: '4px',
-                  backgroundColor: step >= i ? '#202020' : '#e5e5e5',
+                  backgroundColor: step >= i ? '#FF1F6A' : 'rgba(255, 255, 255, 0.1)',
+                  boxShadow: step >= i ? '0 0 8px rgba(255, 31, 106, 0.6)' : 'none',
                   transition: 'background-color 0.2s ease',
                 }}
               />
             ))}
           </div>
 
-          <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#202020', letterSpacing: '-0.02em', lineHeight: 1.2, margin: 0 }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', lineHeight: 1.2, margin: 0, fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}>
             {step === 1 && 'What Makes You Curious?'}
             {step === 2 && 'What Powers Your World?'}
             {step === 3 && 'Lifestyle & Values Algorithm'}
             {step === 4 && 'Your Gate Question & Vibe'}
             {step === 5 && 'Your Portrait & Bio'}
           </h2>
-          <p style={{ fontSize: '13px', color: '#575656', marginTop: '4px' }}>
+          <p style={{ fontSize: '13px', color: '#E0D4D8', marginTop: '4px' }}>
             {step === 1 && 'People connect on Cupiddle through thoughts and ideas, not empty photo swipes.'}
             {step === 2 && 'Choose the books, sounds, and media that shaped your tastes.'}
             {step === 3 && 'Calibrates the Mathematical Matching Model (Values Cosine Similarity).'}
@@ -273,59 +277,61 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {/* STEP 1: CURIOSITY PROMPTS */}
         {step === 1 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#fffbe8', border: '1.5px solid #202020' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
-                <Compass size={15} /> My Current Rabbit Hole
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#1E1116', border: '1px solid rgba(255, 31, 106, 0.25)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
+                <Compass size={15} color="#FF1F6A" /> My Current Rabbit Hole
               </label>
               <textarea
                 rows={2}
                 placeholder="What topic, concept, or rabbit hole are you obsessed with right now?"
                 value={rabbitHole}
                 onChange={(e) => setRabbitHole(e.target.value)}
-                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px' }}
+                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 255, 255, 0.12)', color: '#FFFFFF' }}
               />
             </div>
 
-            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#f3f3f3', border: '1.5px solid #202020' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
-                <Flame size={15} /> Defend This Take
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#1E1116', border: '1px solid rgba(255, 31, 106, 0.25)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
+                <Flame size={15} color="#FF1F6A" /> Defend This Take
               </label>
               <textarea
                 rows={2}
                 placeholder="An opinion or perspective you are genuinely willing to defend..."
                 value={defendTake}
                 onChange={(e) => setDefendTake(e.target.value)}
-                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px' }}
+                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 255, 255, 0.12)', color: '#FFFFFF' }}
               />
             </div>
 
-            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#ffffff', border: '1.5px solid #202020' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
-                <Lightbulb size={15} /> Teach Me Something
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#1E1116', border: '1px solid rgba(255, 31, 106, 0.25)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
+                <Lightbulb size={15} color="#FF1F6A" /> Teach Me Something
               </label>
               <textarea
                 rows={2}
                 placeholder="What could you explain or teach someone for hours without getting tired?"
                 value={teachMe}
                 onChange={(e) => setTeachMe(e.target.value)}
-                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px' }}
+                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 255, 255, 0.12)', color: '#FFFFFF' }}
               />
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
               <button
                 onClick={() => setStep(2)}
-                className="btn-bumble-action"
                 style={{
                   padding: '12px 28px',
                   borderRadius: '16px',
-                  backgroundColor: '#202020',
+                  backgroundColor: '#FF1F6A',
                   color: '#ffffff',
                   fontWeight: 800,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                 }}
               >
                 Continue <ArrowRight size={16} />
@@ -338,7 +344,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {step === 2 && (
           <div>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#FFFFFF', marginBottom: '8px' }}>
                 Tap to add tags or create your own:
               </label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px', maxHeight: '180px', overflowY: 'auto' }}>
@@ -352,18 +358,20 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       style={{
                         padding: '6px 14px',
                         borderRadius: '1000px',
-                        backgroundColor: selected ? '#ffdb5b' : '#f3f3f3',
-                        border: '1.5px solid #202020',
-                        color: '#202020',
+                        backgroundColor: selected ? '#5E081E' : 'rgba(255, 255, 255, 0.06)',
+                        border: selected ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.12)',
+                        color: selected ? '#FFFFFF' : '#E0D4D8',
+                        boxShadow: selected ? '0 0 10px rgba(255, 31, 106, 0.35)' : 'none',
                         fontSize: '13px',
                         fontWeight: 700,
                         cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '6px',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      {selected && <Check size={13} />} {tag}
+                      {selected && <Check size={13} color="#FF1F6A" />} {tag}
                     </button>
                   );
                 })}
@@ -381,19 +389,20 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       handleAddCustomTag();
                     }
                   }}
-                  style={{ flex: 1, fontSize: '14px', padding: '10px 14px' }}
+                  style={{ flex: 1, fontSize: '14px', padding: '10px 14px', borderRadius: '12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#FFFFFF' }}
                 />
                 <button
                   type="button"
                   onClick={handleAddCustomTag}
-                  className="btn-bumble-action"
                   style={{
                     padding: '10px 18px',
-                    borderRadius: '16px',
-                    backgroundColor: '#202020',
+                    borderRadius: '12px',
+                    backgroundColor: '#5E081E',
+                    border: '1px solid #FF1F6A',
                     color: '#ffffff',
                     fontWeight: 700,
                     fontSize: '13px',
+                    cursor: 'pointer',
                   }}
                 >
                   <Tag size={14} style={{ display: 'inline', marginRight: '4px' }} /> Add
@@ -407,31 +416,34 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 style={{
                   padding: '12px 20px',
                   borderRadius: '16px',
-                  border: '1.5px solid #202020',
-                  backgroundColor: '#ffffff',
-                  color: '#202020',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  color: '#E0D4D8',
                   fontWeight: 700,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
+                  cursor: 'pointer',
                 }}
               >
                 <ArrowLeft size={16} /> Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="btn-bumble-action"
                 style={{
                   padding: '12px 28px',
                   borderRadius: '16px',
-                  backgroundColor: '#202020',
+                  backgroundColor: '#FF1F6A',
                   color: '#ffffff',
                   fontWeight: 800,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                 }}
               >
                 Continue <ArrowRight size={16} />
@@ -445,7 +457,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '380px', overflowY: 'auto', paddingRight: '4px' }}>
             {/* Sleep Schedule */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Sleep Cycle
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -463,9 +475,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '12px',
                       fontWeight: 700,
-                      backgroundColor: nightOwl === opt.val ? '#202020' : '#f3f3f3',
-                      color: nightOwl === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: nightOwl === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: nightOwl === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: nightOwl === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: nightOwl === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -477,7 +490,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Social Battery */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Social Battery
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -495,9 +508,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '12px',
                       fontWeight: 700,
-                      backgroundColor: introversion === opt.val ? '#202020' : '#f3f3f3',
-                      color: introversion === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: introversion === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: introversion === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: introversion === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: introversion === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -509,7 +523,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Ambition & Hustle */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Drive & Ambition
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -527,9 +541,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '12px',
                       fontWeight: 700,
-                      backgroundColor: ambitionLevel === opt.val ? '#202020' : '#f3f3f3',
-                      color: ambitionLevel === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: ambitionLevel === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: ambitionLevel === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: ambitionLevel === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: ambitionLevel === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -541,7 +556,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Campus Social Presence */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Campus Social Life
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -559,9 +574,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '12px',
                       fontWeight: 700,
-                      backgroundColor: campusSocial === opt.val ? '#202020' : '#f3f3f3',
-                      color: campusSocial === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: campusSocial === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: campusSocial === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: campusSocial === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: campusSocial === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -573,7 +589,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Religion Importance */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Faith / Spirituality Importance
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -592,9 +608,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 700,
-                      backgroundColor: religionWeight === opt.val ? '#202020' : '#f3f3f3',
-                      color: religionWeight === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: religionWeight === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: religionWeight === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: religionWeight === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: religionWeight === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -606,7 +623,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Drinking & Social Drinks */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Drinking
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -625,9 +642,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 700,
-                      backgroundColor: drinking === opt.val ? '#202020' : '#f3f3f3',
-                      color: drinking === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: drinking === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: drinking === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: drinking === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: drinking === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -639,7 +657,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Smoking */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Smoking / Shisha
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -658,9 +676,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 700,
-                      backgroundColor: smoking === opt.val ? '#202020' : '#f3f3f3',
-                      color: smoking === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: smoking === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: smoking === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: smoking === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: smoking === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -672,7 +691,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Family & Relationship Values */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Family Values & Outlook
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -690,9 +709,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 700,
-                      backgroundColor: familyValues === opt.val ? '#202020' : '#f3f3f3',
-                      color: familyValues === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: familyValues === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: familyValues === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: familyValues === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: familyValues === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -704,7 +724,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
             {/* Academic Track (Confidential Soft Boost) */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Academic Ambition (Confidential Tier)
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -723,9 +743,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 700,
-                      backgroundColor: cgpaTier === opt.val ? '#202020' : '#f3f3f3',
-                      color: cgpaTier === opt.val ? '#ffffff' : '#202020',
-                      border: '1px solid #202020',
+                      backgroundColor: cgpaTier === opt.val ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                      color: cgpaTier === opt.val ? '#ffffff' : '#E0D4D8',
+                      border: cgpaTier === opt.val ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: cgpaTier === opt.val ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
                       cursor: 'pointer',
                     }}
                   >
@@ -741,31 +762,34 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 style={{
                   padding: '12px 20px',
                   borderRadius: '16px',
-                  border: '1.5px solid #202020',
-                  backgroundColor: '#ffffff',
-                  color: '#202020',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  color: '#E0D4D8',
                   fontWeight: 700,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
+                  cursor: 'pointer',
                 }}
               >
                 <ArrowLeft size={16} /> Back
               </button>
               <button
                 onClick={() => setStep(4)}
-                className="btn-bumble-action"
                 style={{
                   padding: '12px 28px',
                   borderRadius: '16px',
-                  backgroundColor: '#202020',
+                  backgroundColor: '#FF1F6A',
                   color: '#ffffff',
                   fontWeight: 800,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                 }}
               >
                 Continue <ArrowRight size={16} />
@@ -779,7 +803,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Dating Intentions */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 What are you looking for right now?
               </label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -789,75 +813,85 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   'Deep Connection 💜',
                   'Casual Vibes 🎮',
                   'Open to Romance ✨',
-                ].map((intent) => (
-                  <button
-                    key={intent}
-                    type="button"
-                    onClick={() => setDatingIntentions(intent)}
-                    style={{
-                      padding: '8px 14px',
-                      borderRadius: '1000px',
-                      border: '1.5px solid #202020',
-                      backgroundColor: datingIntentions === intent ? '#ffdb5b' : '#f9f9f9',
-                      color: '#202020',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {datingIntentions === intent && '✓ '}
-                    {intent}
-                  </button>
-                ))}
+                ].map((intent) => {
+                  const selected = datingIntentions === intent;
+                  return (
+                    <button
+                      key={intent}
+                      type="button"
+                      onClick={() => setDatingIntentions(intent)}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: '1000px',
+                        border: selected ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.12)',
+                        backgroundColor: selected ? '#5E081E' : 'rgba(255, 255, 255, 0.06)',
+                        color: selected ? '#ffffff' : '#E0D4D8',
+                        boxShadow: selected ? '0 0 10px rgba(255, 31, 106, 0.35)' : 'none',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      {selected && '✓ '}
+                      {intent}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Vibe Tag Picker (8 ephemeral tags) */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px', color: '#FFFFFF' }}>
                 Current Campus Vibe (Expires in 6 Hours)
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
-                {VIBE_TAGS.map((v) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => setSelectedVibe(v.id)}
-                    style={{
-                      padding: '8px 10px',
-                      borderRadius: '12px',
-                      border: `1.5px solid ${selectedVibe === v.id ? '#202020' : '#e0e0e0'}`,
-                      backgroundColor: selectedVibe === v.id ? '#202020' : '#ffffff',
-                      color: selectedVibe === v.id ? '#ffffff' : '#202020',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                    }}
-                  >
-                    <span>{v.emoji}</span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.label}</span>
-                  </button>
-                ))}
+                {VIBE_TAGS.map((v) => {
+                  const selected = selectedVibe === v.id;
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => setSelectedVibe(v.id)}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '12px',
+                        border: selected ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.1)',
+                        backgroundColor: selected ? '#5E081E' : 'rgba(255, 255, 255, 0.05)',
+                        color: selected ? '#ffffff' : '#E0D4D8',
+                        boxShadow: selected ? '0 0 10px rgba(255, 31, 106, 0.3)' : 'none',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <span>{v.emoji}</span>
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Custom Gate Question */}
-            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#fffbeb', border: '1.5px dashed #f59e0b' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#b45309', marginBottom: '6px' }}>
-                <Lock size={14} /> Your Connection Gate Question
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#1E1116', border: '1px dashed rgba(255, 31, 106, 0.5)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#FF1F6A', marginBottom: '6px' }}>
+                <Lock size={14} color="#FF1F6A" /> Your Connection Gate Question
               </label>
               <textarea
                 rows={2}
                 placeholder="e.g. Name one thing your faculty hasn't taught you, but definitely should have."
                 value={gateQuestion}
                 onChange={(e) => setGateQuestion(e.target.value)}
-                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', border: '1px solid #202020' }}
+                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 31, 106, 0.3)', color: '#FFFFFF' }}
               />
-              <span style={{ fontSize: '11px', color: '#78350f', display: 'block', marginTop: '4px' }}>
+              <span style={{ fontSize: '11px', color: '#E0D4D8', display: 'block', marginTop: '4px' }}>
                 💡 Anyone who sparks you MUST write a real answer to this question first.
               </span>
             </div>
@@ -868,31 +902,34 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 style={{
                   padding: '12px 20px',
                   borderRadius: '16px',
-                  border: '1.5px solid #202020',
-                  backgroundColor: '#ffffff',
-                  color: '#202020',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  color: '#E0D4D8',
                   fontWeight: 700,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
+                  cursor: 'pointer',
                 }}
               >
                 <ArrowLeft size={16} /> Back
               </button>
               <button
                 onClick={() => setStep(5)}
-                className="btn-bumble-action"
                 style={{
                   padding: '12px 28px',
                   borderRadius: '16px',
-                  backgroundColor: '#202020',
+                  backgroundColor: '#FF1F6A',
                   color: '#ffffff',
                   fontWeight: 800,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                 }}
               >
                 Continue <ArrowRight size={16} />
@@ -905,7 +942,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {step === 5 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '8px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#FFFFFF', marginBottom: '8px' }}>
                 Profile Portrait (Photo or Selfie)
               </label>
 
@@ -922,9 +959,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   style={{
                     padding: '8px 12px',
                     borderRadius: '12px',
-                    backgroundColor: '#ffebeb',
-                    border: '1px solid #ff4d4d',
-                    color: '#c00000',
+                    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                    border: '1px solid rgba(239, 68, 68, 0.4)',
+                    color: '#f87171',
                     fontSize: '12px',
                     fontWeight: 600,
                     marginBottom: '10px',
@@ -941,9 +978,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     alignItems: 'center',
                     gap: '16px',
                     padding: '12px 16px',
-                    backgroundColor: '#fff386',
+                    backgroundColor: '#1E1116',
                     borderRadius: '16px',
-                    border: '1.5px solid #202020',
+                    border: '1px solid rgba(255, 31, 106, 0.3)',
                   }}
                 >
                   <img
@@ -954,8 +991,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       height: '72px',
                       borderRadius: '14px',
                       objectFit: 'cover',
-                      border: '1.5px solid #202020',
-                      backgroundColor: '#f3f3f3',
+                      border: '1.5px solid #FF1F6A',
+                      backgroundColor: '#0D080A',
                     }}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -964,8 +1001,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         style={{
                           fontSize: '11px',
                           fontWeight: 800,
-                          backgroundColor: '#202020',
-                          color: '#ffdb5b',
+                          backgroundColor: '#5E081E',
+                          color: '#FF1F6A',
+                          border: '1px solid #FF1F6A',
                           padding: '2px 8px',
                           borderRadius: '1000px',
                         }}
@@ -973,7 +1011,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         ✓ Portrait Ready
                       </span>
                     </div>
-                    <p style={{ fontSize: '12px', color: '#3b3b3b', margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: '12px', color: '#E0D4D8', margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                       {photoURL}
                     </p>
                   </div>
@@ -985,8 +1023,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       style={{
                         padding: '6px 12px',
                         borderRadius: '1000px',
-                        border: '1px solid #202020',
-                        backgroundColor: '#ffffff',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                        color: '#FFFFFF',
                         fontSize: '12px',
                         fontWeight: 700,
                         cursor: 'pointer',
@@ -1000,9 +1039,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       style={{
                         padding: '6px 8px',
                         borderRadius: '1000px',
-                        border: '1px solid #202020',
-                        backgroundColor: '#ffffff',
-                        color: '#c00000',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                        color: '#f87171',
                         fontSize: '12px',
                         fontWeight: 700,
                         cursor: 'pointer',
@@ -1018,13 +1057,12 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingPhoto}
-                    className="btn-bumble-action"
                     style={{
                       width: '100%',
                       padding: '20px',
                       borderRadius: '16px',
-                      border: '2px dashed #202020',
-                      backgroundColor: '#f8f8f8',
+                      border: '2px dashed rgba(255, 31, 106, 0.35)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -1036,8 +1074,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   >
                     {uploadingPhoto ? (
                       <>
-                        <Loader2 size={26} className="animate-spin" color="#202020" />
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#202020' }}>
+                        <Loader2 size={26} className="animate-spin" color="#FF1F6A" />
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#FFFFFF' }}>
                           Compressing & Uploading...
                         </span>
                       </>
@@ -1048,19 +1086,20 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                             width: '44px',
                             height: '44px',
                             borderRadius: '50%',
-                            backgroundColor: '#ffdb5b',
-                            border: '1.5px solid #202020',
+                            backgroundColor: '#5E081E',
+                            border: '1px solid #FF1F6A',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            boxShadow: '0 0 12px rgba(255, 31, 106, 0.35)',
                           }}
                         >
-                          <Upload size={20} color="#202020" />
+                          <Upload size={20} color="#FF1F6A" />
                         </div>
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#202020' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#FFFFFF' }}>
                           Choose Portrait from Phone / Camera
                         </span>
-                        <span style={{ fontSize: '12px', color: '#575656', fontWeight: 500 }}>
+                        <span style={{ fontSize: '12px', color: '#9E8C93', fontWeight: 500 }}>
                           Will start at 40px silhouette in discovery feed
                         </span>
                       </>
@@ -1076,7 +1115,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         border: 'none',
                         padding: 0,
                         fontSize: '12px',
-                        color: '#575656',
+                        color: '#9E8C93',
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         display: 'inline-flex',
@@ -1095,7 +1134,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         placeholder="e.g. https://images.unsplash.com/..."
                         value={photoURL}
                         onChange={(e) => setPhotoURL(e.target.value)}
-                        style={{ width: '100%', fontSize: '13px', padding: '8px 12px' }}
+                        style={{ width: '100%', fontSize: '13px', padding: '8px 12px', borderRadius: '12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#FFFFFF' }}
                       />
                     </div>
                   )}
@@ -1104,7 +1143,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#FFFFFF', marginBottom: '6px' }}>
                 Short Bio / Introduction
               </label>
               <textarea
@@ -1112,7 +1151,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 placeholder="A couple sentences about what makes you you..."
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                style={{ width: '100%', fontSize: '14px' }}
+                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', backgroundColor: '#0D080A', border: '1px solid rgba(255, 255, 255, 0.12)', color: '#FFFFFF' }}
               />
             </div>
 
@@ -1122,14 +1161,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 style={{
                   padding: '12px 20px',
                   borderRadius: '16px',
-                  border: '1.5px solid #202020',
-                  backgroundColor: '#ffffff',
-                  color: '#202020',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  color: '#E0D4D8',
                   fontWeight: 700,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
+                  cursor: 'pointer',
                 }}
               >
                 <ArrowLeft size={16} /> Back
@@ -1137,17 +1177,19 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <button
                 onClick={handleFinish}
                 disabled={loading}
-                className="btn-bumble-action"
                 style={{
                   padding: '12px 32px',
                   borderRadius: '16px',
-                  backgroundColor: '#202020',
+                  backgroundColor: '#FF1F6A',
                   color: '#ffffff',
                   fontWeight: 800,
                   fontSize: '14px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
+                  border: 'none',
+                  cursor: loading ? 'wait' : 'pointer',
+                  boxShadow: '0 0 20px rgba(255, 31, 106, 0.5)',
                 }}
               >
                 {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}

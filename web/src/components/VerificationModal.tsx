@@ -128,8 +128,9 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(32, 32, 32, 0.65)',
-        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(13, 8, 10, 0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -144,14 +145,14 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
       <div
         className="animate-modal-spring"
         style={{
-          backgroundColor: '#ffffff',
-          color: '#202020',
+          backgroundColor: '#170E12',
+          color: '#FFFFFF',
           borderRadius: '24px',
-          border: '1.5px solid #202020',
-          maxWidth: '520px',
+          border: '1px solid rgba(255, 31, 106, 0.3)',
+          maxWidth: '480px',
           width: '100%',
-          padding: '28px',
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.25)',
+          padding: '28px 24px',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
           position: 'relative',
           margin: 'auto',
         }}
@@ -162,49 +163,51 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
           aria-label="Close"
           style={{
             position: 'absolute',
-            top: '20px',
-            right: '20px',
-            width: '36px',
-            height: '36px',
+            top: '18px',
+            right: '18px',
+            width: '32px',
+            height: '32px',
             borderRadius: '50%',
-            backgroundColor: '#f3f3f3',
-            border: '1px solid #e0e0e0',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#202020',
+            color: '#FFFFFF',
             cursor: 'pointer',
           }}
         >
-          <X size={18} />
+          <X size={16} />
         </button>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 14px',
+              padding: '4px 12px',
               borderRadius: '1000px',
-              backgroundColor: '#ffdb5b',
-              color: '#202020',
-              fontSize: '12px',
+              backgroundColor: '#5E081E',
+              border: '1px solid #FF1F6A',
+              color: '#FF1F6A',
+              fontSize: '11px',
               fontWeight: 800,
               letterSpacing: '0.02em',
               marginBottom: '10px',
+              boxShadow: '0 0 10px rgba(255, 31, 106, 0.3)',
             }}
           >
-            <ShieldCheck size={15} />
-            Campus Verification Engine (100% Free)
+            <ShieldCheck size={14} color="#FF1F6A" />
+            Campus Verification (100% Free)
           </div>
 
-          <h2 style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.02em', margin: 0, fontFamily: "'Playfair Display', serif", fontStyle: 'italic', color: '#FFFFFF' }}>
             Verify Your Campus Status
           </h2>
-          <p style={{ fontSize: '13px', color: '#666', marginTop: '6px', lineHeight: 1.4 }}>
-            Proves you are a real student at <strong>{currentCampus}</strong>. Unlocks verified badges, boosts match priority, and ensures zero creeps on campus.
+          <p style={{ fontSize: '13px', color: '#E0D4D8', marginTop: '6px', lineHeight: 1.4, margin: '6px auto 0', maxWidth: '380px' }}>
+            Proves you are an active student at <strong>{currentCampus}</strong>. Unlocks verified badge, prioritizes match discovery, and ensures pure student safety.
           </p>
         </div>
 
@@ -213,11 +216,12 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            backgroundColor: '#f3f3f3',
-            borderRadius: '16px',
-            padding: '4px',
-            marginBottom: '20px',
-            gap: '4px',
+            backgroundColor: '#0D080A',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '14px',
+            padding: '3px',
+            marginBottom: '18px',
+            gap: '3px',
           }}
         >
           <button
@@ -225,14 +229,15 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             onClick={() => { setTab('remita'); setError(null); }}
             style={{
               padding: '8px 4px',
-              borderRadius: '12px',
+              borderRadius: '11px',
               fontSize: '11px',
               fontWeight: 700,
-              backgroundColor: tab === 'remita' ? '#202020' : 'transparent',
-              color: tab === 'remita' ? '#ffffff' : '#444444',
+              backgroundColor: tab === 'remita' ? '#5E081E' : 'transparent',
+              color: tab === 'remita' ? '#ffffff' : '#8A7B82',
+              border: tab === 'remita' ? '1px solid #FF1F6A' : 'none',
               cursor: 'pointer',
-              border: 'none',
               textAlign: 'center',
+              transition: 'all 0.15s ease',
             }}
           >
             Tuition RRR
@@ -242,14 +247,15 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             onClick={() => { setTab('jamb'); setError(null); }}
             style={{
               padding: '8px 4px',
-              borderRadius: '12px',
+              borderRadius: '11px',
               fontSize: '11px',
               fontWeight: 700,
-              backgroundColor: tab === 'jamb' ? '#202020' : 'transparent',
-              color: tab === 'jamb' ? '#ffffff' : '#444444',
+              backgroundColor: tab === 'jamb' ? '#5E081E' : 'transparent',
+              color: tab === 'jamb' ? '#ffffff' : '#8A7B82',
+              border: tab === 'jamb' ? '1px solid #FF1F6A' : 'none',
               cursor: 'pointer',
-              border: 'none',
               textAlign: 'center',
+              transition: 'all 0.15s ease',
             }}
           >
             JAMB No.
@@ -259,14 +265,15 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             onClick={() => { setTab('nin'); setError(null); }}
             style={{
               padding: '8px 4px',
-              borderRadius: '12px',
+              borderRadius: '11px',
               fontSize: '11px',
               fontWeight: 700,
-              backgroundColor: tab === 'nin' ? '#202020' : 'transparent',
-              color: tab === 'nin' ? '#ffffff' : '#444444',
+              backgroundColor: tab === 'nin' ? '#5E081E' : 'transparent',
+              color: tab === 'nin' ? '#ffffff' : '#8A7B82',
+              border: tab === 'nin' ? '1px solid #FF1F6A' : 'none',
               cursor: 'pointer',
-              border: 'none',
               textAlign: 'center',
+              transition: 'all 0.15s ease',
             }}
           >
             NIN Slip
@@ -276,14 +283,15 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             onClick={() => { setTab('vouch'); setError(null); }}
             style={{
               padding: '8px 4px',
-              borderRadius: '12px',
+              borderRadius: '11px',
               fontSize: '11px',
               fontWeight: 700,
-              backgroundColor: tab === 'vouch' ? '#202020' : 'transparent',
-              color: tab === 'vouch' ? '#ffffff' : '#444444',
+              backgroundColor: tab === 'vouch' ? '#5E081E' : 'transparent',
+              color: tab === 'vouch' ? '#ffffff' : '#8A7B82',
+              border: tab === 'vouch' ? '1px solid #FF1F6A' : 'none',
               cursor: 'pointer',
-              border: 'none',
               textAlign: 'center',
+              transition: 'all 0.15s ease',
             }}
           >
             Peer Vouch
@@ -294,12 +302,12 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
         {error && (
           <div
             style={{
-              padding: '12px 14px',
-              backgroundColor: '#fff1f2',
-              border: '1.5px solid #f43f5e',
-              borderRadius: '14px',
-              color: '#9f1239',
-              fontSize: '13px',
+              padding: '10px 14px',
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              border: '1px solid rgba(239, 68, 68, 0.4)',
+              borderRadius: '12px',
+              color: '#f87171',
+              fontSize: '12px',
               fontWeight: 600,
               marginBottom: '16px',
               display: 'flex',
@@ -307,7 +315,7 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
               gap: '8px',
             }}
           >
-            <AlertCircle size={16} />
+            <AlertCircle size={15} />
             <span>{error}</span>
           </div>
         )}
@@ -317,27 +325,27 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
           <form onSubmit={handleVerifyRemita}>
             <div
               style={{
-                padding: '14px',
-                backgroundColor: '#fffbe8',
-                border: '1px solid #ffdb5b',
-                borderRadius: '16px',
+                padding: '12px 14px',
+                backgroundColor: '#1E1116',
+                border: '1px solid rgba(255, 31, 106, 0.25)',
+                borderRadius: '14px',
                 marginBottom: '16px',
-                fontSize: '13px',
-                color: '#444',
+                fontSize: '12px',
+                color: '#E0D4D8',
                 lineHeight: 1.45,
               }}
             >
-              💡 <strong>Instant in 2 seconds:</strong> Look at your school fee receipt or invoice. Find the 12-digit <strong>Remita Retrieval Reference (RRR)</strong> code. Enter it below to auto-verify your enrollment at {currentCampus}.
+              💡 <strong style={{ color: '#FF1F6A' }}>Instant in 2 seconds:</strong> Find the 12-digit <strong>Remita Retrieval Reference (RRR)</strong> code on your school fee receipt. Enter it below to auto-verify enrollment at {currentCampus}.
             </div>
 
             {remitaSuccess ? (
               <div
                 style={{
                   padding: '16px',
-                  backgroundColor: '#ecfdf5',
-                  border: '1.5px solid #10b981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                  border: '1.5px solid rgba(16, 185, 129, 0.4)',
                   borderRadius: '16px',
-                  color: '#065f46',
+                  color: '#34d399',
                   fontSize: '14px',
                   fontWeight: 700,
                   textAlign: 'center',
@@ -347,13 +355,13 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                   gap: '8px',
                 }}
               >
-                <CheckCircle2 size={32} color="#10b981" />
+                <CheckCircle2 size={32} color="#34d399" />
                 {remitaSuccess}
               </div>
             ) : (
               <>
                 <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: '#E0D4D8' }}>
                     12-Digit Remita RRR Code
                   </label>
                   <input
@@ -366,12 +374,14 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      fontSize: '16px',
+                      fontSize: '15px',
                       fontWeight: 700,
                       letterSpacing: '2px',
-                      borderRadius: '14px',
-                      border: '1.5px solid #202020',
-                      backgroundColor: '#ffffff',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      backgroundColor: '#0D080A',
+                      color: '#FFFFFF',
+                      outline: 'none',
                     }}
                   />
                 </div>
@@ -381,18 +391,19 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                   disabled={remitaLoading || rrr.replace(/-/g, '').length < 12}
                   style={{
                     width: '100%',
-                    padding: '14px',
-                    borderRadius: '16px',
-                    backgroundColor: '#202020',
+                    padding: '13px',
+                    borderRadius: '100px',
+                    backgroundColor: '#FF1F6A',
                     color: '#ffffff',
-                    fontSize: '15px',
-                    fontWeight: 700,
+                    fontSize: '14px',
+                    fontWeight: 800,
                     cursor: remitaLoading ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
                     border: 'none',
+                    boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                   }}
                 >
                   {remitaLoading ? <Loader2 size={18} className="animate-spin" /> : <GraduationCap size={18} />}
@@ -408,27 +419,27 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
           <form onSubmit={handleVerifyJAMB}>
             <div
               style={{
-                padding: '14px',
-                backgroundColor: '#f8fafc',
-                border: '1px solid #cbd5e1',
-                borderRadius: '16px',
+                padding: '12px 14px',
+                backgroundColor: '#1E1116',
+                border: '1px solid rgba(255, 31, 106, 0.25)',
+                borderRadius: '14px',
                 marginBottom: '16px',
-                fontSize: '13px',
-                color: '#444',
+                fontSize: '12px',
+                color: '#E0D4D8',
                 lineHeight: 1.45,
               }}
             >
-              🏛️ <strong>JAMB Matriculation Check:</strong> Enter your JAMB Registration Number from your admission slip or result.
+              🏛️ <strong style={{ color: '#FF1F6A' }}>JAMB Matriculation Check:</strong> Enter your JAMB Registration Number from your admission slip or result.
             </div>
 
             {jambSuccess ? (
               <div
                 style={{
                   padding: '16px',
-                  backgroundColor: '#ecfdf5',
-                  border: '1.5px solid #10b981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                  border: '1.5px solid rgba(16, 185, 129, 0.4)',
                   borderRadius: '16px',
-                  color: '#065f46',
+                  color: '#34d399',
                   fontSize: '14px',
                   fontWeight: 700,
                   textAlign: 'center',
@@ -438,13 +449,13 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                   gap: '8px',
                 }}
               >
-                <CheckCircle2 size={32} color="#10b981" />
+                <CheckCircle2 size={32} color="#34d399" />
                 {jambSuccess}
               </div>
             ) : (
               <>
                 <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: '#E0D4D8' }}>
                     JAMB Registration Number
                   </label>
                   <input
@@ -456,12 +467,14 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                     style={{
                       width: '100%',
                       padding: '12px 16px',
-                      fontSize: '16px',
+                      fontSize: '15px',
                       fontWeight: 700,
                       letterSpacing: '1px',
-                      borderRadius: '14px',
-                      border: '1.5px solid #202020',
-                      backgroundColor: '#ffffff',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      backgroundColor: '#0D080A',
+                      color: '#FFFFFF',
+                      outline: 'none',
                     }}
                   />
                 </div>
@@ -471,18 +484,19 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                   disabled={jambLoading || jambRegNo.length < 9}
                   style={{
                     width: '100%',
-                    padding: '14px',
-                    borderRadius: '16px',
-                    backgroundColor: '#202020',
+                    padding: '13px',
+                    borderRadius: '100px',
+                    backgroundColor: '#FF1F6A',
                     color: '#ffffff',
-                    fontSize: '15px',
-                    fontWeight: 700,
+                    fontSize: '14px',
+                    fontWeight: 800,
                     cursor: jambLoading ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
                     border: 'none',
+                    boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                   }}
                 >
                   {jambLoading ? <Loader2 size={18} className="animate-spin" /> : <FileText size={18} />}
@@ -498,27 +512,27 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
           <form onSubmit={handleVerifyNIN}>
             <div
               style={{
-                padding: '14px',
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: '16px',
+                padding: '12px 14px',
+                backgroundColor: '#1E1116',
+                border: '1px solid rgba(255, 31, 106, 0.25)',
+                borderRadius: '14px',
                 marginBottom: '16px',
-                fontSize: '13px',
-                color: '#1e40af',
+                fontSize: '12px',
+                color: '#E0D4D8',
                 lineHeight: 1.45,
               }}
             >
-              🛡️ <strong>100% Client-Side AI:</strong> Takes 45 seconds on your phone. Compares your face to your NIN document with zero third-party API fees.
+              🛡️ <strong style={{ color: '#FF1F6A' }}>100% Client-Side AI:</strong> Takes 45 seconds on your phone. Compares your selfie to your NIN slip with zero third-party fees.
             </div>
 
             {ninSuccess ? (
               <div
                 style={{
                   padding: '16px',
-                  backgroundColor: '#ecfdf5',
-                  border: '1.5px solid #10b981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                  border: '1.5px solid rgba(16, 185, 129, 0.4)',
                   borderRadius: '16px',
-                  color: '#065f46',
+                  color: '#34d399',
                   fontSize: '14px',
                   fontWeight: 700,
                   textAlign: 'center',
@@ -528,13 +542,13 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                   gap: '8px',
                 }}
               >
-                <CheckCircle2 size={32} color="#10b981" />
+                <CheckCircle2 size={32} color="#34d399" />
                 {ninSuccess}
               </div>
             ) : (
               <>
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: '#E0D4D8' }}>
                     11-Digit NIN Number
                   </label>
                   <input
@@ -550,9 +564,11 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                       fontSize: '15px',
                       fontWeight: 700,
                       letterSpacing: '2px',
-                      borderRadius: '14px',
-                      border: '1.5px solid #202020',
-                      backgroundColor: '#ffffff',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
+                      backgroundColor: '#0D080A',
+                      color: '#FFFFFF',
+                      outline: 'none',
                     }}
                   />
                 </div>
@@ -564,9 +580,9 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                     style={{
                       padding: '12px',
                       borderRadius: '14px',
-                      border: `1.5px dashed ${hasSlipPhoto ? '#10b981' : '#202020'}`,
-                      backgroundColor: hasSlipPhoto ? '#ecfdf5' : '#f9f9f9',
-                      color: hasSlipPhoto ? '#065f46' : '#202020',
+                      border: `1.5px dashed ${hasSlipPhoto ? '#FF1F6A' : 'rgba(255, 255, 255, 0.2)'}`,
+                      backgroundColor: hasSlipPhoto ? '#5E081E' : 'rgba(255, 255, 255, 0.04)',
+                      color: hasSlipPhoto ? '#FFFFFF' : '#E0D4D8',
                       fontSize: '12px',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -576,7 +592,7 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                       gap: '4px',
                     }}
                   >
-                    <FileText size={18} />
+                    <FileText size={18} color={hasSlipPhoto ? '#FF1F6A' : '#E0D4D8'} />
                     {hasSlipPhoto ? '✓ Slip Attached' : 'Attach NIN Slip'}
                   </button>
 
@@ -586,9 +602,9 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                     style={{
                       padding: '12px',
                       borderRadius: '14px',
-                      border: `1.5px dashed ${selfieCaptured ? '#10b981' : '#202020'}`,
-                      backgroundColor: selfieCaptured ? '#ecfdf5' : '#f9f9f9',
-                      color: selfieCaptured ? '#065f46' : '#202020',
+                      border: `1.5px dashed ${selfieCaptured ? '#FF1F6A' : 'rgba(255, 255, 255, 0.2)'}`,
+                      backgroundColor: selfieCaptured ? '#5E081E' : 'rgba(255, 255, 255, 0.04)',
+                      color: selfieCaptured ? '#FFFFFF' : '#E0D4D8',
                       fontSize: '12px',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -598,7 +614,7 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                       gap: '4px',
                     }}
                   >
-                    <Camera size={18} />
+                    <Camera size={18} color={selfieCaptured ? '#FF1F6A' : '#E0D4D8'} />
                     {selfieCaptured ? '✓ Selfie Captured' : 'Take Quick Selfie'}
                   </button>
                 </div>
@@ -608,18 +624,19 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                   disabled={ninLoading || ninNumber.length !== 11}
                   style={{
                     width: '100%',
-                    padding: '14px',
-                    borderRadius: '16px',
-                    backgroundColor: '#202020',
+                    padding: '13px',
+                    borderRadius: '100px',
+                    backgroundColor: '#FF1F6A',
                     color: '#ffffff',
-                    fontSize: '15px',
-                    fontWeight: 700,
+                    fontSize: '14px',
+                    fontWeight: 800,
                     cursor: ninLoading ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '8px',
                     border: 'none',
+                    boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                   }}
                 >
                   {ninLoading ? <Loader2 size={18} className="animate-spin" /> : <ShieldCheck size={18} />}
@@ -635,27 +652,27 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
           <form onSubmit={handlePeerVouch}>
             <div
               style={{
-                padding: '14px',
-                backgroundColor: '#faf5ff',
-                border: '1px solid #e9d5ff',
-                borderRadius: '16px',
+                padding: '12px 14px',
+                backgroundColor: '#1E1116',
+                border: '1px solid rgba(255, 31, 106, 0.25)',
+                borderRadius: '14px',
                 marginBottom: '16px',
-                fontSize: '13px',
-                color: '#6b21a8',
+                fontSize: '12px',
+                color: '#E0D4D8',
                 lineHeight: 1.45,
               }}
             >
-              🤝 <strong>Web of Trust:</strong> If you are verified, you can vouch for a coursemate from your department. When a student receives <strong>2 verified vouches</strong>, they are automatically verified!
+              🤝 <strong style={{ color: '#FF1F6A' }}>Web of Trust:</strong> When a student receives <strong>2 verified vouches</strong> from coursemates, they are automatically verified!
             </div>
 
             {vouchMessage && (
               <div
                 style={{
                   padding: '12px 14px',
-                  backgroundColor: '#ecfdf5',
-                  border: '1.5px solid #10b981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                  border: '1.5px solid rgba(16, 185, 129, 0.4)',
                   borderRadius: '14px',
-                  color: '#065f46',
+                  color: '#34d399',
                   fontSize: '13px',
                   fontWeight: 600,
                   marginBottom: '14px',
@@ -667,11 +684,11 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             )}
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: '#E0D4D8' }}>
                 Coursemate's Handle (@username)
               </label>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '16px', top: '12px', fontWeight: 800, color: '#888' }}>@</span>
+                <span style={{ position: 'absolute', left: '16px', top: '12px', fontWeight: 800, color: '#FF1F6A' }}>@</span>
                 <input
                   type="text"
                   required
@@ -682,9 +699,11 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
                     width: '100%',
                     padding: '12px 16px 12px 34px',
                     fontSize: '15px',
-                    borderRadius: '14px',
-                    border: '1.5px solid #202020',
-                    backgroundColor: '#ffffff',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    backgroundColor: '#0D080A',
+                    color: '#FFFFFF',
+                    outline: 'none',
                   }}
                 />
               </div>
@@ -695,18 +714,19 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
               disabled={vouchLoading || !targetUsername.trim()}
               style={{
                 width: '100%',
-                padding: '14px',
-                borderRadius: '16px',
-                backgroundColor: '#202020',
+                padding: '13px',
+                borderRadius: '100px',
+                backgroundColor: '#FF1F6A',
                 color: '#ffffff',
-                fontSize: '15px',
-                fontWeight: 700,
+                fontSize: '14px',
+                fontWeight: 800,
                 cursor: vouchLoading ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
                 border: 'none',
+                boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
               }}
             >
               {vouchLoading ? <Loader2 size={18} className="animate-spin" /> : <Users size={18} />}
@@ -714,8 +734,8 @@ export const VerificationModal: React.FC<VerificationModalProps> = ({
             </button>
 
             {userHandle && (
-              <div style={{ marginTop: '14px', textAlign: 'center', fontSize: '12px', color: '#666' }}>
-                Your handle is <strong>@{userHandle}</strong>. Ask 2 coursemates to vouch for you!
+              <div style={{ marginTop: '14px', textAlign: 'center', fontSize: '12px', color: '#8A7B82' }}>
+                Your handle is <strong style={{ color: '#FF1F6A' }}>@{userHandle}</strong>. Ask 2 coursemates to vouch for you!
               </div>
             )}
           </form>

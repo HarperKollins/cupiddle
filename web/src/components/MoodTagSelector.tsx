@@ -32,11 +32,11 @@ export const MoodTagSelector: React.FC<MoodTagSelectorProps> = ({
     <div style={{ marginBottom: compact ? '8px' : '16px' }}>
       {!compact && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', letterSpacing: '0.01em' }}>
+          <span style={{ fontSize: '13px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.01em' }}>
             Campus Vibe Check
           </span>
-          <span style={{ fontSize: '11px', color: '#666', fontWeight: 600 }}>
-            Updates your active mood
+          <span style={{ fontSize: '11px', color: '#9E8C93', fontWeight: 600 }}>
+            Broadcasts your mood
           </span>
         </div>
       )}
@@ -67,13 +67,19 @@ export const MoodTagSelector: React.FC<MoodTagSelectorProps> = ({
                 borderRadius: '1000px',
                 fontSize: compact ? '12px' : '13px',
                 fontWeight: 700,
-                border: isSelected ? '1.5px solid #202020' : '1px solid #e0e0e0',
-                backgroundColor: isSelected ? '#ffdb5b' : '#ffffff',
-                color: '#202020',
+                border: isSelected
+                  ? '1.5px solid #FF1F6A'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: isSelected
+                  ? '#5E081E'
+                  : 'rgba(255, 255, 255, 0.05)',
+                color: isSelected ? '#FFFFFF' : '#E0D4D8',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                boxShadow: isSelected ? '0 2px 8px rgba(32, 32, 32, 0.15)' : 'none',
-                transition: 'all 0.15s ease',
+                boxShadow: isSelected
+                  ? '0 0 14px rgba(255, 31, 106, 0.4)'
+                  : 'none',
+                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
                 flexShrink: 0,
               }}
             >

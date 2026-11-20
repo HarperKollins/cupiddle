@@ -53,22 +53,11 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
   const getIcon = () => {
     switch (toast.type) {
       case 'spark':
-        return <CupiddleIcon size={18} color="#202020" />;
+        return <CupiddleIcon size={18} color="#FF1F6A" />;
       case 'match':
-        return <Heart size={18} color="#202020" fill="#202020" />;
+        return <Heart size={18} color="#FF1F6A" fill="#FF1F6A" />;
       default:
-        return <MessageCircle size={18} color="#202020" />;
-    }
-  };
-
-  const getBadgeColor = () => {
-    switch (toast.type) {
-      case 'match':
-        return '#ffdb5b'; // Sunlit Honey
-      case 'spark':
-        return '#fff386'; // Pollen
-      default:
-        return '#ffffff';
+        return <MessageCircle size={18} color="#FF1F6A" />;
     }
   };
 
@@ -81,11 +70,13 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
       className="animate-slide-up"
       style={{
         pointerEvents: 'auto',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'rgba(23, 14, 18, 0.96)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         borderRadius: '20px',
-        border: '2px solid #202020',
-        boxShadow: '0 12px 32px rgba(32, 32, 32, 0.22)',
-        padding: '14px 16px',
+        border: '1px solid rgba(255, 31, 106, 0.3)',
+        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.8)',
+        padding: '12px 16px',
         display: 'flex',
         alignItems: 'center',
         gap: '12px',
@@ -96,16 +87,17 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
       {/* Icon or Avatar */}
       <div
         style={{
-          width: '44px',
-          height: '44px',
+          width: '42px',
+          height: '42px',
           borderRadius: '50%',
-          backgroundColor: getBadgeColor(),
-          border: '1.5px solid #202020',
+          backgroundColor: '#5E081E',
+          border: '1.5px solid #FF1F6A',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
           overflow: 'hidden',
+          boxShadow: '0 0 10px rgba(255, 31, 106, 0.35)',
         }}
       >
         {toast.avatar ? (
@@ -120,15 +112,15 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span
             style={{
-              fontSize: '11px',
+              fontSize: '10px',
               fontWeight: 800,
               textTransform: 'uppercase',
               letterSpacing: '0.04em',
-              color: '#202020',
-              backgroundColor: getBadgeColor(),
+              color: '#FF1F6A',
+              backgroundColor: '#5E081E',
               padding: '2px 8px',
               borderRadius: '1000px',
-              border: '1px solid #202020',
+              border: '1px solid #FF1F6A',
             }}
           >
             {toast.type === 'match' ? "It's a Match!" : toast.type === 'spark' ? 'New Spark' : 'New Message'}
@@ -138,7 +130,7 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
           style={{
             fontSize: '14px',
             fontWeight: 800,
-            color: '#202020',
+            color: '#FFFFFF',
             margin: '3px 0 0',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
@@ -150,7 +142,7 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
         <p
           style={{
             fontSize: '12px',
-            color: '#575656',
+            color: '#E0D4D8',
             margin: 0,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
@@ -172,7 +164,7 @@ const ToastItem: React.FC<{ toast: ToastData; onDismiss: () => void }> = ({ toas
         style={{
           background: 'none',
           border: 'none',
-          color: '#575656',
+          color: '#8A7B82',
           padding: '6px',
           cursor: 'pointer',
           borderRadius: '50%',

@@ -1,107 +1,63 @@
 :root {
-  /* Bumble — Sunlit Honey Editorial Tokens */
-  --color-bumble-honey: #ffdb5b;
-  --color-pollen: #fff386;
-  --color-bumble-ink: #202020;
-  --color-paper-white: #ffffff;
-  --color-mist: #f3f3f3;
-  --color-charcoal: #3b3b3b;
-  --color-graphite: #575656;
-  --color-onyx: #343333;
+  /* Midnight Burgundy Desire System */
+  --color-canvas: #0D080A;
+  --color-canvas-subtle: #140C0F;
+  --color-surface-card: #170E12;
+  --color-surface-elevated: #221219;
+  --color-surface-border: rgba(255, 31, 106, 0.22);
+  --color-surface-border-subtle: rgba(255, 255, 255, 0.08);
 
-  /* Typography */
-  --font-bumblesans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Primary Brand Colors */
+  --color-burgundy: #5E081E;
+  --color-burgundy-rich: #7B112C;
+  --color-burgundy-deep: #3A0512;
+  --color-rose: #FF1F6A;
+  --color-rose-glow: rgba(255, 31, 106, 0.35);
+  --color-crimson: #C80A32;
 
-  /* Type Scale */
-  --text-caption: 15px;
-  --leading-caption: 1.5;
-  --tracking-caption: 0.11px;
-  --text-body: 17px;
-  --leading-body: 1.5;
-  --tracking-body: 0.2px;
-  --text-subheading: 20px;
-  --leading-subheading: 1.33;
-  --tracking-subheading: 0.32px;
-  --text-heading-sm: 24px;
-  --leading-heading-sm: 1.25;
-  --tracking-heading-sm: 0.43px;
-  --text-heading: 32px;
-  --leading-heading: 1.2;
-  --tracking-heading: 0.64px;
-  --text-heading-lg: 40px;
-  --leading-heading-lg: 1.18;
-  --tracking-heading-lg: 0.8px;
-  --text-display: 68px;
-  --leading-display: 1;
-  --tracking-display: 1.36px;
+  /* Typography Colors */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E0D4D8;
+  --color-text-muted: #9E8C93;
+  --color-text-dim: #6B5B61;
 
-  /* Typography — Weights */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  /* Backwards compatibility aliases mapped to new aesthetic */
+  --color-bumble-honey: #FF1F6A;
+  --color-pollen: #3A0512;
+  --color-bumble-ink: #FFFFFF;
+  --color-paper-white: #170E12;
+  --color-mist: #221219;
+  --color-charcoal: #E0D4D8;
+  --color-graphite: #9E8C93;
+  --color-onyx: #0D080A;
 
-  /* Spacing */
-  --spacing-unit: 4px;
-  --spacing-8: 8px;
-  --spacing-12: 12px;
-  --spacing-16: 16px;
-  --spacing-20: 20px;
-  --spacing-24: 24px;
-  --spacing-32: 32px;
-  --spacing-36: 36px;
-  --spacing-40: 40px;
-  --spacing-48: 48px;
+  --surface-page-canvas: #0D080A;
+  --surface-soft-card: #170E12;
+  --surface-pollen-frame: #221219;
+  --surface-honey-band: #5E081E;
+  --color-surface-canvas: #0D080A;
+  --color-surface-nav: rgba(13, 8, 10, 0.92);
+  --color-surface-input: #221219;
 
-  /* Layout */
-  --page-max-width: 1200px;
-  --section-gap: 64px;
-  --card-padding: 32px;
-  --element-gap: 24px;
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-bumblesans: var(--font-sans);
 
-  /* Border Radius */
-  --radius-lg: 9px;
-  --radius-2xl: 16px;
-  --radius-3xl: 24px;
-  --radius-full: 1000px;
+  /* Mobile App Dimensions */
+  --mobile-app-width: 480px;
+  --bottom-bar-height: 68px;
 
-  /* Named Radii */
-  --radius-nav: 16px;
+  /* Border Radii */
   --radius-cards: 24px;
-  --radius-badges: 1000px;
   --radius-buttons: 16px;
-  --radius-small-elements: 9px;
+  --radius-badges: 1000px;
+  --radius-small-elements: 10px;
 
   /* Shadows */
-  --shadow-sm: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
-
-  /* Surfaces */
-  --surface-page-canvas: #ffffff;
-  --surface-soft-card: #f3f3f3;
-  --surface-pollen-frame: #fff386;
-  --surface-honey-band: #ffdb5b;
-
-  /* Theme Compatibility Tokens (Light Editorial) */
-  --color-surface-card: #ffffff;
-  --color-surface-border: #202020;
-  --color-surface-input: #f3f3f3;
-  --color-surface-canvas: #ffffff;
-  --color-surface-nav: #ffffff;
-  --color-text-primary: #202020;
-  --color-text-secondary: #575656;
-  --color-text-muted: #757575;
-  --color-violet-400: #202020;
-  --color-violet-500: #202020;
-  --color-violet-600: #202020;
-  --color-violet-700: #202020;
-  --color-violet-800: #ffdb5b;
-  --color-coral-300: #202020;
-  --color-coral-400: #202020;
-  --color-coral-500: #ffdb5b;
-  --color-coral-600: #202020;
-  --shadow-coral-glow: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
-  --shadow-glow: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
-  --shadow-subtle: rgba(32, 32, 32, 0.12) 0px 1px 8px 0px;
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 8px 32px rgba(255, 31, 106, 0.25);
+  --shadow-burgundy-glow: 0 12px 36px rgba(94, 8, 30, 0.45);
 }
 
 * {
@@ -110,246 +66,112 @@
   padding: 0;
 }
 
-body {
-  font-family: var(--font-bumblesans);
-  background-color: var(--surface-page-canvas);
-  color: var(--color-bumble-ink);
-  line-height: var(--leading-body);
+html, body {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  letter-spacing: 0.01em;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  touch-action: manipulation;
+}
+
+/* Mobile Frame Wrapper for Desktop Displays (Steve Jobs Taste) */
+.mobile-app-viewport {
+  max-width: var(--mobile-app-width);
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background-color: var(--color-canvas);
+  box-shadow: 0 0 80px rgba(94, 8, 30, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 481px) {
+  body {
+    background-color: #060304;
+  }
+  .mobile-app-viewport {
+    border-left: 1px solid rgba(255, 31, 106, 0.12);
+    border-right: 1px solid rgba(255, 31, 106, 0.12);
+  }
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-bumblesans);
-  color: var(--color-bumble-ink);
-  letter-spacing: 0.015em;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  letter-spacing: -0.015em;
+}
+
+.font-editorial {
+  font-family: var(--font-serif) !important;
 }
 
 button {
-  font-family: var(--font-bumblesans);
+  font-family: var(--font-sans);
   cursor: pointer;
   border: none;
   background: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
 }
 
 input, textarea, select {
-  font-family: var(--font-bumblesans);
-  background-color: var(--color-paper-white);
-  border: 1.5px solid var(--color-bumble-ink);
-  color: var(--color-bumble-ink);
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-input);
+  border: 1.5px solid var(--color-surface-border);
+  color: var(--color-text-primary);
   border-radius: var(--radius-buttons);
   padding: 12px 16px;
   outline: none;
   font-size: 15px;
-  letter-spacing: 0.01em;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: var(--color-bumble-ink);
-  box-shadow: 0 0 0 3px rgba(255, 219, 91, 0.5);
+  border-color: var(--color-rose);
+  box-shadow: 0 0 0 3px rgba(255, 31, 106, 0.28);
 }
 
 /* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--surface-soft-card);
+  background: var(--color-canvas);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-graphite);
-  border-radius: var(--radius-full);
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-badges);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-bumble-ink);
-}
-
-/* Responsive Navigation */
-@media (max-width: 768px) {
-  .desktop-nav {
-    display: none !important;
-  }
-  .mobile-bottom-bar {
-    display: flex !important;
-  }
-  main {
-    padding-bottom: 84px !important;
-  }
-}
-
-@media (min-width: 769px) {
-  .mobile-bottom-bar {
-    display: none !important;
-  }
+  background: var(--color-rose);
 }
 
 /* ========================================================
-   BUMBLE SUNLIT HONEY EDITORIAL ANIMATION SYSTEM
+   BURGUNDY DESIRE ANIMATIONS & MICRO-INTERACTIONS
    ======================================================== */
 
-/* 1. Tilted Phone Cards Floating Physics */
-@keyframes floatLeftTilt {
+@keyframes pulseGlow {
   0%, 100% {
-    transform: rotate(-7deg) translateY(20px);
+    box-shadow: 0 0 15px rgba(255, 31, 106, 0.2);
   }
   50% {
-    transform: rotate(-5deg) translateY(6px);
+    box-shadow: 0 0 28px rgba(255, 31, 106, 0.45);
   }
 }
 
-@keyframes floatRightTilt {
-  0%, 100% {
-    transform: rotate(7deg) translateY(20px);
-  }
-  50% {
-    transform: rotate(5deg) translateY(8px);
-  }
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 
-@keyframes floatCenterHero {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-
-.animate-float-left {
-  animation: floatLeftTilt 6s ease-in-out infinite;
-}
-
-.animate-float-right {
-  animation: floatRightTilt 6.5s ease-in-out infinite 0.5s;
-}
-
-.animate-float-center {
-  animation: floatCenterHero 5.5s ease-in-out infinite 0.2s;
-}
-
-/* Pause floating animation and straighten on hover with tactile spring physics */
-.interactive-card-hover {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), z-index 0.2s;
-  cursor: pointer;
-  will-change: transform, box-shadow;
-}
-
-.interactive-card-hover:hover {
-  animation-play-state: paused !important;
-  transform: rotate(0deg) translateY(-14px) scale(1.03) !important;
-  box-shadow: 0 24px 48px rgba(32, 32, 32, 0.22) !important;
-  z-index: 30 !important;
-}
-
-/* 2. Infinite Continuous Marquee Ticker */
-@keyframes marqueeScroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.marquee-container {
-  overflow: hidden;
-  white-space: nowrap;
-  display: flex;
-  width: 100%;
-  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-}
-
-.marquee-track {
-  display: inline-flex;
-  gap: 12px;
-  animation: marqueeScroll 32s linear infinite;
-  will-change: transform;
-}
-
-.marquee-track:hover {
-  animation-play-state: paused;
-}
-
-/* 3. Subtle Ambient Pulse & Shimmer */
-@keyframes gentlePulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 1px 8px rgba(32, 32, 32, 0.12);
-  }
-  50% {
-    transform: scale(1.04);
-    box-shadow: 0 6px 20px rgba(32, 32, 32, 0.18);
-  }
-}
-
-.animate-pulse-gentle {
-  animation: gentlePulse 3s ease-in-out infinite;
-}
-
-/* 4. Button & Pill Tactile Physics */
-.btn-bumble-action {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
-}
-
-.btn-bumble-action:hover {
-  transform: translateY(-2px) scale(1.015);
-  box-shadow: 0 8px 24px rgba(32, 32, 32, 0.25);
-}
-
-.btn-bumble-action:active {
-  transform: translateY(1px) scale(0.98);
-}
-
-.pill-interactive {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, color 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-
-.pill-interactive:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 16px rgba(32, 32, 32, 0.16);
-}
-
-.pill-interactive:active {
-  transform: translateY(0px) scale(0.97);
-}
-
-/* 5. Editorial Feature Card Elevate on Hover */
-.editorial-card-lift {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.editorial-card-lift:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 36px rgba(32, 32, 32, 0.14);
-}
-
-/* 6. Rotating Word Transition */
-@keyframes slideUpFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-up {
-  animation: slideUpFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* 7. Modal Scale-In Spring */
 @keyframes springModalIn {
   from {
     opacity: 0;
-    transform: scale(0.94) translateY(12px);
+    transform: scale(0.95) translateY(16px);
   }
   to {
     opacity: 1;
@@ -358,14 +180,36 @@ input:focus, textarea:focus, select:focus {
 }
 
 .animate-modal-spring {
-  animation: springModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: springModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* 8. Student Privacy & Anti-Screenshot Shield */
+/* Tactile Mobile Touch Actions */
+.btn-bumble-action, .btn-desire-action {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s, background-color 0.18s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: var(--radius-buttons);
+}
+
+.btn-bumble-action:active, .btn-desire-action:active {
+  transform: scale(0.97);
+}
+
+.pill-interactive {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.18s, border-color 0.18s;
+  cursor: pointer;
+}
+
+.pill-interactive:active {
+  transform: scale(0.96);
+}
+
+/* Anti-Screenshot Privacy Shield */
 .secure-student-app {
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
-  -ms-user-select: none !important;
   user-select: none !important;
   -webkit-touch-callout: none !important;
 }
@@ -373,7 +217,7 @@ input:focus, textarea:focus, select:focus {
 .privacy-curtain {
   position: fixed;
   inset: 0;
-  background-color: rgba(32, 32, 32, 0.95);
+  background-color: rgba(13, 8, 10, 0.96);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   z-index: 99999;
@@ -381,7 +225,7 @@ input:focus, textarea:focus, select:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--color-bumble-honey, #ffdb5b);
+  color: var(--color-rose);
   text-align: center;
   padding: 24px;
   pointer-events: none;

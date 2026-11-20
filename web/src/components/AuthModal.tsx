@@ -272,13 +272,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(32, 32, 32, 0.55)',
-        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(13, 8, 10, 0.88)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1000,
-        padding: '20px',
+        padding: '16px',
         overflowY: 'auto',
       }}
       onClick={(e) => {
@@ -288,14 +289,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       <div
         className="animate-modal-spring"
         style={{
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-          color: 'var(--color-bumble-ink, #202020)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          maxWidth: '480px',
+          backgroundColor: '#170E12',
+          color: '#FFFFFF',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 31, 106, 0.3)',
+          maxWidth: '460px',
           width: '100%',
-          padding: '36px',
-          boxShadow: '0 20px 48px rgba(32, 32, 32, 0.18)',
+          padding: '32px 24px',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
           position: 'relative',
           margin: 'auto',
         }}
@@ -306,57 +307,62 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           aria-label="Close"
           style={{
             position: 'absolute',
-            top: '20px',
-            right: '20px',
-            width: '36px',
-            height: '36px',
+            top: '18px',
+            right: '18px',
+            width: '34px',
+            height: '34px',
             borderRadius: '50%',
-            backgroundColor: 'var(--color-mist, #f3f3f3)',
-            border: '1px solid #e0e0e0',
+            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--color-bumble-ink, #202020)',
+            color: '#E0D4D8',
             cursor: 'pointer',
           }}
         >
-          <X size={18} />
+          <X size={16} />
         </button>
 
         {/* Brand Pill Badge */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '18px' }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-              color: 'var(--color-bumble-ink, #202020)',
-              fontSize: '12px',
-              fontWeight: 700,
-              letterSpacing: '0.02em',
-              marginBottom: '14px',
+              padding: '5px 14px',
+              borderRadius: '1000px',
+              backgroundColor: '#5E081E',
+              color: '#FF1F6A',
+              fontSize: '11px',
+              fontWeight: 800,
+              letterSpacing: '0.04em',
+              marginBottom: '12px',
+              border: '1px solid #FF1F6A',
+              boxShadow: '0 0 12px rgba(255, 31, 106, 0.3)',
             }}
           >
-            <CupiddleIcon size={14} color="#202020" />
-            Curiosity is attractive
+            <CupiddleIcon size={12} color="#FF1F6A" />
+            Campus Desire
           </div>
 
           <h2
             style={{
-              fontSize: '28px',
+              fontSize: '26px',
               fontWeight: 800,
               letterSpacing: '-0.02em',
-              color: 'var(--color-bumble-ink, #202020)',
+              color: '#FFFFFF',
               lineHeight: 1.15,
+              fontFamily: "'Playfair Display', serif",
+              fontStyle: 'italic',
+              margin: 0,
             }}
           >
             {mode === 'login'
               ? 'Welcome Back'
               : mode === 'register'
-              ? 'Create Free Account'
+              ? 'Join Your Campus'
               : mode === 'forgot'
               ? 'Reset Password'
               : 'Set New Password'}
@@ -364,18 +370,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           <p
             style={{
-              fontSize: '14px',
-              color: 'var(--color-graphite, #575656)',
+              fontSize: '13px',
+              color: '#E0D4D8',
               marginTop: '6px',
               lineHeight: 1.4,
             }}
           >
             {mode === 'login'
-              ? 'Sign in to rediscover your Sparks and conversations.'
+              ? 'Sign in to reconnect with your campus sparks.'
               : mode === 'register'
-              ? 'Join the curiosity-first community. Zero fees, 100% free forever.'
+              ? 'Discreet connection. No real names, zero phone numbers.'
               : mode === 'forgot'
-              ? 'Enter your registered email address to receive your 6-digit reset code.'
+              ? 'Enter your registered email to receive your 6-digit code.'
               : 'Enter your 6-digit code and choose a new password.'}
           </p>
         </div>
@@ -386,11 +392,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
-              backgroundColor: 'var(--color-mist, #f3f3f3)',
-              borderRadius: 'var(--radius-badges, 1000px)',
+              backgroundColor: '#221219',
+              borderRadius: '1000px',
               padding: '4px',
-              marginBottom: '24px',
-              border: '1px solid #e5e5e5',
+              marginBottom: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
             }}
           >
             <button
@@ -401,17 +407,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 setInfoMessage(null);
               }}
               style={{
-                padding: '10px 16px',
-                borderRadius: 'var(--radius-badges, 1000px)',
-                backgroundColor: mode === 'register' ? 'var(--color-bumble-ink, #202020)' : 'transparent',
-                color: mode === 'register' ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
-                fontSize: '14px',
-                fontWeight: 700,
+                padding: '9px 16px',
+                borderRadius: '1000px',
+                backgroundColor: mode === 'register' ? '#5E081E' : 'transparent',
+                color: mode === 'register' ? '#FFFFFF' : '#9E8C93',
+                fontSize: '13px',
+                fontWeight: 800,
                 letterSpacing: '0.01em',
-                transition: 'all 0.15s ease',
+                border: mode === 'register' ? '1px solid #FF1F6A' : 'none',
+                boxShadow: mode === 'register' ? '0 0 10px rgba(255, 31, 106, 0.35)' : 'none',
+                transition: 'all 0.18s ease',
               }}
             >
-              Create Account
+              Join Campus
             </button>
             <button
               type="button"
@@ -421,14 +429,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 setInfoMessage(null);
               }}
               style={{
-                padding: '10px 16px',
-                borderRadius: 'var(--radius-badges, 1000px)',
-                backgroundColor: mode === 'login' ? 'var(--color-bumble-ink, #202020)' : 'transparent',
-                color: mode === 'login' ? '#ffffff' : 'var(--color-bumble-ink, #202020)',
-                fontSize: '14px',
-                fontWeight: 700,
+                padding: '9px 16px',
+                borderRadius: '1000px',
+                backgroundColor: mode === 'login' ? '#5E081E' : 'transparent',
+                color: mode === 'login' ? '#FFFFFF' : '#9E8C93',
+                fontSize: '13px',
+                fontWeight: 800,
                 letterSpacing: '0.01em',
-                transition: 'all 0.15s ease',
+                border: mode === 'login' ? '1px solid #FF1F6A' : 'none',
+                boxShadow: mode === 'login' ? '0 0 10px rgba(255, 31, 106, 0.35)' : 'none',
+                transition: 'all 0.18s ease',
               }}
             >
               Sign In
@@ -483,17 +493,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 style={{
                   width: '100%',
                   padding: '12px 16px',
-                  backgroundColor: '#ffffff',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  borderRadius: 'var(--radius-buttons, 16px)',
+                  backgroundColor: '#221219',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '16px',
                   fontSize: '14px',
                   fontWeight: 700,
-                  color: 'var(--color-bumble-ink, #202020)',
+                  color: '#FFFFFF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '10px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
                   cursor: loading ? 'not-allowed' : 'pointer',
                 }}
               >
@@ -507,7 +517,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
             ) : (
               <form onSubmit={handleGoogleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#202020' }}>Enter your Gmail to continue:</div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#FFFFFF' }}>Enter your Gmail to continue:</div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="email"
@@ -520,10 +530,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       flex: 1,
                       padding: '12px 14px',
                       fontSize: '14px',
-                      borderRadius: 'var(--radius-buttons, 16px)',
-                      border: '1.5px solid #202020',
-                      backgroundColor: '#fff',
-                      color: '#202020',
+                      borderRadius: '16px',
+                      border: '1.5px solid rgba(255, 31, 106, 0.3)',
+                      backgroundColor: '#1E1116',
+                      color: '#FFFFFF',
                     }}
                   />
                   <button
@@ -1059,17 +1069,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="btn-bumble-action"
+            className="btn-desire-action"
             style={{
               marginTop: '12px',
               padding: '16px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              backgroundColor: 'var(--color-bumble-ink, #202020)',
-              color: 'var(--color-paper-white, #ffffff)',
-              fontSize: '16px',
-              fontWeight: 700,
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #FF1F6A 0%, #C80A32 100%)',
+              color: '#FFFFFF',
+              fontSize: '15px',
+              fontWeight: 800,
               letterSpacing: '0.015em',
-              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+              boxShadow: '0 4px 22px rgba(255, 31, 106, 0.45)',
               opacity: loading ? 0.7 : 1,
               cursor: loading ? 'not-allowed' : 'pointer',
               display: 'flex',
@@ -1083,7 +1093,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             ) : mode === 'login' ? (
               'Sign In to Cupiddle'
             ) : mode === 'register' ? (
-              'Join Cupiddle Free — No Paywalls'
+              'Join Campus — 100% Free'
             ) : mode === 'forgot' ? (
               'Send 6-Digit Reset Code'
             ) : (
@@ -1104,7 +1114,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 style={{
                   fontSize: '13px',
                   fontWeight: 700,
-                  color: 'var(--color-bumble-ink, #202020)',
+                  color: '#FF1F6A',
                   textDecoration: 'underline',
                   cursor: 'pointer',
                 }}
@@ -1118,8 +1128,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <p
             style={{
               textAlign: 'center',
-              fontSize: '12px',
-              color: 'var(--color-graphite, #575656)',
+              fontSize: '11px',
+              color: '#9E8C93',
               marginTop: '4px',
               lineHeight: 1.4,
             }}

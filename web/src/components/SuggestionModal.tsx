@@ -66,8 +66,9 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(32, 32, 32, 0.6)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: 'rgba(13, 8, 10, 0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -82,14 +83,14 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
       <div
         className="animate-modal-spring"
         style={{
-          backgroundColor: '#ffffff',
-          color: '#202020',
+          backgroundColor: '#170E12',
+          color: '#FFFFFF',
           borderRadius: '24px',
-          border: '2px solid #202020',
-          maxWidth: '520px',
+          border: '1px solid rgba(255, 31, 106, 0.3)',
+          maxWidth: '480px',
           width: '100%',
-          padding: '32px 28px',
-          boxShadow: '0 24px 60px rgba(32, 32, 32, 0.28)',
+          padding: '28px 24px',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
           position: 'relative',
         }}
       >
@@ -99,57 +100,59 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
           aria-label="Close"
           style={{
             position: 'absolute',
-            top: '20px',
-            right: '20px',
-            width: '36px',
-            height: '36px',
+            top: '18px',
+            right: '18px',
+            width: '32px',
+            height: '32px',
             borderRadius: '50%',
-            backgroundColor: '#f3f3f3',
-            border: '1.5px solid #202020',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#202020',
+            color: '#FFFFFF',
             cursor: 'pointer',
           }}
         >
-          <X size={18} />
+          <X size={16} />
         </button>
 
         {isSuccess ? (
           <div style={{ textAlign: 'center', padding: '24px 10px' }}>
             <div
               style={{
-                width: '64px',
-                height: '64px',
+                width: '60px',
+                height: '60px',
                 borderRadius: '50%',
-                backgroundColor: '#ffdb5b',
-                border: '2px solid #202020',
+                backgroundColor: '#5E081E',
+                border: '1px solid #FF1F6A',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 18px',
+                boxShadow: '0 0 16px rgba(255, 31, 106, 0.4)',
               }}
             >
-              <CheckCircle2 size={36} color="#202020" />
+              <CheckCircle2 size={32} color="#FF1F6A" />
             </div>
-            <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#202020', marginBottom: '8px' }}>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px', fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}>
               Suggestion Received!
             </h3>
-            <p style={{ fontSize: '15px', color: '#575656', lineHeight: 1.5, marginBottom: '24px' }}>
-              Thank you for helping build Cupiddle. We read every single suggestion and use them directly to improve the app.
+            <p style={{ fontSize: '14px', color: '#E0D4D8', lineHeight: 1.5, marginBottom: '24px' }}>
+              Thank you for helping build Cupiddle. We read every single suggestion and use them directly to improve the campus experience.
             </p>
             <button
               onClick={handleReset}
-              className="btn-bumble-action"
               style={{
-                padding: '14px 28px',
-                borderRadius: '16px',
-                backgroundColor: '#202020',
+                padding: '12px 28px',
+                borderRadius: '100px',
+                backgroundColor: '#FF1F6A',
                 color: '#ffffff',
-                fontWeight: 700,
-                fontSize: '15px',
+                fontWeight: 800,
+                fontSize: '14px',
                 cursor: 'pointer',
+                border: 'none',
+                boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
               }}
             >
               Done
@@ -158,7 +161,7 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
         ) : (
           <>
             {/* Header */}
-            <div style={{ marginBottom: '20px' }}>
+            <div style={{ marginBottom: '18px' }}>
               <div
                 style={{
                   display: 'inline-flex',
@@ -166,30 +169,34 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
                   gap: '6px',
                   padding: '4px 12px',
                   borderRadius: '1000px',
-                  backgroundColor: '#ffdb5b',
-                  color: '#202020',
-                  fontSize: '12px',
+                  backgroundColor: '#5E081E',
+                  color: '#FF1F6A',
+                  fontSize: '11px',
                   fontWeight: 800,
-                  border: '1px solid #202020',
+                  border: '1px solid #FF1F6A',
                   marginBottom: '10px',
+                  boxShadow: '0 0 10px rgba(255, 31, 106, 0.3)',
                 }}
               >
-                <Lightbulb size={14} color="#202020" />
-                Community Suggestion Box
+                <Lightbulb size={13} color="#FF1F6A" />
+                Community Wishlist
               </div>
               <h2
                 style={{
-                  fontSize: '24px',
+                  fontSize: '22px',
                   fontWeight: 800,
-                  color: '#202020',
+                  color: '#FFFFFF',
                   letterSpacing: '-0.02em',
                   lineHeight: 1.2,
+                  fontFamily: "'Playfair Display', serif",
+                  fontStyle: 'italic',
+                  margin: 0,
                 }}
               >
                 Help Shape Cupiddle
               </h2>
-              <p style={{ fontSize: '14px', color: '#575656', marginTop: '6px' }}>
-                Have an idea, spotted a bug, or want a new feature? Tell us what you think!
+              <p style={{ fontSize: '13px', color: '#E0D4D8', marginTop: '4px', margin: 0 }}>
+                Have an idea, spotted a bug, or want a new campus feature? Tell us!
               </p>
             </div>
 
@@ -197,10 +204,10 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
               <div
                 style={{
                   padding: '10px 14px',
-                  backgroundColor: '#fff1f2',
-                  border: '1.5px solid #f43f5e',
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
                   borderRadius: '14px',
-                  color: '#9f1239',
+                  color: '#f87171',
                   fontSize: '13px',
                   fontWeight: 600,
                   marginBottom: '16px',
@@ -210,13 +217,13 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Category Pills */}
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: '#E0D4D8' }}>
                   Category
                 </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {CATEGORIES.map((cat) => {
                     const isSelected = category === cat;
                     return (
@@ -224,16 +231,17 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
                         key={cat}
                         type="button"
                         onClick={() => setCategory(cat)}
-                        className="pill-interactive"
                         style={{
-                          padding: '6px 14px',
+                          padding: '5px 12px',
                           borderRadius: '1000px',
-                          fontSize: '12px',
+                          fontSize: '11px',
                           fontWeight: 700,
-                          backgroundColor: isSelected ? '#ffdb5b' : '#f3f3f3',
-                          color: '#202020',
-                          border: isSelected ? '1.5px solid #202020' : '1px solid #d4d4d4',
+                          backgroundColor: isSelected ? '#5E081E' : 'rgba(255, 255, 255, 0.06)',
+                          color: isSelected ? '#FFFFFF' : '#E0D4D8',
+                          border: isSelected ? '1px solid #FF1F6A' : '1px solid rgba(255, 255, 255, 0.12)',
+                          boxShadow: isSelected ? '0 0 10px rgba(255, 31, 106, 0.35)' : 'none',
                           cursor: 'pointer',
+                          transition: 'all 0.15s ease',
                         }}
                       >
                         {cat}
@@ -245,63 +253,72 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
 
               {/* Title Input */}
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '4px', color: '#E0D4D8' }}>
                   Headline / Idea Summary
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g., Add dark mode / Voice notes in chat"
+                  placeholder="e.g., Campus anonymous crush notes / Voice notes in chat"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '14px',
-                    border: '1.5px solid #202020',
+                    padding: '10px 14px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    backgroundColor: '#0D080A',
+                    color: '#FFFFFF',
                     fontSize: '14px',
+                    outline: 'none',
                   }}
                 />
               </div>
 
               {/* Description Input */}
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
-                  Details & Your Experience
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '4px', color: '#E0D4D8' }}>
+                  Details & What You'd Love to See
                 </label>
                 <textarea
                   required
-                  rows={4}
+                  rows={3}
                   placeholder="Tell us what you'd love to see or what we can do better..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '14px',
-                    border: '1.5px solid #202020',
+                    padding: '10px 14px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    backgroundColor: '#0D080A',
+                    color: '#FFFFFF',
                     fontSize: '14px',
                     resize: 'vertical',
+                    outline: 'none',
                   }}
                 />
               </div>
 
               {/* Optional Email */}
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
-                  Email Address <span style={{ fontWeight: 400, color: '#575656' }}>(optional, for updates)</span>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '4px', color: '#E0D4D8' }}>
+                  Email Address <span style={{ fontWeight: 400, color: '#9E8C93' }}>(optional, for updates)</span>
                 </label>
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="you@student.edu.ng"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '14px',
-                    border: '1.5px solid #202020',
+                    padding: '10px 14px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    backgroundColor: '#0D080A',
+                    color: '#FFFFFF',
                     fontSize: '14px',
+                    outline: 'none',
                   }}
                 />
               </div>
@@ -310,25 +327,26 @@ export const SuggestionModal: React.FC<SuggestionModalProps> = ({ isOpen, onClos
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-bumble-action"
                 style={{
-                  marginTop: '8px',
-                  padding: '14px',
-                  borderRadius: '16px',
-                  backgroundColor: '#202020',
+                  marginTop: '6px',
+                  padding: '12px',
+                  borderRadius: '100px',
+                  backgroundColor: '#FF1F6A',
                   color: '#ffffff',
-                  fontSize: '15px',
-                  fontWeight: 700,
+                  fontSize: '14px',
+                  fontWeight: 800,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
                   cursor: loading ? 'not-allowed' : 'pointer',
+                  border: 'none',
+                  boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
                   opacity: loading ? 0.7 : 1,
                 }}
               >
-                <Send size={16} />
-                {loading ? 'Submitting...' : 'Send Suggestion'}
+                <Send size={15} />
+                {loading ? 'Submitting...' : 'Send Wishlist Suggestion'}
               </button>
             </form>
           </>

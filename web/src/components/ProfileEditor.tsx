@@ -142,18 +142,18 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
   };
 
   return (
-    <div style={{ maxWidth: '820px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
       {/* Header Banner */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          backgroundColor: 'var(--color-pollen, #fff386)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          padding: '28px 32px',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 31, 106, 0.25)',
+          padding: '24px 20px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
         }}
       >
         <div>
@@ -162,40 +162,43 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '4px 12px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-              border: '1px solid var(--color-bumble-ink, #202020)',
-              color: 'var(--color-bumble-ink, #202020)',
-              fontSize: '12px',
-              fontWeight: 800,
-              letterSpacing: '0.02em',
-              marginBottom: '10px',
+              padding: '4px 10px',
+              borderRadius: '9999px',
+              backgroundColor: 'rgba(255, 31, 106, 0.12)',
+              border: '1px solid rgba(255, 31, 106, 0.3)',
+              color: '#FF1F6A',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              marginBottom: '8px',
             }}
           >
-            <CupiddleIcon size={16} color="var(--color-bumble-ink, #202020)" />
-            Editorial Profile Studio
+            <CupiddleIcon size={13} color="#FF1F6A" />
+            Profile & Sparks Studio
           </div>
           <h1
             style={{
-              fontSize: '32px',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: '24px',
               fontWeight: 800,
               letterSpacing: '-0.02em',
-              color: 'var(--color-bumble-ink, #202020)',
-              lineHeight: 1.15,
+              color: '#FFFFFF',
+              margin: '0 0 4px 0',
+              lineHeight: 1.2,
             }}
           >
-            Your Curiosity Profile
+            Your Desire Profile
           </h1>
           <p
             style={{
-              fontSize: '16px',
-              color: 'var(--color-charcoal, #3b3b3b)',
-              marginTop: '6px',
+              fontSize: '13px',
+              color: '#9E8C93',
+              margin: 0,
               lineHeight: 1.4,
             }}
           >
-            Curiosity is attractive. Share what you genuinely think about, not just how you look.
+            Genuine curiosity is magnetic. Share what keeps you awake and what ignites your mind.
           </p>
         </div>
 
@@ -205,17 +208,19 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
-              backgroundColor: 'var(--color-bumble-ink, #202020)',
-              color: 'var(--color-paper-white, #ffffff)',
-              padding: '8px 18px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              fontSize: '13px',
+              gap: '5px',
+              backgroundColor: 'rgba(255, 31, 106, 0.18)',
+              border: '1px solid #FF1F6A',
+              color: '#FF1F6A',
+              padding: '6px 14px',
+              borderRadius: '9999px',
+              fontSize: '12px',
               fontWeight: 700,
-              boxShadow: '0 4px 12px rgba(32, 32, 32, 0.18)',
+              boxShadow: '0 2px 10px rgba(255, 31, 106, 0.3)',
+              flexShrink: 0,
             }}
           >
-            <Check size={16} /> Changes Saved!
+            <Check size={14} /> Saved
           </span>
         )}
       </div>
@@ -223,61 +228,62 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
       {/* 1. Photographs Section */}
       <div
         style={{
-          padding: '32px',
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          padding: '24px 20px',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
             <h2
               style={{
-                fontSize: '22px',
-                fontWeight: 800,
-                color: 'var(--color-bumble-ink, #202020)',
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: '19px',
+                fontWeight: 700,
+                color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
+                gap: '8px',
+                margin: 0,
               }}
             >
-              <Camera size={22} color="var(--color-bumble-ink, #202020)" />
+              <Camera size={19} color="#FF1F6A" />
               Profile Photographs
             </h2>
-            <p style={{ fontSize: '14px', color: 'var(--color-graphite, #575656)', marginTop: '4px' }}>
-              High-clarity, authentic portraits lead your discovery card.
+            <p style={{ fontSize: '12px', color: '#8A7B82', margin: '3px 0 0 0' }}>
+              Portraits lead your discovery card with romantic cinematic depth.
             </p>
           </div>
 
           <span
             style={{
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              backgroundColor: 'var(--color-mist, #f3f3f3)',
-              border: '1px solid #d4d4d4',
-              color: 'var(--color-bumble-ink, #202020)',
-              fontSize: '12px',
+              padding: '4px 10px',
+              borderRadius: '9999px',
+              backgroundColor: '#1E1116',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#C7B6BC',
+              fontSize: '11px',
               fontWeight: 700,
             }}
           >
-            {profile.photos?.length || 0} of 6 Photos
+            {profile.photos?.length || 0} / 6
           </span>
         </div>
 
         {/* Photos Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '18px' }}>
           {(profile.photos || []).map((photo) => (
             <div
               key={photo.id}
-              className="editorial-card-lift"
               style={{
                 position: 'relative',
-                height: '180px',
-                borderRadius: 'var(--radius-buttons, 16px)',
+                height: '140px',
+                borderRadius: '16px',
                 overflow: 'hidden',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-mist, #f3f3f3)',
+                border: '1px solid rgba(255, 31, 106, 0.25)',
+                backgroundColor: '#1E1116',
               }}
             >
               <img
@@ -289,18 +295,19 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
                 <span
                   style={{
                     position: 'absolute',
-                    top: '8px',
-                    left: '8px',
-                    backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-                    border: '1px solid var(--color-bumble-ink, #202020)',
-                    color: 'var(--color-bumble-ink, #202020)',
-                    fontSize: '11px',
+                    top: '6px',
+                    left: '6px',
+                    background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+                    color: '#FFFFFF',
+                    fontSize: '9px',
                     fontWeight: 800,
-                    padding: '3px 8px',
-                    borderRadius: 'var(--radius-badges, 1000px)',
+                    padding: '2px 6px',
+                    borderRadius: '9999px',
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
                   }}
                 >
-                  Hero Photo
+                  Hero
                 </span>
               )}
               <button
@@ -308,21 +315,22 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
                 aria-label="Delete photo"
                 style={{
                   position: 'absolute',
-                  top: '8px',
-                  right: '8px',
-                  backgroundColor: 'var(--color-paper-white, #ffffff)',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  color: 'var(--color-bumble-ink, #202020)',
+                  top: '6px',
+                  right: '6px',
+                  backgroundColor: 'rgba(13, 8, 10, 0.75)',
+                  backdropFilter: 'blur(4px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#FFFFFF',
                   borderRadius: '50%',
-                  width: '28px',
-                  height: '28px',
+                  width: '24px',
+                  height: '24px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 2px 6px rgba(32, 32, 32, 0.2)',
+                  cursor: 'pointer',
                 }}
               >
-                <Trash2 size={13} />
+                <Trash2 size={12} />
               </button>
             </div>
           ))}
@@ -342,46 +350,45 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingPhoto}
-              className="editorial-card-lift"
               style={{
-                height: '180px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '2px dashed var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-mist, #f3f3f3)',
+                height: '140px',
+                borderRadius: '16px',
+                border: '1.5px dashed rgba(255, 31, 106, 0.35)',
+                backgroundColor: 'rgba(255, 31, 106, 0.05)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                color: 'var(--color-bumble-ink, #202020)',
-                padding: '16px',
+                gap: '6px',
+                color: '#E0D4D8',
+                padding: '12px',
                 textAlign: 'center',
                 cursor: uploadingPhoto ? 'wait' : 'pointer',
               }}
             >
               {uploadingPhoto ? (
                 <>
-                  <Loader2 size={24} className="animate-spin" color="var(--color-bumble-ink, #202020)" />
-                  <span style={{ fontSize: '12px', fontWeight: 700 }}>Uploading portrait...</span>
+                  <Loader2 size={20} className="animate-spin" color="#FF1F6A" />
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#FF1F6A' }}>Uploading...</span>
                 </>
               ) : (
                 <>
                   <div
                     style={{
-                      width: '40px',
-                      height: '40px',
+                      width: '32px',
+                      height: '32px',
                       borderRadius: '50%',
-                      backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                      backgroundColor: 'rgba(255, 31, 106, 0.15)',
+                      border: '1px solid rgba(255, 31, 106, 0.3)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      border: '1px solid var(--color-bumble-ink, #202020)',
                     }}
                   >
-                    <Upload size={18} color="var(--color-bumble-ink, #202020)" />
+                    <Upload size={14} color="#FF1F6A" />
                   </div>
-                  <span style={{ fontSize: '13px', fontWeight: 800 }}>Upload Portrait</span>
-                  <span style={{ fontSize: '11px', color: 'var(--color-graphite, #575656)' }}>From phone / PC</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF' }}>Add Photo</span>
+                  <span style={{ fontSize: '10px', color: '#8A7B82' }}>From phone</span>
                 </>
               )}
             </button>
@@ -389,34 +396,36 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         </div>
 
         {/* Action Buttons for Device Upload and Public Link */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingPhoto || (profile.photos?.length || 0) >= 6}
-              className="btn-bumble-action"
               style={{
-                padding: '12px 24px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-                color: 'var(--color-bumble-ink, #202020)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                fontSize: '14px',
-                fontWeight: 800,
+                flex: 1,
+                padding: '10px 16px',
+                borderRadius: '14px',
+                background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+                color: '#FFFFFF',
+                border: 'none',
+                fontSize: '13px',
+                fontWeight: 700,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                justifyContent: 'center',
+                gap: '6px',
                 cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(255, 31, 106, 0.3)',
               }}
             >
               {uploadingPhoto ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" /> Uploading from Device...
+                  <Loader2 size={14} className="animate-spin" /> Uploading...
                 </>
               ) : (
                 <>
-                  <Upload size={16} /> Choose Photo from Device
+                  <Upload size={14} /> Upload Portrait
                 </>
               )}
             </button>
@@ -425,26 +434,26 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               type="button"
               onClick={() => setShowUrlPhotoInput(!showUrlPhotoInput)}
               style={{
-                padding: '12px 18px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                color: 'var(--color-graphite, #575656)',
-                border: '1px solid #d4d4d4',
-                fontSize: '13px',
+                padding: '10px 14px',
+                borderRadius: '14px',
+                backgroundColor: '#1E1116',
+                color: '#C7B6BC',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                fontSize: '12px',
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 cursor: 'pointer',
               }}
             >
-              <LinkIcon size={14} /> {showUrlPhotoInput ? 'Hide Link Input' : 'Or add via image URL'}
+              <LinkIcon size={13} /> {showUrlPhotoInput ? 'Hide' : 'Add URL'}
             </button>
           </div>
 
           {/* Add Photo URL Input (Optional) */}
           {showUrlPhotoInput && (
-            <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
               <input
                 type="text"
                 placeholder="Paste public image link (Unsplash, Cloudinary, etc.)..."
@@ -452,31 +461,32 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
                 onChange={(e) => setNewPhotoURL(e.target.value)}
                 style={{
                   flex: 1,
-                  fontSize: '14px',
-                  padding: '12px 16px',
-                  borderRadius: 'var(--radius-buttons, 16px)',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  backgroundColor: 'var(--color-paper-white, #ffffff)',
-                  color: 'var(--color-bumble-ink, #202020)',
+                  fontSize: '13px',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  backgroundColor: '#1E1116',
+                  color: '#FFFFFF',
+                  outline: 'none',
                 }}
               />
               <button
                 onClick={handleAddPhoto}
-                className="btn-bumble-action"
                 style={{
-                  padding: '12px 22px',
-                  borderRadius: 'var(--radius-buttons, 16px)',
-                  backgroundColor: 'var(--color-bumble-ink, #202020)',
-                  color: 'var(--color-paper-white, #ffffff)',
-                  fontSize: '14px',
+                  padding: '10px 16px',
+                  borderRadius: '12px',
+                  backgroundColor: '#2A141E',
+                  border: '1px solid rgba(255, 31, 106, 0.4)',
+                  color: '#FF1F6A',
+                  fontSize: '13px',
                   fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  letterSpacing: '0.01em',
+                  gap: '4px',
+                  cursor: 'pointer',
                 }}
               >
-                <Plus size={16} /> Add Link
+                <Plus size={14} /> Add
               </button>
             </div>
           )}
@@ -487,14 +497,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
       <form
         onSubmit={handleSaveCuriosity}
         style={{
-          padding: '32px',
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          padding: '24px 20px',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px',
+          gap: '18px',
         }}
       >
         <div>
@@ -503,98 +513,103 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '4px 12px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-              color: 'var(--color-bumble-ink, #202020)',
-              fontSize: '12px',
-              fontWeight: 800,
-              letterSpacing: '0.02em',
-              marginBottom: '10px',
+              padding: '4px 10px',
+              borderRadius: '9999px',
+              backgroundColor: 'rgba(255, 31, 106, 0.12)',
+              color: '#FF1F6A',
+              fontSize: '11px',
+              fontWeight: 700,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              marginBottom: '6px',
             }}
           >
-            <CupiddleIcon size={15} color="var(--color-bumble-ink, #202020)" />
-            Contextual Sparks Engine
+            <CupiddleIcon size={13} color="#FF1F6A" />
+            Curiosity Sparks Engine
           </div>
           <h2
             style={{
-              fontSize: '22px',
-              fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: '19px',
+              fontWeight: 700,
+              color: '#FFFFFF',
               letterSpacing: '-0.02em',
+              margin: '0 0 2px 0',
             }}
           >
             Curiosity Prompts (What People Spark)
           </h2>
-          <p style={{ fontSize: '14px', color: 'var(--color-graphite, #575656)', marginTop: '4px' }}>
-            People don't swipe blindly on Cupiddle. They spark specific ideas and answers below.
+          <p style={{ fontSize: '12px', color: '#8A7B82', margin: 0 }}>
+            People don't swipe blindly on Cupiddle. They spark specific takes and answers below.
           </p>
         </div>
 
-        {/* 1. Rabbit Hole (Pollen Accent Frame) */}
+        {/* 1. Rabbit Hole */}
         <div
           style={{
-            padding: '20px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-pollen, #fff386)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            padding: '16px',
+            borderRadius: '16px',
+            backgroundColor: '#1E1116',
+            border: '1px solid rgba(255, 31, 106, 0.22)',
           }}
         >
           <label
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '13px',
-              fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
+              gap: '6px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#FF1F6A',
               marginBottom: '8px',
               textTransform: 'uppercase',
-              letterSpacing: '0.03em',
+              letterSpacing: '0.04em',
             }}
           >
-            <Compass size={17} /> My Rabbit Hole — What are you currently obsessed with?
+            <Compass size={14} /> My Rabbit Hole — Late-night obsession
           </label>
           <textarea
             rows={2}
             value={rabbitHole}
             onChange={(e) => setRabbitHole(e.target.value)}
-            placeholder="e.g. Cellular automata, Nigerian indie film grammar, quantum cryptography, Lagos architecture..."
+            placeholder="e.g. Cellular automata, Nigerian indie cinema, quantum cryptography, Lagos architecture..."
             style={{
               width: '100%',
-              fontSize: '14px',
-              padding: '12px 14px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
+              fontSize: '13px',
+              padding: '10px 12px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#140B10',
+              color: '#FFFFFF',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
         </div>
 
-        {/* 2. Defend This Take (Mist Accent Frame) */}
+        {/* 2. Defend This Take */}
         <div
           style={{
-            padding: '20px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-mist, #f3f3f3)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            padding: '16px',
+            borderRadius: '16px',
+            backgroundColor: '#1E1116',
+            border: '1px solid rgba(255, 31, 106, 0.22)',
           }}
         >
           <label
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              fontSize: '13px',
-              fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
+              gap: '6px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#FF1F6A',
               marginBottom: '8px',
               textTransform: 'uppercase',
-              letterSpacing: '0.03em',
+              letterSpacing: '0.04em',
             }}
           >
-            <Flame size={17} /> Defend This Take — An opinion you're willing to defend
+            <Flame size={14} /> Defend This Take — An unfiltered opinion
           </label>
           <textarea
             rows={2}
@@ -603,64 +618,25 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
             placeholder="e.g. Streaming algorithms flattened narrative bravery; video games are 21st century high art..."
             style={{
               width: '100%',
-              fontSize: '14px',
-              padding: '12px 14px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
-            }}
-          />
-        </div>
-
-        {/* 3. Teach Me Something (Paper White Frame) */}
-        <div
-          style={{
-            padding: '20px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-paper-white, #ffffff)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
-          }}
-        >
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
               fontSize: '13px',
-              fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
-              marginBottom: '8px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.03em',
-            }}
-          >
-            <Lightbulb size={17} /> Teach Me Something — What could you teach someone for hours?
-          </label>
-          <textarea
-            rows={2}
-            value={teachMe}
-            onChange={(e) => setTeachMe(e.target.value)}
-            placeholder="e.g. How CRISPR gene editing works without hype; why sourdough fermentation behaves like an ecosystem..."
-            style={{
-              width: '100%',
-              fontSize: '14px',
-              padding: '12px 14px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
+              padding: '10px 12px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#140B10',
+              color: '#FFFFFF',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
         </div>
 
-        {/* My World Tags */}
+        {/* 3. Teach Me Something */}
         <div
           style={{
-            padding: '20px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-mist, #f3f3f3)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            padding: '16px',
+            borderRadius: '16px',
+            backgroundColor: '#1E1116',
+            border: '1px solid rgba(255, 31, 106, 0.22)',
           }}
         >
           <label
@@ -668,32 +644,73 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              fontSize: '13px',
-              fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
-              marginBottom: '10px',
-              letterSpacing: '0.01em',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#FF1F6A',
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
             }}
           >
-            <Tag size={16} /> My World Tags (Books, films, anime, games, code, artists)
+            <Lightbulb size={14} /> Teach Me Something — Talk for hours about...
+          </label>
+          <textarea
+            rows={2}
+            value={teachMe}
+            onChange={(e) => setTeachMe(e.target.value)}
+            placeholder="e.g. How CRISPR gene editing works without hype; why sourdough behaves like an ecosystem..."
+            style={{
+              width: '100%',
+              fontSize: '13px',
+              padding: '10px 12px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#140B10',
+              color: '#FFFFFF',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
+
+        {/* My World Tags */}
+        <div
+          style={{
+            padding: '16px',
+            borderRadius: '16px',
+            backgroundColor: '#1E1116',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '12px',
+              fontWeight: 700,
+              color: '#C7B6BC',
+              marginBottom: '8px',
+            }}
+          >
+            <Tag size={14} color="#FF1F6A" /> My World Tags (Books, films, anime, games, code, artists)
           </label>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
             {myWorldTags.map((tag) => (
               <span
                 key={tag}
-                className="pill-interactive"
                 style={{
-                  padding: '6px 14px',
-                  backgroundColor: 'var(--color-paper-white, #ffffff)',
-                  border: '1.5px solid var(--color-bumble-ink, #202020)',
-                  borderRadius: 'var(--radius-badges, 1000px)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: 'var(--color-bumble-ink, #202020)',
+                  padding: '5px 12px',
+                  backgroundColor: 'rgba(255, 31, 106, 0.12)',
+                  border: '1px solid rgba(255, 31, 106, 0.3)',
+                  borderRadius: '9999px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  color: '#FFFFFF',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  gap: '6px',
                 }}
               >
                 {tag}
@@ -701,10 +718,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
                   style={{
-                    color: 'var(--color-graphite, #575656)',
+                    color: '#FF1F6A',
                     fontWeight: 800,
-                    fontSize: '14px',
+                    fontSize: '13px',
                     lineHeight: 1,
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
                   }}
                 >
                   ×
@@ -713,10 +734,10 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
             <input
               type="text"
-              placeholder="Add tag (e.g. Dune, Disco Elysium, Rust, Wong Kar-wai, Afrobeats)..."
+              placeholder="Add tag (e.g. Dune, Disco Elysium, Rust, Wong Kar-wai)..."
               value={newTagInput}
               onChange={(e) => setNewTagInput(e.target.value)}
               onKeyDown={(e) => {
@@ -727,28 +748,30 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               }}
               style={{
                 flex: 1,
-                fontSize: '14px',
-                padding: '10px 14px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                color: 'var(--color-bumble-ink, #202020)',
+                fontSize: '13px',
+                padding: '10px 12px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#140B10',
+                color: '#FFFFFF',
+                outline: 'none',
               }}
             />
             <button
               type="button"
               onClick={handleAddTag}
-              className="btn-bumble-action"
               style={{
-                padding: '10px 20px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                backgroundColor: 'var(--color-bumble-ink, #202020)',
-                color: 'var(--color-paper-white, #ffffff)',
-                fontSize: '14px',
+                padding: '10px 16px',
+                borderRadius: '12px',
+                backgroundColor: '#2A141E',
+                border: '1px solid rgba(255, 31, 106, 0.4)',
+                color: '#FF1F6A',
+                fontSize: '13px',
                 fontWeight: 700,
+                cursor: 'pointer',
               }}
             >
-              Add Tag
+              Add
             </button>
           </div>
         </div>
@@ -756,16 +779,17 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         <button
           type="submit"
           disabled={loading}
-          className="btn-bumble-action"
           style={{
             alignSelf: 'flex-end',
-            padding: '14px 32px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-bumble-ink, #202020)',
-            color: 'var(--color-paper-white, #ffffff)',
-            fontWeight: 800,
-            fontSize: '15px',
-            letterSpacing: '0.01em',
+            padding: '12px 24px',
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+            border: 'none',
+            color: '#FFFFFF',
+            fontWeight: 700,
+            fontSize: '13px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(255, 31, 106, 0.35)',
           }}
         >
           {loading ? 'Saving...' : 'Save Curiosity Profile'}
@@ -775,94 +799,95 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
       {/* 2.5 Campus Identity, Verification & Gatekeeper (Nigerian Campus Hub) */}
       <div
         style={{
-          padding: '32px',
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          padding: '24px 20px',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px',
+          gap: '18px',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <GraduationCap size={22} color="var(--color-bumble-ink, #202020)" />
-              <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', margin: 0 }}>
+              <GraduationCap size={20} color="#FF1F6A" />
+              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '19px', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>
                 Campus Identity & Verification
               </h2>
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--color-charcoal, #3a3a3a)', marginTop: '4px', marginBottom: 0 }}>
-              Exclusive to Nigerian University Students. 100% Free, zero paid identity apps.
+            <p style={{ fontSize: '12px', color: '#8A7B82', marginTop: '2px', marginBottom: 0 }}>
+              Exclusive to Nigerian University Students. 100% Free, zero paid verification apps.
             </p>
           </div>
 
           {profile.is_student_verified ? (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '20px', backgroundColor: '#dcfce7', color: '#166534', fontWeight: 800, fontSize: '13px' }}>
-              <ShieldCheck size={16} /> Verified Student @ {profile.campus || 'EBSU'}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '5px 12px', borderRadius: '9999px', backgroundColor: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', color: '#4ade80', fontWeight: 700, fontSize: '12px' }}>
+              <ShieldCheck size={14} /> Verified Student @ {profile.campus || 'EBSU'}
             </div>
           ) : (
             <button
               type="button"
               onClick={() => setShowVerificationModal(true)}
-              className="btn-bumble-action"
               style={{
-                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-                color: 'var(--color-bumble-ink, #202020)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                borderRadius: '16px',
-                padding: '8px 18px',
-                fontWeight: 800,
-                fontSize: '13px',
+                backgroundColor: 'rgba(255, 31, 106, 0.15)',
+                color: '#FF1F6A',
+                border: '1px solid rgba(255, 31, 106, 0.4)',
+                borderRadius: '9999px',
+                padding: '6px 14px',
+                fontWeight: 700,
+                fontSize: '12px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 cursor: 'pointer',
               }}
             >
-              <ShieldCheck size={16} /> Verify Student ID (₦0)
+              <ShieldCheck size={14} /> Verify Student ID (₦0)
             </button>
           )}
         </div>
 
         {/* Live Broadcast Campus Mood / Vibe */}
         <div>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '8px' }}>
+          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#C7B6BC', marginBottom: '8px' }}>
             Broadcast Campus Vibe (What are you in the mood for?)
           </label>
           <MoodTagSelector selectedTag={vibeTag} onSelectTag={setVibeTag} />
         </div>
 
         {/* Gate Question */}
-        <div style={{ backgroundColor: '#fffbeb', borderRadius: '16px', padding: '18px', border: '1.5px dashed var(--color-bumble-ink, #202020)' }}>
-          <label style={{ display: 'block', fontSize: '14px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', marginBottom: '4px' }}>
-            🔒 Your Connection Gate Question
+        <div style={{ backgroundColor: '#1E1116', borderRadius: '16px', padding: '16px', border: '1.5px dashed rgba(255, 31, 106, 0.35)' }}>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#FF1F6A', marginBottom: '3px' }}>
+            🔒 Connection Gate Question
           </label>
-          <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
-            No random unverified slides. Candidates must submit an answer to this question before their Spark connects to your inbox.
+          <p style={{ fontSize: '11px', color: '#8A7B82', marginBottom: '8px' }}>
+            No random unverified slides. Candidates must answer this question before sparking your inbox.
           </p>
           <textarea
             rows={2}
             value={gateQuestion}
             onChange={(e) => setGateQuestion(e.target.value)}
-            placeholder="e.g. Which 300L lecturer tests hardest? / Favorite midnight spot on campus? / Are you a night owl or morning reader?"
+            placeholder="e.g. Which 300L lecturer tests hardest? / Favorite midnight spot on campus? / Night owl or morning reader?"
             style={{
               width: '100%',
-              padding: '12px 14px',
-              fontSize: '14px',
+              padding: '10px 12px',
+              fontSize: '13px',
               borderRadius: '12px',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: '#fff',
-              color: 'var(--color-bumble-ink, #202020)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#140B10',
+              color: '#FFFFFF',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
         </div>
 
         {/* Campus, Level, Faculty Details */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#C7B6BC', marginBottom: '5px' }}>
               Campus
             </label>
             <select
@@ -870,13 +895,15 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               onChange={(e) => setCampus(e.target.value)}
               style={{
                 width: '100%',
-                padding: '12px 14px',
-                fontSize: '14px',
-                borderRadius: '14px',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: '#fff',
-                color: 'var(--color-bumble-ink, #202020)',
+                padding: '10px 12px',
+                fontSize: '13px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#1E1116',
+                color: '#FFFFFF',
                 fontWeight: 600,
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             >
               <option value="EBSU">Ebonyi State University (EBSU)</option>
@@ -894,7 +921,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#C7B6BC', marginBottom: '5px' }}>
               Academic Level
             </label>
             <select
@@ -902,13 +929,15 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               onChange={(e) => setLevel(e.target.value)}
               style={{
                 width: '100%',
-                padding: '12px 14px',
-                fontSize: '14px',
-                borderRadius: '14px',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: '#fff',
-                color: 'var(--color-bumble-ink, #202020)',
+                padding: '10px 12px',
+                fontSize: '13px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#1E1116',
+                color: '#FFFFFF',
                 fontWeight: 600,
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             >
               <option value="100L">100 Level (Fresher)</option>
@@ -921,22 +950,24 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
-              Faculty / Department
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#C7B6BC', marginBottom: '5px' }}>
+              Faculty / Dept
             </label>
             <input
               type="text"
               value={faculty}
               onChange={(e) => setFaculty(e.target.value)}
-              placeholder="e.g. Law, Medicine, CS, Mass Comm"
+              placeholder="e.g. Law, Medicine, CS"
               style={{
                 width: '100%',
-                padding: '12px 14px',
-                fontSize: '14px',
-                borderRadius: '14px',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: '#fff',
-                color: 'var(--color-bumble-ink, #202020)',
+                padding: '10px 12px',
+                fontSize: '13px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#1E1116',
+                color: '#FFFFFF',
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             />
           </div>
@@ -946,19 +977,20 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           type="button"
           onClick={handleSaveBasic}
           disabled={loading}
-          className="btn-bumble-action"
           style={{
             alignSelf: 'flex-end',
-            padding: '12px 28px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-bumble-ink, #202020)',
-            color: 'var(--color-paper-white, #ffffff)',
-            fontWeight: 800,
-            fontSize: '14px',
+            padding: '10px 22px',
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+            border: 'none',
+            color: '#FFFFFF',
+            fontWeight: 700,
+            fontSize: '13px',
             cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(255, 31, 106, 0.35)',
           }}
         >
-          {loading ? 'Saving Campus Profile...' : 'Save Campus Profile'}
+          {loading ? 'Saving...' : 'Save Campus Profile'}
         </button>
       </div>
 
@@ -966,41 +998,37 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
       <form
         onSubmit={handleSaveBasic}
         style={{
-          padding: '32px',
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          padding: '24px 20px',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
+          gap: '16px',
         }}
       >
         <h2
           style={{
-            fontSize: '22px',
-            fontWeight: 800,
-            color: 'var(--color-bumble-ink, #202020)',
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: '19px',
+            fontWeight: 700,
+            color: '#FFFFFF',
             letterSpacing: '-0.02em',
+            margin: 0,
           }}
         >
           Basic Identity & Location
         </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <label
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: 'var(--color-bumble-ink, #202020)',
-                }}
-              >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#C7B6BC' }}>
                 Display Name
               </label>
               {profile.username && (
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', backgroundColor: '#eef2ff', padding: '2px 8px', borderRadius: '10px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#FF1F6A', backgroundColor: 'rgba(255, 31, 106, 0.12)', padding: '2px 6px', borderRadius: '6px' }}>
                   @{profile.username}
                 </span>
               )}
@@ -1011,12 +1039,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
               onChange={(e) => setDisplayName(e.target.value)}
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                fontSize: '15px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                color: 'var(--color-bumble-ink, #202020)',
+                padding: '10px 12px',
+                fontSize: '13px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#1E1116',
+                color: '#FFFFFF',
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             />
           </div>
@@ -1027,27 +1057,29 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: 700,
-                color: 'var(--color-bumble-ink, #202020)',
-                marginBottom: '6px',
+                color: '#C7B6BC',
+                marginBottom: '5px',
               }}
             >
-              <MapPin size={14} color="var(--color-bumble-ink, #202020)" />
-              State / Location (All 36 States + Abuja)
+              <MapPin size={13} color="#FF1F6A" />
+              State / Location
             </label>
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
               style={{
                 width: '100%',
-                padding: '12px 14px',
-                fontSize: '14px',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                backgroundColor: 'var(--color-paper-white, #ffffff)',
-                color: 'var(--color-bumble-ink, #202020)',
+                padding: '10px 12px',
+                fontSize: '13px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#1E1116',
+                color: '#FFFFFF',
                 fontWeight: 600,
+                outline: 'none',
+                boxSizing: 'border-box',
               }}
             >
               {NIGERIAN_STATES.map((state) => (
@@ -1060,30 +1092,24 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         </div>
 
         <div>
-          <label
-            style={{
-              display: 'block',
-              fontSize: '13px',
-              fontWeight: 700,
-              color: 'var(--color-bumble-ink, #202020)',
-              marginBottom: '6px',
-            }}
-          >
+          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#C7B6BC', marginBottom: '5px' }}>
             Bio / Introduction
           </label>
           <textarea
-            rows={3}
+            rows={2}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Tell us what excites you or how you spend your unstructured time..."
+            placeholder="Tell us what excites you or how you spend your unstructured late-night time..."
             style={{
               width: '100%',
-              padding: '12px 16px',
-              fontSize: '15px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
+              padding: '10px 12px',
+              fontSize: '13px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              backgroundColor: '#1E1116',
+              color: '#FFFFFF',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
         </div>
@@ -1093,29 +1119,31 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              fontSize: '13px',
+              gap: '5px',
+              fontSize: '12px',
               fontWeight: 700,
-              color: 'var(--color-bumble-ink, #202020)',
-              marginBottom: '6px',
+              color: '#C7B6BC',
+              marginBottom: '5px',
             }}
           >
-            <Heart size={14} color="var(--color-bumble-ink, #202020)" />
+            <Heart size={13} color="#FF1F6A" />
             Dating Intentions
           </label>
           <input
             type="text"
             value={datingIntentions}
             onChange={(e) => setDatingIntentions(e.target.value)}
-            placeholder="e.g. Deep conversations & long-term connection, intellectual spark..."
+            placeholder="e.g. Deep conversations & long-term connection, late-night companion..."
             style={{
               width: '100%',
-              padding: '12px 16px',
-              fontSize: '15px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
+              padding: '10px 12px',
+              fontSize: '13px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              backgroundColor: '#1E1116',
+              color: '#FFFFFF',
+              outline: 'none',
+              boxSizing: 'border-box',
             }}
           />
         </div>
@@ -1123,16 +1151,17 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         <button
           type="submit"
           disabled={loading}
-          className="btn-bumble-action"
           style={{
             alignSelf: 'flex-end',
-            padding: '14px 32px',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            backgroundColor: 'var(--color-bumble-ink, #202020)',
-            color: 'var(--color-paper-white, #ffffff)',
-            fontWeight: 800,
-            fontSize: '15px',
-            letterSpacing: '0.01em',
+            padding: '12px 24px',
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, #FF1F6A 0%, #B81347 100%)',
+            border: 'none',
+            color: '#FFFFFF',
+            fontWeight: 700,
+            fontSize: '13px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(255, 31, 106, 0.35)',
           }}
         >
           Update Identity
@@ -1141,41 +1170,40 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
 
       {/* Install Cupiddle on your Phone (PWA) */}
       <div
-        className="editorial-card-lift"
         style={{
-          backgroundColor: 'var(--color-pollen, #fff386)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          padding: '24px',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          padding: '20px',
+          border: '1px solid rgba(255, 31, 106, 0.25)',
+          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '16px',
+          gap: '14px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: '240px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '200px' }}>
           <div
             style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '14px',
-              backgroundColor: 'var(--color-bumble-ink, #202020)',
-              color: 'var(--color-bumble-honey, #ffdb5b)',
+              width: '40px',
+              height: '40px',
+              borderRadius: '12px',
+              backgroundColor: '#2A141E',
+              color: '#FF1F6A',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <Smartphone size={24} />
+            <Smartphone size={20} />
           </div>
           <div>
-            <h4 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: 'var(--color-bumble-ink, #202020)' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: 700, margin: 0, color: '#FFFFFF' }}>
               Install Cupiddle on Your Phone
             </h4>
-            <p style={{ fontSize: '13px', color: 'var(--color-charcoal, #3a3a3a)', margin: '4px 0 0', lineHeight: 1.4 }}>
+            <p style={{ fontSize: '12px', color: '#8A7B82', margin: '2px 0 0', lineHeight: 1.4 }}>
               Add Cupiddle to your home screen for fullscreen chat, real-time chimes, and zero app store wait.
             </p>
           </div>
@@ -1184,53 +1212,52 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         <button
           type="button"
           onClick={() => window.dispatchEvent(new CustomEvent('cupiddle:open-install'))}
-          className="btn-bumble-action"
           style={{
-            backgroundColor: 'var(--color-bumble-ink, #202020)',
-            color: 'var(--color-paper-white, #ffffff)',
-            borderRadius: 'var(--radius-buttons, 16px)',
-            padding: '12px 24px',
-            fontSize: '14px',
-            fontWeight: 800,
+            backgroundColor: 'rgba(255, 31, 106, 0.15)',
+            color: '#FF1F6A',
+            border: '1px solid rgba(255, 31, 106, 0.4)',
+            borderRadius: '14px',
+            padding: '10px 18px',
+            fontSize: '13px',
+            fontWeight: 700,
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '6px',
             cursor: 'pointer',
-            border: 'none',
           }}
         >
-          <Download size={16} /> Install App
+          <Download size={14} /> Install App
         </button>
       </div>
 
       {/* 4. Account Safety & Deletion (GDPR / NDPA Compliance) */}
       <div
         style={{
-          padding: '28px 32px',
-          backgroundColor: 'var(--color-mist, #f3f3f3)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          padding: '20px',
+          backgroundColor: '#170E12',
+          borderRadius: '20px',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
         <h3
           style={{
-            fontSize: '18px',
-            fontWeight: 800,
-            color: 'var(--color-bumble-ink, #202020)',
+            fontSize: '15px',
+            fontWeight: 700,
+            color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            marginBottom: '8px',
+            marginBottom: '6px',
           }}
         >
-          <ShieldAlert size={20} color="var(--color-bumble-ink, #202020)" />
+          <ShieldAlert size={16} color="#FF1F6A" />
           Account & Privacy Rights (NDPA 2023)
         </h3>
         <p
           style={{
-            fontSize: '14px',
-            color: 'var(--color-graphite, #575656)',
-            marginBottom: '16px',
+            fontSize: '12px',
+            color: '#8A7B82',
+            marginBottom: '14px',
             lineHeight: 1.5,
           }}
         >
@@ -1241,39 +1268,43 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           <div
             style={{
               display: 'flex',
-              gap: '12px',
+              gap: '10px',
               alignItems: 'center',
               flexWrap: 'wrap',
-              backgroundColor: '#fff1f2',
-              padding: '16px 20px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid #f43f5e',
+              backgroundColor: 'rgba(225, 29, 72, 0.1)',
+              padding: '12px 16px',
+              borderRadius: '14px',
+              border: '1px solid rgba(225, 29, 72, 0.4)',
             }}
           >
-            <span style={{ fontSize: '13px', color: '#9f1239', fontWeight: 700 }}>
+            <span style={{ fontSize: '12px', color: '#fda4af', fontWeight: 600 }}>
               Are you completely sure? This action is permanent and irreversible.
             </span>
             <button
               onClick={onDeleteAccount}
-              className="btn-bumble-action"
               style={{
-                padding: '8px 18px',
+                padding: '8px 16px',
                 backgroundColor: '#e11d48',
                 color: '#ffffff',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                fontSize: '13px',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '12px',
                 fontWeight: 700,
+                cursor: 'pointer',
               }}
             >
-              Permanently Delete Account
+              Permanently Delete
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
               style={{
-                padding: '8px 14px',
-                color: 'var(--color-graphite, #575656)',
-                fontSize: '13px',
+                padding: '8px 12px',
+                color: '#8A7B82',
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '12px',
                 fontWeight: 600,
+                cursor: 'pointer',
               }}
             >
               Cancel
@@ -1283,13 +1314,14 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           <button
             onClick={() => setShowDeleteConfirm(true)}
             style={{
-              padding: '10px 20px',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
-              fontSize: '13px',
-              fontWeight: 700,
+              padding: '8px 16px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              backgroundColor: '#1E1116',
+              color: '#8A7B82',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
             }}
           >
             Request Account Deletion

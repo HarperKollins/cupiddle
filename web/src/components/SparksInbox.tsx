@@ -41,8 +41,8 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-graphite, #575656)' }}>
-        <CupiddleIcon size={36} color="var(--color-bumble-ink, #202020)" style={{ margin: '0 auto 12px' }} />
+      <div style={{ textAlign: 'center', padding: '60px 20px', color: '#E0D4D8' }}>
+        <CupiddleIcon size={36} color="#FF1F6A" style={{ margin: '0 auto 12px' }} />
         <p style={{ fontWeight: 600 }}>Loading your Sparks inbox...</p>
       </div>
     );
@@ -51,78 +51,86 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
   if (sparkList.length === 0) {
     return (
       <div
-        className="editorial-card-lift"
+        className="editorial-card-lift animate-modal-spring"
         style={{
-          maxWidth: '560px',
-          margin: '40px auto',
-          padding: '48px 32px',
+          maxWidth: '440px',
+          margin: '30px auto',
+          padding: '40px 20px',
           textAlign: 'center',
-          backgroundColor: 'var(--color-paper-white, #ffffff)',
-          borderRadius: 'var(--radius-cards, 24px)',
-          border: '1.5px solid var(--color-bumble-ink, #202020)',
-          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          backgroundColor: '#170E12',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 31, 106, 0.25)',
+          boxShadow: '0 16px 40px rgba(0, 0, 0, 0.6)',
+          color: '#FFFFFF',
         }}
       >
         <div
           style={{
-            width: '64px',
-            height: '64px',
+            width: '60px',
+            height: '60px',
             borderRadius: '50%',
-            backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
+            backgroundColor: '#5E081E',
+            border: '1px solid #FF1F6A',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 18px',
+            boxShadow: '0 0 16px rgba(255, 31, 106, 0.4)',
           }}
         >
-          <Heart size={30} color="var(--color-bumble-ink, #202020)" />
+          <Heart size={28} color="#FF1F6A" />
         </div>
         <h3
           style={{
-            fontSize: '24px',
+            fontSize: '22px',
             fontWeight: 800,
-            color: 'var(--color-bumble-ink, #202020)',
+            color: '#FFFFFF',
             marginBottom: '8px',
             letterSpacing: '-0.02em',
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: 'italic',
           }}
         >
           No Pending Sparks Yet
         </h3>
-        <p style={{ fontSize: '15px', color: 'var(--color-graphite, #575656)', lineHeight: 1.5 }}>
-          When people discover your Rabbit Hole, Defend This Take opinion, or profile questions in the Idea Stream, their curious responses will arrive here.
+        <p style={{ fontSize: '14px', color: '#E0D4D8', lineHeight: 1.5, margin: '0 auto 8px', maxWidth: '340px' }}>
+          When people connect with your Rabbit Hole, Defend This Take perspective, or Gate Question in the Idea Stream, their curious sparks will arrive here.
         </p>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '680px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+    <div style={{ width: '100%', maxWidth: '480px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
         <div>
           <h2
             style={{
-              fontSize: '28px',
+              fontSize: '24px',
               fontWeight: 800,
-              color: 'var(--color-bumble-ink, #202020)',
+              color: '#FFFFFF',
               letterSpacing: '-0.02em',
+              fontFamily: "'Playfair Display', serif",
+              fontStyle: 'italic',
+              margin: 0,
             }}
           >
             Sparks Inbox
           </h2>
-          <p style={{ fontSize: '15px', color: 'var(--color-graphite, #575656)', marginTop: '2px' }}>
-            People who connected directly with ideas in your profile.
+          <p style={{ fontSize: '13px', color: '#E0D4D8', marginTop: '2px', margin: 0 }}>
+            People who connected directly with your perspective.
           </p>
         </div>
         <span
           style={{
-            padding: '6px 14px',
-            backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
-            color: 'var(--color-bumble-ink, #202020)',
-            border: '1.5px solid var(--color-bumble-ink, #202020)',
-            borderRadius: 'var(--radius-badges, 1000px)',
-            fontSize: '13px',
+            padding: '4px 12px',
+            backgroundColor: '#5E081E',
+            color: '#FF1F6A',
+            border: '1px solid #FF1F6A',
+            borderRadius: '1000px',
+            fontSize: '12px',
             fontWeight: 800,
+            boxShadow: '0 0 10px rgba(255, 31, 106, 0.3)',
           }}
         >
           {sparkList.length} Pending
@@ -142,36 +150,41 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
             key={spark.id}
             className="editorial-card-lift"
             style={{
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              borderRadius: 'var(--radius-cards, 24px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              padding: '28px',
+              backgroundColor: '#170E12',
+              borderRadius: '24px',
+              border: '1px solid rgba(255, 31, 106, 0.22)',
+              padding: '20px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '18px',
-              boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+              gap: '14px',
+              boxShadow: '0 12px 32px rgba(0, 0, 0, 0.55)',
+              color: '#FFFFFF',
             }}
           >
             {/* Sender Header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <img
                 src={photo}
                 alt={sender?.display_name || 'Sender'}
                 style={{
-                  width: '64px',
-                  height: '64px',
+                  width: '56px',
+                  height: '56px',
                   borderRadius: '50%',
                   objectFit: 'cover',
-                  border: '2px solid var(--color-bumble-ink, #202020)',
+                  border: '2px solid #FF1F6A',
+                  backgroundColor: '#0D080A',
                 }}
               />
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <h4
                   style={{
-                    fontSize: '20px',
+                    fontSize: '18px',
                     fontWeight: 800,
-                    color: 'var(--color-bumble-ink, #202020)',
+                    color: '#FFFFFF',
                     letterSpacing: '-0.01em',
+                    margin: 0,
+                    fontFamily: "'Playfair Display', serif",
+                    fontStyle: 'italic',
                   }}
                 >
                   {sender?.display_name || 'Curious Member'}, {sender?.age}
@@ -180,21 +193,21 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '13px',
-                    color: 'var(--color-graphite, #575656)',
+                    gap: '6px',
+                    fontSize: '12px',
+                    color: '#E0D4D8',
                     marginTop: '2px',
                     flexWrap: 'wrap',
                   }}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                    <MapPin size={14} />
-                    {sender?.city ? `${sender.city}, Nigeria` : 'Nigeria'}
+                    <MapPin size={12} color="#FF1F6A" />
+                    {sender?.city ? `${sender.city}` : 'Nigeria'}
                   </span>
-                  {sender?.bio && (
+                  {sender?.campus && (
                     <>
                       <span>•</span>
-                      <span>{sender.bio.slice(0, 50)}...</span>
+                      <span style={{ color: '#FF1F6A', fontWeight: 700 }}>{sender.campus}</span>
                     </>
                   )}
                 </div>
@@ -204,23 +217,23 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
             {/* What they reacted to */}
             <div
               style={{
-                padding: '14px 18px',
-                backgroundColor: 'var(--color-mist, #f3f3f3)',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1px solid #e0e0e0',
-                borderLeft: '5px solid var(--color-bumble-honey, #ffdb5b)',
-                fontSize: '14px',
-                color: 'var(--color-bumble-ink, #202020)',
+                padding: '12px 14px',
+                backgroundColor: '#1E1116',
+                borderRadius: '14px',
+                border: '1px solid rgba(255, 31, 106, 0.15)',
+                borderLeft: '4px solid #FF1F6A',
+                fontSize: '13px',
+                color: '#E0D4D8',
               }}
             >
               <span
                 style={{
                   fontWeight: 800,
-                  color: 'var(--color-bumble-ink, #202020)',
+                  color: '#FF1F6A',
                   textTransform: 'uppercase',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   display: 'block',
-                  marginBottom: '4px',
+                  marginBottom: '2px',
                   letterSpacing: '0.04em',
                 }}
               >
@@ -232,34 +245,35 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
             {/* Their Spark Comment */}
             <div
               style={{
-                padding: '18px 20px',
-                backgroundColor: 'var(--color-pollen, #fff386)',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                padding: '14px 16px',
+                backgroundColor: 'rgba(94, 8, 30, 0.35)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 31, 106, 0.3)',
               }}
             >
               <span
                 style={{
                   fontWeight: 800,
-                  color: 'var(--color-bumble-ink, #202020)',
-                  fontSize: '12px',
+                  color: '#FF1F6A',
+                  fontSize: '11px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  marginBottom: '6px',
+                  marginBottom: '4px',
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
                 }}
               >
-                <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
+                <CupiddleIcon size={13} color="#FF1F6A" />
                 Their Spark Response:
               </span>
               <p
                 style={{
-                  fontSize: '16px',
-                  color: 'var(--color-bumble-ink, #202020)',
-                  lineHeight: 1.5,
+                  fontSize: '14px',
+                  color: '#FFFFFF',
+                  lineHeight: 1.45,
                   fontWeight: 600,
+                  margin: 0,
                 }}
               >
                 "{spark.comment}"
@@ -272,52 +286,51 @@ export const SparksInbox: React.FC<SparksInboxProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-                gap: '12px',
-                paddingTop: '6px',
+                gap: '10px',
+                paddingTop: '4px',
               }}
             >
               <button
                 onClick={() => handlePass(spark.id)}
                 disabled={isBusy}
-                className="pill-interactive"
                 style={{
-                  padding: '10px 20px',
-                  borderRadius: 'var(--radius-buttons, 16px)',
-                  backgroundColor: 'var(--color-mist, #f3f3f3)',
-                  border: '1px solid #e0e0e0',
-                  color: 'var(--color-bumble-ink, #202020)',
-                  fontSize: '14px',
+                  padding: '9px 18px',
+                  borderRadius: '100px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  color: '#E0D4D8',
+                  fontSize: '13px',
                   fontWeight: 700,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '5px',
                   cursor: isBusy ? 'not-allowed' : 'pointer',
                 }}
               >
-                <X size={16} />
+                <X size={15} />
                 Pass
               </button>
 
               <button
                 onClick={() => handleAccept(spark.id)}
                 disabled={isBusy}
-                className="btn-bumble-action"
                 style={{
-                  padding: '12px 28px',
-                  borderRadius: 'var(--radius-buttons, 16px)',
-                  backgroundColor: 'var(--color-bumble-ink, #202020)',
-                  color: 'var(--color-paper-white, #ffffff)',
-                  fontSize: '15px',
-                  fontWeight: 700,
+                  padding: '10px 22px',
+                  borderRadius: '100px',
+                  backgroundColor: '#FF1F6A',
+                  color: '#ffffff',
+                  fontSize: '13px',
+                  fontWeight: 800,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+                  gap: '6px',
+                  boxShadow: '0 0 16px rgba(255, 31, 106, 0.45)',
+                  border: 'none',
                   cursor: isBusy ? 'not-allowed' : 'pointer',
                 }}
               >
-                <Check size={16} color="var(--color-bumble-honey, #ffdb5b)" />
-                {isBusy ? 'Connecting...' : 'Accept Spark & Match Free'}
+                <Check size={15} color="#ffffff" />
+                {isBusy ? 'Connecting...' : 'Accept & Match'}
               </button>
             </div>
           </div>
