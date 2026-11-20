@@ -69,6 +69,12 @@ export interface DiscoveryCandidate {
   distance_km: number;
   shared_interests: string[];
   match_score: number;
+  compatibility_pct?: number;
+  gate_question?: string;
+  vibe_tag?: string;
+  faculty?: string;
+  level?: string;
+  blur_level?: number;
 }
 
 export interface Spark {

@@ -3,6 +3,7 @@ import { Send, Gamepad2, Compass, CheckCheck, MapPin, ArrowLeft } from 'lucide-r
 import { CupiddleIcon } from './CupiddleLogo';
 import { Conversation, Message, CoopGame } from '../types';
 import { api } from '../api';
+import { scanMessageSafety } from '../utils/safetyGuard';
 
 interface ChatRoomProps {
   conversations: Conversation[];
@@ -74,6 +75,13 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedConvId || !inputContent.trim()) return;
+
+    // Client-side pre-send safety verification (Phone numbers, WhatsApp, transactional leaks)
+    const safetyCheck = scanMessageSafety(inputContent.trim());
+    if (safetyCheck.blocked) {
+      setSafetyError(safetyCheck.reason || 'Safety Alert: Contact info and external redirects are strictly prohibited.');
+      return;
+    }
 
     try {
       setSafetyError(null);

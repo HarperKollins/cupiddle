@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { Compass, Flame, Lightbulb, Check, Tag, ArrowRight, ArrowLeft, Upload, Trash2, Loader2, Link as LinkIcon } from 'lucide-react';
+import { Compass, Flame, Lightbulb, Check, Tag, ArrowRight, ArrowLeft, Upload, Trash2, Loader2, Link as LinkIcon, Lock, Sparkles } from 'lucide-react';
 import { CupiddleIcon } from './CupiddleLogo';
 import { Profile } from '../types';
 import { api } from '../api';
+import { VIBE_TAGS } from './MoodTagSelector';
 
 interface OnboardingModalProps {
   isOpen: boolean;
@@ -17,26 +18,49 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   onComplete,
   onDismiss,
 }) => {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+
+  // Step 1: Curiosity
   const [rabbitHole, setRabbitHole] = useState(profile.rabbit_hole || '');
   const [defendTake, setDefendTake] = useState(profile.defend_take || '');
   const [teachMe, setTeachMe] = useState(profile.teach_me || '');
+
+  // Step 2: World Tags
   const [myWorldTags, setMyWorldTags] = useState<string[]>(profile.my_world_tags || []);
   const [tagInput, setTagInput] = useState('');
+
+  // Step 3: Lifestyle & Values (10-dim vector for master matching model)
+  const [smoking, setSmoking] = useState(0.0);
+  const [drinking, setDrinking] = useState(0.0);
+  const [religionWeight, setReligionWeight] = useState(0.5);
+  const [nightOwl, setNightOwl] = useState(0.5);
+  const [introversion, setIntroversion] = useState(0.5);
+  const [ambitionLevel, setAmbitionLevel] = useState(0.7);
+  const [campusSocial, setCampusSocial] = useState(0.5);
+  const [familyValues, setFamilyValues] = useState(0.5);
+  const [cgpaTier, setCgpaTier] = useState(4); // 1=Gold, 2=Silver, 3=Bronze, 4=Unranked
+
+  // Step 4: Dating Intent, Campus Vibe & Gate Question
+  const [datingIntentions, setDatingIntentions] = useState(profile.dating_intentions || 'Deep conversations & genuine connection');
+  const [selectedVibe, setSelectedVibe] = useState(profile.vibe_tag || 'looking_for_spark');
+  const [gateQuestion, setGateQuestion] = useState(profile.gate_question || '');
+
+  // Step 5: Portrait & Bio
   const [photoURL, setPhotoURL] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [showUrlInput, setShowUrlInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [bio, setBio] = useState(profile.bio || '');
-  const [datingIntentions, setDatingIntentions] = useState(profile.dating_intentions || '');
+
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
   const popularTags = [
     'Afrobeats', 'Sci-Fi', 'Film Grammar', 'Rust', 'Philosophy',
-    'Anime', 'Dune', 'Indie Games', 'AI & ML', 'Jazz', 'Architecture', 'Creative Writing'
+    'Anime', 'Dune', 'Indie Games', 'AI & ML', 'Jazz', 'Architecture', 'Creative Writing',
+    'Asake', 'Burnaboy', 'Law & Justice', 'Medicine', 'Fintech', 'Campus Politics'
   ];
 
   const handleToggleTag = (tag: string) => {
@@ -59,8 +83,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 35 * 1024 * 1024) {
-      setUploadError('Image size must be less than 35MB.');
+    if (file.size > 25 * 1024 * 1024) {
+      setUploadError('Image size must be less than 25MB.');
       return;
     }
 
@@ -89,18 +113,52 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         my_world_tags: myWorldTags,
       });
 
-      // 2. Save bio & dating intentions
+      // 2. Save 10-dim values & lifestyle
+      const lifestyleData: Record<string, number> = {
+        smoking,
+        drinking,
+        religion_weight: religionWeight,
+        night_owl: nightOwl,
+        introversion,
+        political_interest: 0.3,
+        ambition_level: ambitionLevel,
+        campus_social: campusSocial,
+        cheating_stance: 0.0,
+        family_values: familyValues,
+      };
+      await api.updateLifestyle(lifestyleData, cgpaTier);
+
+      // 3. Save vibe tag & gate question
+      if (selectedVibe) {
+        try {
+          await api.setVibeTag(selectedVibe);
+        } catch (e) {
+          console.warn('Vibe save notice:', e);
+        }
+      }
+
+      if (gateQuestion.trim()) {
+        try {
+          await api.setGateQuestion(gateQuestion.trim());
+        } catch (e) {
+          console.warn('Gate question save notice:', e);
+        }
+      }
+
+      // 4. Save bio & dating intentions
       const updated = await api.updateProfile({
         bio,
         dating_intentions: datingIntentions,
+        gate_question: gateQuestion.trim() || undefined,
+        vibe_tag: selectedVibe || undefined,
       });
 
-      // 3. Add portrait if provided
+      // 5. Add portrait if uploaded
       if (photoURL.trim()) {
         try {
-          await api.addPhoto(photoURL.trim());
+          await api.addPhoto(photoURL.trim(), true);
         } catch (e) {
-          console.warn('Photo add warning:', e);
+          console.warn('Photo add notice:', e);
         }
       }
 
@@ -126,7 +184,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1100,
-        padding: '20px',
+        padding: '16px',
         overflowY: 'auto',
       }}
     >
@@ -136,15 +194,16 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           backgroundColor: '#ffffff',
           borderRadius: '24px',
           border: '1.5px solid #202020',
-          maxWidth: '560px',
+          maxWidth: '580px',
           width: '100%',
-          padding: '36px',
+          padding: '32px',
           boxShadow: '0 24px 60px rgba(32, 32, 32, 0.22)',
           position: 'relative',
+          margin: 'auto',
         }}
       >
-        {/* Progress Bar & Header */}
-        <div style={{ marginBottom: '24px' }}>
+        {/* Header & Step Tracker */}
+        <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <div
               style={{
@@ -163,7 +222,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               }}
             >
               <CupiddleIcon size={14} color="#202020" />
-              Step {step} of 3 • Curiosity Onboarding
+              Step {step} of 5 • Campus Onboarding
             </div>
 
             <button
@@ -181,28 +240,40 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '16px' }}>
-            <div style={{ height: '4px', borderRadius: '4px', backgroundColor: step >= 1 ? '#202020' : '#e5e5e5' }} />
-            <div style={{ height: '4px', borderRadius: '4px', backgroundColor: step >= 2 ? '#202020' : '#e5e5e5' }} />
-            <div style={{ height: '4px', borderRadius: '4px', backgroundColor: step >= 3 ? '#202020' : '#e5e5e5' }} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px', marginBottom: '16px' }}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                style={{
+                  height: '4px',
+                  borderRadius: '4px',
+                  backgroundColor: step >= i ? '#202020' : '#e5e5e5',
+                  transition: 'background-color 0.2s ease',
+                }}
+              />
+            ))}
           </div>
 
-          <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#202020', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#202020', letterSpacing: '-0.02em', lineHeight: 1.2, margin: 0 }}>
             {step === 1 && 'What Makes You Curious?'}
             {step === 2 && 'What Powers Your World?'}
-            {step === 3 && 'Your Portrait & Perspective'}
+            {step === 3 && 'Lifestyle & Values Algorithm'}
+            {step === 4 && 'Your Gate Question & Vibe'}
+            {step === 5 && 'Your Portrait & Bio'}
           </h2>
-          <p style={{ fontSize: '14px', color: '#575656', marginTop: '4px' }}>
-            {step === 1 && 'People connect on Cupiddle through thoughts and ideas, not empty swipes.'}
+          <p style={{ fontSize: '13px', color: '#575656', marginTop: '4px' }}>
+            {step === 1 && 'People connect on Cupiddle through thoughts and ideas, not empty photo swipes.'}
             {step === 2 && 'Choose the books, sounds, and media that shaped your tastes.'}
-            {step === 3 && 'Add a face to your ideas and set your dating intentions.'}
+            {step === 3 && 'Calibrates the Mathematical Matching Model (Values Cosine Similarity).'}
+            {step === 4 && 'People must answer your Gate Question before they can spark you.'}
+            {step === 5 && 'Add a face to your ideas. Photo starts at 40px silhouette in discovery.'}
           </p>
         </div>
 
-        {/* Step 1: Curiosity Prompts */}
+        {/* STEP 1: CURIOSITY PROMPTS */}
         {step === 1 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ padding: '16px', borderRadius: '16px', backgroundColor: '#fff386', border: '1.5px solid #202020' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#fffbe8', border: '1.5px solid #202020' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
                 <Compass size={15} /> My Current Rabbit Hole
               </label>
@@ -215,7 +286,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               />
             </div>
 
-            <div style={{ padding: '16px', borderRadius: '16px', backgroundColor: '#f3f3f3', border: '1.5px solid #202020' }}>
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#f3f3f3', border: '1.5px solid #202020' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
                 <Flame size={15} /> Defend This Take
               </label>
@@ -228,7 +299,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               />
             </div>
 
-            <div style={{ padding: '16px', borderRadius: '16px', backgroundColor: '#ffffff', border: '1.5px solid #202020' }}>
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#ffffff', border: '1.5px solid #202020' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
                 <Lightbulb size={15} /> Teach Me Something
               </label>
@@ -241,7 +312,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
               <button
                 onClick={() => setStep(2)}
                 className="btn-bumble-action"
@@ -263,14 +334,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           </div>
         )}
 
-        {/* Step 2: My World Tags */}
+        {/* STEP 2: WORLD TAGS */}
         {step === 2 && (
           <div>
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '8px' }}>
                 Tap to add tags or create your own:
               </label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px', maxHeight: '180px', overflowY: 'auto' }}>
                 {popularTags.map((tag) => {
                   const selected = myWorldTags.includes(tag);
                   return (
@@ -369,16 +440,475 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           </div>
         )}
 
-        {/* Step 3: Identity & Portrait */}
+        {/* STEP 3: LIFESTYLE & VALUES VECTORS */}
         {step === 3 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '380px', overflowY: 'auto', paddingRight: '4px' }}>
+            {/* Sleep Schedule */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Sleep Cycle
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Early Bird 🌅', val: 0.0 },
+                  { label: 'Balanced ⏰', val: 0.5 },
+                  { label: 'Night Owl 🌙', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setNightOwl(opt.val)}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      backgroundColor: nightOwl === opt.val ? '#202020' : '#f3f3f3',
+                      color: nightOwl === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Social Battery */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Social Battery
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Extrovert 🎉', val: 0.0 },
+                  { label: 'Ambivert ⚖️', val: 0.5 },
+                  { label: 'Introvert 🧘', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setIntroversion(opt.val)}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      backgroundColor: introversion === opt.val ? '#202020' : '#f3f3f3',
+                      color: introversion === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ambition & Hustle */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Drive & Ambition
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Peace of Mind 🍃', val: 0.2 },
+                  { label: 'Goal Oriented 🎯', val: 0.6 },
+                  { label: 'Full Grindset 🚀', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setAmbitionLevel(opt.val)}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      backgroundColor: ambitionLevel === opt.val ? '#202020' : '#f3f3f3',
+                      color: ambitionLevel === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Campus Social Presence */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Campus Social Life
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Hostel/Home 🏠', val: 0.0 },
+                  { label: 'Selective 🤝', val: 0.5 },
+                  { label: 'Everywhere 🌍', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setCampusSocial(opt.val)}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      backgroundColor: campusSocial === opt.val ? '#202020' : '#f3f3f3',
+                      color: campusSocial === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Religion Importance */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Faith / Spirituality Importance
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Not at all', val: 0.0 },
+                  { label: 'Mild', val: 0.33 },
+                  { label: 'Important', val: 0.66 },
+                  { label: 'Core', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setReligionWeight(opt.val)}
+                    style={{
+                      padding: '8px 4px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      backgroundColor: religionWeight === opt.val ? '#202020' : '#f3f3f3',
+                      color: religionWeight === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Drinking & Social Drinks */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Drinking
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Never 🧃', val: 0.0 },
+                  { label: 'Socially 🥂', val: 0.33 },
+                  { label: 'Weekends 🍻', val: 0.66 },
+                  { label: 'Often 🍾', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setDrinking(opt.val)}
+                    style={{
+                      padding: '8px 4px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      backgroundColor: drinking === opt.val ? '#202020' : '#f3f3f3',
+                      color: drinking === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Smoking */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Smoking / Shisha
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Never 🚫', val: 0.0 },
+                  { label: 'Socially 💨', val: 0.33 },
+                  { label: 'Regular 🚬', val: 0.66 },
+                  { label: 'Daily ⚡', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setSmoking(opt.val)}
+                    style={{
+                      padding: '8px 4px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      backgroundColor: smoking === opt.val ? '#202020' : '#f3f3f3',
+                      color: smoking === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Family & Relationship Values */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Family Values & Outlook
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'Modern & Free 🌱', val: 0.0 },
+                  { label: 'Balanced 🤝', val: 0.5 },
+                  { label: 'Traditional 🏛️', val: 1.0 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setFamilyValues(opt.val)}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      backgroundColor: familyValues === opt.val ? '#202020' : '#f3f3f3',
+                      color: familyValues === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Academic Track (Confidential Soft Boost) */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Academic Ambition (Confidential Tier)
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                {[
+                  { label: 'First Class 🥇', val: 1 },
+                  { label: '2.1 Upper 🥈', val: 2 },
+                  { label: 'Solid 2.2 🥉', val: 3 },
+                  { label: 'Vibes Only 🎯', val: 4 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setCgpaTier(opt.val)}
+                    style={{
+                      padding: '8px 4px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      backgroundColor: cgpaTier === opt.val ? '#202020' : '#f3f3f3',
+                      color: cgpaTier === opt.val ? '#ffffff' : '#202020',
+                      border: '1px solid #202020',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+              <button
+                onClick={() => setStep(2)}
+                style={{
+                  padding: '12px 20px',
+                  borderRadius: '16px',
+                  border: '1.5px solid #202020',
+                  backgroundColor: '#ffffff',
+                  color: '#202020',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+              <button
+                onClick={() => setStep(4)}
+                className="btn-bumble-action"
+                style={{
+                  padding: '12px 28px',
+                  borderRadius: '16px',
+                  backgroundColor: '#202020',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '14px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                Continue <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: CAMPUS VIBE & GATE QUESTION */}
+        {step === 4 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Real File Upload Section */}
+            {/* Dating Intentions */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                What are you looking for right now?
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {[
+                  'Study Buddy 📚',
+                  'Curious Banter 💭',
+                  'Deep Connection 💜',
+                  'Casual Vibes 🎮',
+                  'Open to Romance ✨',
+                ].map((intent) => (
+                  <button
+                    key={intent}
+                    type="button"
+                    onClick={() => setDatingIntentions(intent)}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '1000px',
+                      border: '1.5px solid #202020',
+                      backgroundColor: datingIntentions === intent ? '#ffdb5b' : '#f9f9f9',
+                      color: '#202020',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {datingIntentions === intent && '✓ '}
+                    {intent}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Vibe Tag Picker (8 ephemeral tags) */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Current Campus Vibe (Expires in 6 Hours)
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
+                {VIBE_TAGS.map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => setSelectedVibe(v.id)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '12px',
+                      border: `1.5px solid ${selectedVibe === v.id ? '#202020' : '#e0e0e0'}`,
+                      backgroundColor: selectedVibe === v.id ? '#202020' : '#ffffff',
+                      color: selectedVibe === v.id ? '#ffffff' : '#202020',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <span>{v.emoji}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom Gate Question */}
+            <div style={{ padding: '14px', borderRadius: '16px', backgroundColor: '#fffbeb', border: '1.5px dashed #f59e0b' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#b45309', marginBottom: '6px' }}>
+                <Lock size={14} /> Your Connection Gate Question
+              </label>
+              <textarea
+                rows={2}
+                placeholder="e.g. Name one thing your faculty hasn't taught you, but definitely should have."
+                value={gateQuestion}
+                onChange={(e) => setGateQuestion(e.target.value)}
+                style={{ width: '100%', fontSize: '14px', borderRadius: '12px', padding: '10px 12px', border: '1px solid #202020' }}
+              />
+              <span style={{ fontSize: '11px', color: '#78350f', display: 'block', marginTop: '4px' }}>
+                💡 Anyone who sparks you MUST write a real answer to this question first.
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+              <button
+                onClick={() => setStep(3)}
+                style={{
+                  padding: '12px 20px',
+                  borderRadius: '16px',
+                  border: '1.5px solid #202020',
+                  backgroundColor: '#ffffff',
+                  color: '#202020',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <ArrowLeft size={16} /> Back
+              </button>
+              <button
+                onClick={() => setStep(5)}
+                className="btn-bumble-action"
+                style={{
+                  padding: '12px 28px',
+                  borderRadius: '16px',
+                  backgroundColor: '#202020',
+                  color: '#ffffff',
+                  fontWeight: 800,
+                  fontSize: '14px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                Continue <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 5: PORTRAIT & BIO */}
+        {step === 5 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '8px' }}>
-                Profile Portrait (Upload Image)
+                Profile Portrait (Photo or Selfie)
               </label>
 
-              {/* Hidden File Input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -405,7 +935,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               )}
 
               {photoURL ? (
-                /* Uploaded Photo Preview Card */
                 <div
                   style={{
                     display: 'flex',
@@ -484,7 +1013,6 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   </div>
                 </div>
               ) : (
-                /* Primary Upload Button / Dropzone */
                 <div>
                   <button
                     type="button"
@@ -510,7 +1038,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       <>
                         <Loader2 size={26} className="animate-spin" color="#202020" />
                         <span style={{ fontSize: '14px', fontWeight: 800, color: '#202020' }}>
-                          Uploading from device...
+                          Compressing & Uploading...
                         </span>
                       </>
                     ) : (
@@ -530,16 +1058,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                           <Upload size={20} color="#202020" />
                         </div>
                         <span style={{ fontSize: '14px', fontWeight: 800, color: '#202020' }}>
-                          Choose Photo from Phone / Laptop
+                          Choose Portrait from Phone / Camera
                         </span>
                         <span style={{ fontSize: '12px', color: '#575656', fontWeight: 500 }}>
-                          Select from Gallery, Files, or Camera (PNG, JPG, WebP up to 10MB)
+                          Will start at 40px silhouette in discovery feed
                         </span>
                       </>
                     )}
                   </button>
 
-                  {/* Optional URL Toggle */}
                   <div style={{ marginTop: '8px', textAlign: 'right' }}>
                     <button
                       type="button"
@@ -557,7 +1084,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         gap: '4px',
                       }}
                     >
-                      <LinkIcon size={12} /> {showUrlInput ? 'Hide image URL link' : 'Or paste an image web link'}
+                      <LinkIcon size={12} /> {showUrlInput ? 'Hide image URL link' : 'Or paste image URL link'}
                     </button>
                   </div>
 
@@ -582,29 +1109,16 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               </label>
               <textarea
                 rows={2}
-                placeholder="A couple sentences about what keeps you up at night or what you enjoy..."
+                placeholder="A couple sentences about what makes you you..."
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 style={{ width: '100%', fontSize: '14px' }}
               />
             </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#202020', marginBottom: '6px' }}>
-                Dating Intentions
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Deep conversations & long-term connection, curious banter..."
-                value={datingIntentions}
-                onChange={(e) => setDatingIntentions(e.target.value)}
-                style={{ width: '100%', fontSize: '14px' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
               <button
-                onClick={() => setStep(2)}
+                onClick={() => setStep(4)}
                 style={{
                   padding: '12px 20px',
                   borderRadius: '16px',
@@ -636,6 +1150,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   gap: '8px',
                 }}
               >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
                 {loading ? 'Saving Profile...' : 'Complete & Enter Cupiddle'}
               </button>
             </div>

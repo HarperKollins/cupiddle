@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
+	"math"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/cupiddle/server/internal/database"
@@ -59,6 +62,20 @@ type AudioIntroRequest struct {
 type AddPhotoRequest struct {
 	URL       string `json:"url"`
 	IsPrimary bool   `json:"is_primary"`
+}
+
+type UpdateLifestyleRequest struct {
+	Lifestyle    map[string]float64 `json:"lifestyle"`
+	ValuesVector []float64          `json:"values_vector,omitempty"`
+	CGPATier     *int               `json:"cgpa_tier,omitempty"`
+}
+
+type SetVibeRequest struct {
+	VibeTag string `json:"vibe_tag"`
+}
+
+type SetGateQuestionRequest struct {
+	GateQuestion string `json:"gate_question"`
 }
 
 // UpdateProfile updates basic identity and discovery filters
@@ -231,6 +248,133 @@ func (h *ProfileHandler) UpdateAudioIntro(w http.ResponseWriter, r *http.Request
 	respondJSON(w, http.StatusOK, map[string]interface{}{
 		"audio_intro_url":      req.AudioURL,
 		"audio_intro_duration": req.Duration,
+	})
+}
+
+// UpdateLifestyle saves lifestyle answers and computes the 10-dim values vector
+func (h *ProfileHandler) UpdateLifestyle(w http.ResponseWriter, r *http.Request) {
+	userID, _ := r.Context().Value(middleware.UserIDKey).(string)
+	var req UpdateLifestyleRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	if req.Lifestyle == nil {
+		req.Lifestyle = make(map[string]float64)
+	}
+
+	// Dimensions: smoking, drinking, religion_weight, night_owl, introversion, political_interest, ambition_level, campus_social, cheating_stance, family_values
+	keys := []string{
+		"smoking", "drinking", "religion_weight", "night_owl", "introversion",
+		"political_interest", "ambition_level", "campus_social", "cheating_stance", "family_values",
+	}
+
+	vec := make([]float64, 10)
+	if len(req.ValuesVector) == 10 {
+		vec = req.ValuesVector
+	} else {
+		for i, k := range keys {
+			if val, ok := req.Lifestyle[k]; ok {
+				vec[i] = val
+			} else {
+				vec[i] = 0.5 // Default neutral
+			}
+		}
+	}
+
+	lifestyleBytes, _ := json.Marshal(req.Lifestyle)
+	vecBytes, _ := json.Marshal(vec)
+	tier := 4
+	if req.CGPATier != nil && *req.CGPATier >= 1 && *req.CGPATier <= 4 {
+		tier = *req.CGPATier
+	}
+
+	now := time.Now()
+	_, err := h.DB.Exec(
+		`UPDATE users SET lifestyle = $1, values_vector = $2, cgpa_tier = $3, updated_at = $4 WHERE id = $5`,
+		string(lifestyleBytes), string(vecBytes), tier, now, userID,
+	)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to update lifestyle"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{
+		"success":       true,
+		"lifestyle":     req.Lifestyle,
+		"values_vector": vec,
+		"cgpa_tier":     tier,
+	})
+}
+
+// SetVibeTag sets an ephemeral vibe tag with a strict 6-hour expiration
+func (h *ProfileHandler) SetVibeTag(w http.ResponseWriter, r *http.Request) {
+	userID, _ := r.Context().Value(middleware.UserIDKey).(string)
+	var req SetVibeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	now := time.Now()
+	expiresAt := now.Add(6 * time.Hour)
+
+	_, err := h.DB.Exec(
+		`UPDATE profiles SET vibe_tag = $1, vibe_expires_at = $2, updated_at = $3 WHERE user_id = $4`,
+		req.VibeTag, expiresAt, now, userID,
+	)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to update vibe tag"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{
+		"success":         true,
+		"vibe_tag":        req.VibeTag,
+		"vibe_expires_at": expiresAt.Format(time.RFC3339),
+	})
+}
+
+// SetGateQuestion sets the user's custom gate question, rate-limited to once every 7 days
+func (h *ProfileHandler) SetGateQuestion(w http.ResponseWriter, r *http.Request) {
+	userID, _ := r.Context().Value(middleware.UserIDKey).(string)
+	var req SetGateQuestionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	req.GateQuestion = strings.TrimSpace(req.GateQuestion)
+	if len(req.GateQuestion) > 0 && len(req.GateQuestion) < 15 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "Gate question should be at least 15 characters to be meaningful."})
+		return
+	}
+
+	var lastSet *time.Time
+	_ = h.DB.QueryRow(`SELECT gate_question_set_at FROM profiles WHERE user_id = $1`, userID).Scan(&lastSet)
+
+	now := time.Now()
+	if lastSet != nil && now.Sub(*lastSet) < 7*24*time.Hour && len(req.GateQuestion) > 0 {
+		daysRemaining := int(math.Ceil(float64(7*24*time.Hour-now.Sub(*lastSet)) / float64(24*time.Hour)))
+		respondJSON(w, http.StatusTooManyRequests, map[string]string{
+			"error": fmt.Sprintf("Gate questions can only be updated once every 7 days (%d days remaining).", daysRemaining),
+		})
+		return
+	}
+
+	_, err := h.DB.Exec(
+		`UPDATE profiles SET gate_question = $1, gate_question_set_at = $2, updated_at = $3 WHERE user_id = $4`,
+		req.GateQuestion, now, now, userID,
+	)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to update gate question"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{
+		"success":       true,
+		"gate_question": req.GateQuestion,
 	})
 }
 

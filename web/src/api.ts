@@ -186,6 +186,27 @@ class ApiClient {
     });
   }
 
+  async updateLifestyle(lifestyle: Record<string, number>, cgpaTier: number = 4): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/profile/lifestyle', {
+      method: 'PUT',
+      body: JSON.stringify({ lifestyle, cgpa_tier: cgpaTier }),
+    });
+  }
+
+  async setVibeTag(vibeTag: string): Promise<{ success: boolean; vibe_tag: string; vibe_expires_at: string }> {
+    return this.request<{ success: boolean; vibe_tag: string; vibe_expires_at: string }>('/profile/vibe', {
+      method: 'POST',
+      body: JSON.stringify({ vibe_tag: vibeTag }),
+    });
+  }
+
+  async setGateQuestion(gateQuestion: string): Promise<{ success: boolean; gate_question: string }> {
+    return this.request<{ success: boolean; gate_question: string }>('/profile/gate-question', {
+      method: 'POST',
+      body: JSON.stringify({ gate_question: gateQuestion }),
+    });
+  }
+
   async addPhoto(url: string, is_primary: boolean = false) {
     return this.request('/profile/photos', {
       method: 'POST',

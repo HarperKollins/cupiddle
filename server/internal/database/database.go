@@ -336,6 +336,12 @@ func (db *DB) RunMigrations() error {
 		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS vibe_expires_at TIMESTAMP",
 		"CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)",
 		"CREATE INDEX IF NOT EXISTS idx_profiles_campus ON profiles(campus, faculty)",
+		// New columns for matching algorithm and safety
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS lifestyle JSONB DEFAULT '{}'",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS cgpa_tier INTEGER DEFAULT 4",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS values_vector JSONB DEFAULT '[]'",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS safety_strikes INTEGER DEFAULT 0",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS gate_question_set_at TIMESTAMP",
 	}
 
 	for _, stmt := range safeMigrations {
