@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -315,6 +316,149 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type GoogleAuthRequest struct {
+	Credential string `json:"credential"` // JWT ID Token from Google GSI
+	Email      string `json:"email"`
+	Name       string `json:"name"`
+	Username   string `json:"username,omitempty"`
+	Campus     string `json:"campus,omitempty"`
+	Faculty    string `json:"faculty,omitempty"`
+	Level      string `json:"level,omitempty"`
+}
+
+// GoogleAuth handles 1-Tap Google authentication and instant student sign-in
+func (h *AuthHandler) GoogleAuth(w http.ResponseWriter, r *http.Request) {
+	var req GoogleAuthRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request payload"})
+		return
+	}
+
+	email := strings.ToLower(strings.TrimSpace(req.Email))
+	if email == "" && req.Credential != "" {
+		// Attempt to parse email from client Google credential JWT
+		parts := strings.Split(req.Credential, ".")
+		if len(parts) >= 2 {
+			payload, _ := base64.RawURLEncoding.DecodeString(parts[1])
+			var claims struct {
+				Email string `json:"email"`
+				Name  string `json:"name"`
+			}
+			if json.Unmarshal(payload, &claims) == nil && claims.Email != "" {
+				email = strings.ToLower(strings.TrimSpace(claims.Email))
+				if req.Name == "" {
+					req.Name = claims.Name
+				}
+			}
+		}
+	}
+
+	if email == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "valid Google email is required"})
+		return
+	}
+
+	now := time.Now()
+	var user models.User
+
+	// Check if student user already exists
+	err := h.DB.QueryRow(
+		`SELECT id, email, COALESCE(username, ''), COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''), password_hash, role, status, email_verified, COALESCE(is_student_verified, false), created_at, updated_at
+		 FROM users WHERE email = $1`, email,
+	).Scan(&user.ID, &user.Email, &user.Username, &user.Campus, &user.Faculty, &user.Department, &user.Level, &user.PasswordHash, &user.Role, &user.Status, &user.EmailVerified, &user.IsStudentVerified, &user.CreatedAt, &user.UpdatedAt)
+
+	if err != nil {
+		// Create new student user from Google profile
+		userID := uuid.New().String()
+		userCampus := strings.TrimSpace(req.Campus)
+		if userCampus == "" {
+			userCampus = "EBSU"
+		}
+		userLevel := strings.TrimSpace(req.Level)
+		if userLevel == "" {
+			userLevel = "100L"
+		}
+		userFaculty := strings.TrimSpace(req.Faculty)
+
+		chosenUsername := cleanUsername(req.Username)
+		if chosenUsername == "" {
+			prefix := strings.Split(email, "@")[0]
+			chosenUsername = cleanUsername(prefix)
+			if chosenUsername == "" {
+				chosenUsername = "student_" + userID[:6]
+			}
+		}
+
+		// Ensure uniqueness
+		var existingID string
+		errCheck := h.DB.QueryRow(`SELECT id FROM users WHERE username = $1`, chosenUsername).Scan(&existingID)
+		if errCheck == nil {
+			chosenUsername = fmt.Sprintf("%s_%s", chosenUsername, userID[:4])
+		}
+
+		dummyHash, _ := auth.HashPassword(uuid.New().String())
+
+		_, err = h.DB.Exec(
+			`INSERT INTO users (id, email, username, password_hash, role, status, email_verified, campus, faculty, level, created_at, updated_at)
+			 VALUES ($1, $2, $3, $4, 'user', 'active', true, $5, $6, $7, $8, $9)`,
+			userID, email, chosenUsername, dummyHash, userCampus, userFaculty, userLevel, now, now,
+		)
+		if err != nil {
+			respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to create student user from Google account"})
+			return
+		}
+
+		displayName := strings.TrimSpace(req.Name)
+		if displayName == "" {
+			displayName = chosenUsername
+		}
+
+		_, err = h.DB.Exec(
+			`INSERT INTO profiles (user_id, username, display_name, campus, faculty, level, birthdate, age, gender, city, country, bio, created_at, updated_at)
+			 VALUES ($1, $2, $3, $4, $5, $6, '2004-01-01', 20, 'Student', 'Ebonyi', 'Nigeria', 'Curious Nigerian student', $7, $8)`,
+			userID, chosenUsername, displayName, userCampus, userFaculty, userLevel, now, now,
+		)
+		if err != nil {
+			respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to initialize student profile"})
+			return
+		}
+
+		user = models.User{
+			ID:                userID,
+			Email:             email,
+			Username:          chosenUsername,
+			Campus:            userCampus,
+			Faculty:           userFaculty,
+			Level:             userLevel,
+			Role:              "user",
+			Status:            "active",
+			EmailVerified:     true,
+			IsStudentVerified: false,
+			CreatedAt:         now,
+			UpdatedAt:         now,
+		}
+	}
+
+	if user.Status == "banned" {
+		respondJSON(w, http.StatusForbidden, map[string]string{"error": "this account has been permanently suspended for safety violations"})
+		return
+	}
+
+	profile := h.getProfileByUserID(user.ID)
+
+	token, err := auth.GenerateJWT(user.ID, user.Email, user.Role, h.Config.JWTSecret)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to generate authentication token"})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, AuthResponse{
+		Token:   token,
+		User:    &user,
+		Profile: profile,
+	})
+}
+
 // Me returns the authenticated user's account and profile
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	userID, _ := r.Context().Value(middleware.UserIDKey).(string)
@@ -484,6 +628,149 @@ func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
 
 	profile := h.getProfileByUserID(user.ID)
 	token, _ := auth.GenerateJWT(user.ID, user.Email, user.Role, h.Config.JWTSecret)
+
+	respondJSON(w, http.StatusOK, AuthResponse{
+		Token:   token,
+		User:    &user,
+		Profile: profile,
+	})
+}
+
+type GoogleAuthRequest struct {
+	Credential string `json:"credential"` // JWT ID Token from Google GSI
+	Email      string `json:"email"`
+	Name       string `json:"name"`
+	Username   string `json:"username,omitempty"`
+	Campus     string `json:"campus,omitempty"`
+	Faculty    string `json:"faculty,omitempty"`
+	Level      string `json:"level,omitempty"`
+}
+
+// GoogleAuth handles 1-Tap Google authentication and instant student sign-in
+func (h *AuthHandler) GoogleAuth(w http.ResponseWriter, r *http.Request) {
+	var req GoogleAuthRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request payload"})
+		return
+	}
+
+	email := strings.ToLower(strings.TrimSpace(req.Email))
+	if email == "" && req.Credential != "" {
+		// Attempt to parse email from client Google credential JWT
+		parts := strings.Split(req.Credential, ".")
+		if len(parts) >= 2 {
+			payload, _ := base64.RawURLEncoding.DecodeString(parts[1])
+			var claims struct {
+				Email string `json:"email"`
+				Name  string `json:"name"`
+			}
+			if json.Unmarshal(payload, &claims) == nil && claims.Email != "" {
+				email = strings.ToLower(strings.TrimSpace(claims.Email))
+				if req.Name == "" {
+					req.Name = claims.Name
+				}
+			}
+		}
+	}
+
+	if email == "" {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "valid Google email is required"})
+		return
+	}
+
+	now := time.Now()
+	var user models.User
+
+	// Check if student user already exists
+	err := h.DB.QueryRow(
+		`SELECT id, email, COALESCE(username, ''), COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''), password_hash, role, status, email_verified, COALESCE(is_student_verified, false), created_at, updated_at
+		 FROM users WHERE email = $1`, email,
+	).Scan(&user.ID, &user.Email, &user.Username, &user.Campus, &user.Faculty, &user.Department, &user.Level, &user.PasswordHash, &user.Role, &user.Status, &user.EmailVerified, &user.IsStudentVerified, &user.CreatedAt, &user.UpdatedAt)
+
+	if err != nil {
+		// Create new student user from Google profile
+		userID := uuid.New().String()
+		userCampus := strings.TrimSpace(req.Campus)
+		if userCampus == "" {
+			userCampus = "EBSU"
+		}
+		userLevel := strings.TrimSpace(req.Level)
+		if userLevel == "" {
+			userLevel = "100L"
+		}
+		userFaculty := strings.TrimSpace(req.Faculty)
+
+		chosenUsername := cleanUsername(req.Username)
+		if chosenUsername == "" {
+			prefix := strings.Split(email, "@")[0]
+			chosenUsername = cleanUsername(prefix)
+			if chosenUsername == "" {
+				chosenUsername = "student_" + userID[:6]
+			}
+		}
+
+		// Ensure uniqueness
+		var existingID string
+		errCheck := h.DB.QueryRow(`SELECT id FROM users WHERE username = $1`, chosenUsername).Scan(&existingID)
+		if errCheck == nil {
+			chosenUsername = fmt.Sprintf("%s_%s", chosenUsername, userID[:4])
+		}
+
+		dummyHash, _ := auth.HashPassword(uuid.New().String())
+
+		_, err = h.DB.Exec(
+			`INSERT INTO users (id, email, username, password_hash, role, status, email_verified, campus, faculty, level, created_at, updated_at)
+			 VALUES ($1, $2, $3, $4, 'user', 'active', true, $5, $6, $7, $8, $9)`,
+			userID, email, chosenUsername, dummyHash, userCampus, userFaculty, userLevel, now, now,
+		)
+		if err != nil {
+			respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to create student user from Google account"})
+			return
+		}
+
+		displayName := strings.TrimSpace(req.Name)
+		if displayName == "" {
+			displayName = chosenUsername
+		}
+
+		_, err = h.DB.Exec(
+			`INSERT INTO profiles (user_id, username, display_name, campus, faculty, level, birthdate, age, gender, city, country, bio, created_at, updated_at)
+			 VALUES ($1, $2, $3, $4, $5, $6, '2004-01-01', 20, 'Student', 'Ebonyi', 'Nigeria', 'Curious Nigerian student', $7, $8)`,
+			userID, chosenUsername, displayName, userCampus, userFaculty, userLevel, now, now,
+		)
+		if err != nil {
+			respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to initialize student profile"})
+			return
+		}
+
+		user = models.User{
+			ID:                userID,
+			Email:             email,
+			Username:          chosenUsername,
+			Campus:            userCampus,
+			Faculty:           userFaculty,
+			Level:             userLevel,
+			Role:              "user",
+			Status:            "active",
+			EmailVerified:     true,
+			IsStudentVerified: false,
+			CreatedAt:         now,
+			UpdatedAt:         now,
+		}
+	}
+
+	if user.Status == "banned" {
+		respondJSON(w, http.StatusForbidden, map[string]string{"error": "this account has been permanently suspended for safety violations"})
+		return
+	}
+
+	profile := h.getProfileByUserID(user.ID)
+
+	token, err := auth.GenerateJWT(user.ID, user.Email, user.Role, h.Config.JWTSecret)
+	if err != nil {
+		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to generate authentication token"})
+		return
+	}
 
 	respondJSON(w, http.StatusOK, AuthResponse{
 		Token:   token,

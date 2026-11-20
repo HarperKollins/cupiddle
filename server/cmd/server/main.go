@@ -92,6 +92,7 @@ func main() {
 	r.Route("/api", func(r chi.Router) {
 		r.Post("/auth/register", authH.Register)
 		r.Post("/auth/login", authH.Login)
+		r.Post("/auth/google", authH.GoogleAuth)
 		r.Get("/auth/check-username", authH.CheckUsername)
 		r.Post("/auth/forgot-password", authH.ForgotPassword)
 		r.Post("/auth/reset-password", authH.ResetPassword)

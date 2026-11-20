@@ -106,6 +106,23 @@ class ApiClient {
     return res;
   }
 
+  async googleAuth(body: {
+    credential?: string;
+    email?: string;
+    name?: string;
+    username?: string;
+    campus?: string;
+    faculty?: string;
+    level?: string;
+  }): Promise<{ token: string; user: User; profile: Profile }> {
+    const res = await this.request<{ token: string; user: User; profile: Profile }>('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    this.setToken(res.token);
+    return res;
+  }
+
   async forgotPassword(email: string): Promise<{ message: string; code?: string; sent: boolean }> {
     return this.request<{ message: string; code?: string; sent: boolean }>('/auth/forgot-password', {
       method: 'POST',

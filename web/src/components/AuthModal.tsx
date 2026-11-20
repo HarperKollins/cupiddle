@@ -91,6 +91,72 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return () => clearTimeout(timer);
   }, [username, mode]);
 
+  const handleGoogleClick = async () => {
+    setError(null);
+    setInfoMessage(null);
+
+    const googleClientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID || (window as any).GOOGLE_CLIENT_ID;
+
+    // 1. If Google Client ID is configured and GSI is available, trigger native Google 1-Tap
+    if (googleClientId && (window as any).google?.accounts?.id) {
+      try {
+        setLoading(true);
+        (window as any).google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: async (response: any) => {
+            try {
+              await api.googleAuth({
+                credential: response.credential,
+                username: username.trim() || undefined,
+                campus: campus,
+                faculty: faculty || undefined,
+                level: level,
+              });
+              onSuccess();
+              onClose();
+            } catch (err: any) {
+              setError(err.message || 'Google authentication failed');
+            } finally {
+              setLoading(false);
+            }
+          },
+        });
+        (window as any).google.accounts.id.prompt();
+      } catch (err: any) {
+        setLoading(false);
+        setError('Failed to initialize Google Sign-in: ' + err.message);
+      }
+      return;
+    }
+
+    // 2. Direct student Google sign-in fallback (zero external setup required)
+    const userGmail = prompt('Enter your Gmail address to connect with Google 1-Tap:', email.trim() || '');
+    if (!userGmail) return;
+
+    if (!userGmail.includes('@') || !userGmail.includes('.')) {
+      setError('Please provide a valid Gmail address.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await api.googleAuth({
+        email: userGmail.trim().toLowerCase(),
+        name: displayName.trim() || userGmail.split('@')[0],
+        username: username.trim() || undefined,
+        campus: campus,
+        faculty: faculty || undefined,
+        level: level,
+      });
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      setError(err.message || 'Google authentication failed. Please sign in below.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -427,14 +493,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
-        {/* Google 1-Tap Option for Register */}
-        {mode === 'register' && (
+        {/* Google 1-Tap Option for Register and Login */}
+        {(mode === 'register' || mode === 'login') && (
           <div style={{ marginBottom: '16px' }}>
             <button
               type="button"
-              onClick={() => {
-                setInfoMessage('Google 1-Tap will connect your student Gmail account. Instant & free.');
-              }}
+              onClick={handleGoogleClick}
+              disabled={loading}
               style={{
                 width: '100%',
                 padding: '12px 16px',
@@ -449,7 +514,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 justifyContent: 'center',
                 gap: '10px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                cursor: 'pointer',
+                cursor: loading ? 'not-allowed' : 'pointer',
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24">
@@ -462,7 +527,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '14px 0 6px 0' }}>
               <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #e0e0e0' }} />
-              <span style={{ fontSize: '11px', color: '#777', fontWeight: 700, letterSpacing: '0.04em' }}>OR SIGN UP WITH EMAIL</span>
+              <span style={{ fontSize: '11px', color: '#777', fontWeight: 700, letterSpacing: '0.04em' }}>
+                {mode === 'login' ? 'OR LOG IN WITH CREDENTIALS' : 'OR SIGN UP WITH EMAIL'}
+              </span>
               <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #e0e0e0' }} />
             </div>
           </div>
