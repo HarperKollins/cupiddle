@@ -9,6 +9,7 @@ interface AuthModalProps {
   onClose: () => void;
   onSuccess: () => void;
   initialState?: string;
+  initialCampus?: string;
   initialMode?: 'login' | 'register' | 'forgot';
 }
 
@@ -17,6 +18,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   onSuccess,
   initialState,
+  initialCampus,
   initialMode,
 }) => {
   const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'reset'>(initialMode || 'register');
@@ -24,7 +26,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [username, setUsername] = useState('');
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [usernameMessage, setUsernameMessage] = useState<string | null>(null);
-  const [campus, setCampus] = useState('EBSU');
+  const [campus, setCampus] = useState(initialCampus || 'EBSU');
   const [faculty, setFaculty] = useState('');
   const [level, setLevel] = useState('300L');
   const [password, setPassword] = useState('');
@@ -45,13 +47,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (isOpen) {
       if (initialMode) {
         setMode(initialMode);
-      } else if (initialState) {
+      } else if (initialState || initialCampus) {
         setMode('register');
       }
       setError(null);
       setInfoMessage(null);
     }
-  }, [isOpen, initialMode, initialState]);
+  }, [isOpen, initialMode, initialState, initialCampus]);
+
+  useEffect(() => {
+    if (initialCampus) {
+      setCampus(initialCampus);
+    }
+  }, [initialCampus]);
 
   useEffect(() => {
     if (initialState) {
@@ -816,13 +824,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       fontWeight: 600,
                     }}
                   >
-                    <option value="EBSU">EBSU (Ebonyi State)</option>
+                    <option value="EBSU">EBSU (Abakaliki)</option>
                     <option value="UNN">UNN (Nsukka)</option>
-                    <option value="UNIZIK">UNIZIK (Awka)</option>
                     <option value="UNILAG">UNILAG (Akoka)</option>
-                    <option value="FUTO">FUTO (Owerri)</option>
-                    <option value="UI">UI (Ibadan)</option>
                     <option value="OAU">OAU (Ifẹ)</option>
+                    <option value="UI">UI (Ibadan)</option>
+                    <option value="ABU">ABU (Zaria)</option>
+                    <option value="FUTO">FUTO (Owerri)</option>
+                    <option value="ESUT">ESUT (Enugu)</option>
+                    <option value="IMSU">IMSU (Owerri)</option>
+                    <option value="UNIZIK">UNIZIK (Awka)</option>
                     <option value="Other">Other Campus</option>
                   </select>
                 </div>

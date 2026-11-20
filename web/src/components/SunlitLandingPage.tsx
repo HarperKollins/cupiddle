@@ -1,1726 +1,1355 @@
 import React, { useState } from 'react';
+import {
+  ArrowRight,
+  Download,
+  EyeOff,
+  Lock,
+  MapPin,
+  Menu,
+  PhoneOff,
+  ShieldAlert,
+  Smartphone,
+  Sparkles,
+  X,
+} from 'lucide-react';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
 
-// ============================================================================
-// 1. INLINE SVG ICONS & BRAND ASSETS (Self-contained, fast, zero layout shift)
-// ============================================================================
-
-const CupiddleIcon: React.FC<{ size?: number; color?: string }> = ({ size = 20, color = '#202020' }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 100 100"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    style={{ display: 'inline-block', verticalAlign: 'middle', flexShrink: 0 }}
-  >
-    <path
-      d="M 64 22 C 34 22 18 36 18 50 C 18 64 34 78 64 78"
-      stroke={color}
-      strokeWidth="13"
-      strokeLinecap="round"
-    />
-    <path
-      d="M 66 42 Q 66 48 60 48 Q 66 48 66 54 Q 66 48 72 48 Q 66 48 66 42 Z"
-      fill={color}
-    />
-    <circle cx="66" cy="62" r="3.2" fill={color} />
-  </svg>
-);
-
-const CupiddleAppBadge: React.FC<{ size?: number }> = ({ size = 38 }) => (
-  <div
-    style={{
-      width: size,
-      height: size,
-      borderRadius: `${Math.round(size * 0.3)}px`,
-      background: '#202020',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 6px 16px rgba(32, 32, 32, 0.2)',
-      flexShrink: 0,
-    }}
-  >
-    <svg width={size * 0.58} height={size * 0.58} viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-        fill="#ffdb5b"
-      />
-      <path d="M13.2 6.8L9.8 12h3.8l-1.8 5.2" stroke="#202020" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  </div>
-);
-
-const ArrowRightIcon: React.FC<{ size?: number }> = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="5" y1="12" x2="19" y2="12" />
-    <polyline points="12 5 19 12 12 19" />
-  </svg>
-);
-
-const CompassIcon: React.FC<{ size?: number; color?: string }> = ({ size = 24, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" />
-    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-  </svg>
-);
-
-const Gamepad2Icon: React.FC<{ size?: number; color?: string }> = ({ size = 24, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="6" y1="11" x2="10" y2="11" />
-    <line x1="8" y1="9" x2="8" y2="13" />
-    <line x1="15" y1="12" x2="15.01" y2="12" />
-    <line x1="18" y1="10" x2="18.01" y2="10" />
-    <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />
-  </svg>
-);
-
-const UsersIcon: React.FC<{ size?: number; color?: string }> = ({ size = 24, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
-const MapPinIcon: React.FC<{ size?: number; color?: string }> = ({ size = 16, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-);
-
-const LightbulbIcon: React.FC<{ size?: number; color?: string }> = ({ size = 16, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-    <path d="M9 18h6" />
-    <path d="M10 22h4" />
-  </svg>
-);
-
-const SparklesIcon: React.FC<{ size?: number; color?: string }> = ({ size = 14, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-  </svg>
-);
-
-const DownloadIcon: React.FC<{ size?: number }> = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" y1="15" x2="12" y2="3" />
-  </svg>
-);
-
-// ============================================================================
-// 2. DATA CONSTANTS & AUTHENTIC NIGERIAN PORTRAITS
-// ============================================================================
-
-const ROTATING_CURIOSITIES = [
-  'Quantum Telemetry & Physics',
-  'West African Cinema & Nollywood',
-  'Octavia Butler & Speculative Fiction',
-  'Roguelike Mechanics & Game Audio',
-  'Emergent AI & Latent Semantics',
-  'Jollof Diplomacy & Food Culture',
-  'Afrobeats Syncopation & Fela Kuti',
-  'CRISPR Gene Editing Ethics',
-  'Stoic Philosophy in Modern Tech',
-  'Chess Tactics & Sicilian Defenses',
-];
-
-const NIGERIAN_PORTRAITS = {
-  bgWoman1: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=800&q=85',
-  bgMan1: 'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=800&q=85',
-  bgWoman2: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=800&q=85',
-  bgMan2: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=800&q=85',
-
-  tunde: 'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=700&q=85',
-  amina: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=700&q=85',
-  chidi: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=700&q=85',
-  philosophyFeature: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1000&q=85',
-};
-
-// Cascading & Floating Nigerian Faces Overlay Data
-interface FloatingNigerianMind {
-  id: string;
-  name: string;
-  age: number;
-  city: string;
-  role: string;
-  take: string;
-  badge: string;
-  avatar: string;
-  topPct: number; // Vertical position in hero %
-  side: 'left' | 'right';
-  offsetPx: number; // Distance from edge
-  animClass: string;
-  delay: string;
-}
-
-const FLOATING_NIGERIAN_FACES: FloatingNigerianMind[] = [
-  {
-    id: 'amina',
-    name: 'Amina',
-    age: 24,
-    city: 'Lagos',
-    role: 'ML Researcher',
-    take: '"Cellular automata and latent transformer geometry."',
-    badge: '💡 AI & Math',
-    avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=300&q=80',
-    topPct: 14,
-    side: 'left',
-    offsetPx: 32,
-    animClass: 'animate-cascade-float-1',
-    delay: '0s',
-  },
-  {
-    id: 'tunde',
-    name: 'Tunde',
-    age: 28,
-    city: 'Port Harcourt',
-    role: 'Filmmaker',
-    take: '"Streaming algorithms have flattened cinematic bravery."',
-    badge: '🎬 Nollywood 35mm',
-    avatar: 'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=300&q=80',
-    topPct: 20,
-    side: 'right',
-    offsetPx: 36,
-    animClass: 'animate-cascade-float-2',
-    delay: '-3.2s',
-  },
-  {
-    id: 'chidi',
-    name: 'Chidi',
-    age: 27,
-    city: 'Abuja',
-    role: 'Game Audio',
-    take: '"Interactive audio tension builds true roguelike dread."',
-    badge: '🎮 Game Audio',
-    avatar: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=300&q=80',
-    topPct: 48,
-    side: 'left',
-    offsetPx: 44,
-    animClass: 'animate-cascade-float-3',
-    delay: '-5.8s',
-  },
-  {
-    id: 'folake',
-    name: 'Folake',
-    age: 23,
-    city: 'Ibadan',
-    role: 'Food Essayist',
-    take: '"Hot akara + Agege bread beats any Victoria Island brunch."',
-    badge: '🥪 Jollof Debate',
-    avatar: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=300&q=80',
-    topPct: 56,
-    side: 'right',
-    offsetPx: 48,
-    animClass: 'animate-cascade-float-1',
-    delay: '-8.5s',
-  },
-  {
-    id: 'kelechi',
-    name: 'Kelechi',
-    age: 26,
-    city: 'Enugu',
-    role: 'Composer',
-    take: '"Fela Kuti jazz voicings in contemporary Afro-fusion."',
-    badge: '🎵 Afrobeat Chords',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-    topPct: 76,
-    side: 'left',
-    offsetPx: 38,
-    animClass: 'animate-cascade-float-2',
-    delay: '-11.2s',
-  },
-  {
-    id: 'zainab',
-    name: 'Zainab',
-    age: 25,
-    city: 'Kano',
-    role: 'Architect',
-    take: '"Traditional earth architecture in Mars habitat systems."',
-    badge: '🏛️ Earth Architecture',
-    avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=300&q=80',
-    topPct: 82,
-    side: 'right',
-    offsetPx: 40,
-    animClass: 'animate-cascade-float-3',
-    delay: '-14s',
-  },
-];
-
-// ============================================================================
-// 3. MAIN SUNLIT LANDING PAGE COMPONENT
-// ============================================================================
-
 interface SunlitLandingPageProps {
-  onOpenAuth: (preselectedState?: string, mode?: 'login' | 'register') => void;
+  onOpenAuth: (
+    preselectedState?: string,
+    mode?: 'login' | 'register',
+    preselectedCampus?: string
+  ) => void;
   onOpenSuggestion?: () => void;
 }
 
-export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({ onOpenAuth, onOpenSuggestion }) => {
-  const [activeNav, setActiveNav] = useState<'why' | 'stream' | 'sparks' | 'coop' | 'states'>('why');
-  const [activeHoverMind, setActiveHoverMind] = useState<FloatingNigerianMind | null>(null);
+const DESIRE_MOODS = [
+  {
+    id: 'feeling_lonely',
+    emoji: '🫠',
+    label: 'Feeling lonely rn',
+    handle: '@amaka_x',
+    whisper: 'My room is too quiet tonight. Come distract me.',
+  },
+  {
+    id: 'late_night',
+    emoji: '🌙',
+    label: 'Late night, bored',
+    handle: '@zainab_v',
+    whisper: 'Up past 2 AM. Tell me your unfiltered confession.',
+  },
+  {
+    id: 'meet_someone',
+    emoji: '🔥',
+    label: 'Ready to meet someone',
+    handle: '@kachi_m',
+    whisper: 'No dry small talk. Pure tension and eye contact.',
+  },
+  {
+    id: 'secret_mode',
+    emoji: '😶‍🌫️',
+    label: 'Secret mode — curious',
+    handle: '@nnenna_s',
+    whisper: 'Nobody knows your real name here. Let go.',
+  },
+] as const;
 
-  const handleStateClick = (state: string) => {
-    onOpenAuth(state, 'register');
+const MARQUEE_WHISPERS = [
+  '🫠 Feeling lonely rn',
+  '🌙 Late night, bored',
+  '🔥 Ready to meet someone',
+  '😶‍🌫️ Secret mode — curious',
+  '⚡ Looking for my spark',
+  '💭 Just want to talk',
+];
+
+const TornEdgeDivider: React.FC<{ flip?: boolean; fill?: string }> = ({
+  flip = false,
+  fill = '#0D080A',
+}) => (
+  <svg
+    viewBox="0 0 1440 28"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    style={{
+      display: 'block',
+      width: '100%',
+      height: '22px',
+      transform: flip ? 'scaleY(-1)' : undefined,
+      pointerEvents: 'none',
+    }}
+  >
+    <path
+      d="M0,0 L1440,0 L1440,14 C1385,22 1330,8 1270,16 C1210,24 1150,10 1090,15 C1025,21 965,9 905,17 C845,25 785,11 720,16 C655,21 595,8 535,16 C475,24 415,10 355,17 C290,24 230,9 170,16 C110,23 55,11 0,18 Z"
+      fill={fill}
+    />
+  </svg>
+);
+
+const PureCupiddleEmblem: React.FC = () => (
+  <svg
+    viewBox="0 0 460 300"
+    aria-hidden="true"
+    className="pure-emblem-float"
+    style={{
+      width: 'clamp(225px, 28vw, 340px)',
+      height: 'auto',
+      display: 'block',
+      margin: '0 auto 8px',
+      filter: 'drop-shadow(0 14px 32px rgba(13, 8, 10, 0.6))',
+    }}
+  >
+    <g transform="translate(46, 148)">
+      <g className="pure-starburst-spin">
+        <polygon
+          points="0,-32 7,-11 29,-20 15,-2 34,10 11,12 17,34 0,17 -17,34 -11,12 -34,10 -15,-2 -29,-20 -7,-11"
+          fill="#FF1F6A"
+          stroke="#0D080A"
+          strokeWidth="4.5"
+          strokeLinejoin="round"
+        />
+      </g>
+    </g>
+
+    <g transform="translate(414, 148)">
+      <g className="pure-starburst-spin-reverse">
+        <polygon
+          points="0,-28 6,-9 25,-18 13,-2 30,9 9,11 15,30 0,15 -15,30 -9,11 -30,9 -13,-2 -25,-18 -6,-9"
+          fill="#FF1F6A"
+          stroke="#0D080A"
+          strokeWidth="4.5"
+          strokeLinejoin="round"
+        />
+      </g>
+    </g>
+
+    <g transform="translate(5, 5)" opacity="0.65">
+      <path
+        d="M150,24 C122,22 104,44 114,76 C92,98 84,132 102,162 C116,184 148,194 176,204 C166,232 172,262 194,282 C202,260 212,248 230,248 C248,248 258,260 266,282 C288,262 294,232 284,204 C312,194 344,184 358,162 C376,132 368,98 346,76 C356,44 338,22 310,24 C280,26 254,54 230,68 C206,54 180,26 150,24 Z"
+        fill="#FF1F6A"
+      />
+    </g>
+
+    <path
+      d="M150,24 C122,22 104,44 114,76 C92,98 84,132 102,162 C116,184 148,194 176,204 C166,232 172,262 194,282 C202,260 212,248 230,248 C248,248 258,260 266,282 C288,262 294,232 284,204 C312,194 344,184 358,162 C376,132 368,98 346,76 C356,44 338,22 310,24 C280,26 254,54 230,68 C206,54 180,26 150,24 Z"
+      fill="#0D080A"
+    />
+
+    <path
+      d="M158,52 C140,52 134,74 146,90 C156,104 176,100 180,82 C184,64 174,52 158,52 Z"
+      fill="#C80A32"
+    />
+    <path
+      d="M302,52 C286,52 276,64 280,82 C284,100 304,104 314,90 C326,74 320,52 302,52 Z"
+      fill="#C80A32"
+    />
+
+    <text
+      x="230"
+      y="148"
+      textAnchor="middle"
+      fill="#FFFFFF"
+      fontFamily="'Plus Jakarta Sans', sans-serif"
+      fontWeight="800"
+      fontStyle="italic"
+      fontSize="36"
+      letterSpacing="2.5"
+    >
+      CUPIDDLE
+    </text>
+
+    <g transform="translate(230, 194)">
+      <path d="M-26,0 Q0,-17 26,0 Q0,17 -26,0 Z" fill="#FF1F6A" />
+      <circle cx="0" cy="0" r="7" fill="#0D080A" />
+      <circle cx="-2" cy="-2" r="2.2" fill="#FFFFFF" />
+    </g>
+  </svg>
+);
+
+export const SunlitLandingPage: React.FC<SunlitLandingPageProps> = ({
+  onOpenAuth,
+  onOpenSuggestion,
+}) => {
+  const [selectedState, setSelectedState] = useState<string>('Lagos');
+  const [selectedMood, setSelectedMood] = useState<string>('feeling_lonely');
+  const [gateReply, setGateReply] = useState<string>('');
+  const [installOs, setInstallOs] = useState<'android' | 'ios'>('android');
+  const [shieldDemoActive, setShieldDemoActive] = useState<boolean>(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+
+  const triggerInstallModal = () => {
+    window.dispatchEvent(new CustomEvent('cupiddle:open-install'));
   };
 
-  const handleSparkMind = (mind: FloatingNigerianMind) => {
-    onOpenAuth(mind.city, 'register');
-  };
+  const activeMood =
+    DESIRE_MOODS.find((m) => m.id === selectedMood) || DESIRE_MOODS[0];
 
   return (
     <div
       style={{
-        '--surface-page-canvas': '#FFFDF7',
-        '--color-bumble-honey': '#ffdb5b',
-        '--color-pollen': '#fff386',
-        '--color-bumble-ink': '#202020',
-        '--color-charcoal': '#3A3A3A',
-        '--color-graphite': '#666666',
-        '--color-paper-white': '#FFFFFF',
-        '--color-mist': '#F7F5F0',
-        backgroundColor: '#FFFDF7',
-        color: '#202020',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
+        backgroundColor: '#0D080A',
+        color: '#FFFFFF',
+        fontFamily: "'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif",
         minHeight: '100vh',
         overflowX: 'hidden',
         position: 'relative',
-      } as React.CSSProperties}
+      }}
     >
-      {/* APPLE-STYLE TRANSLUCENCY, CASCADING MOTION & GLASSMORPHISM */}
       <style>{`
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-
-        .apple-glass-nav {
-          background: rgba(255, 219, 91, 0.76);
-          backdrop-filter: saturate(180%) blur(24px);
-          -webkit-backdrop-filter: saturate(180%) blur(24px);
-          border-bottom: 1px solid rgba(32, 32, 32, 0.08);
+        .pure-burgundy-root * { box-sizing: border-box; }
+        @keyframes pureSunburstSpin {
+          from { transform: translate(-50%, -50%) rotate(0deg); }
+          to { transform: translate(-50%, -50%) rotate(360deg); }
         }
-
-        /* CINEMATIC DUOTONE PORTRAIT BLEND LAYER (Inspired by Harper Kollins Portfolio) */
-        .cinematic-duotone-wrapper {
-          position: absolute;
-          inset: 0;
-          z-index: 0;
-          pointer-events: none;
-          overflow: hidden;
-          background-color: #ffdb5b;
-        }
-
-        .cinematic-duotone-face {
-          position: absolute;
-          background-size: cover;
-          background-repeat: no-repeat;
-          filter: grayscale(100%) contrast(170%) brightness(95%);
-          mix-blend-mode: multiply;
-          opacity: 0.36;
-          transition: transform 0.6s ease-out;
-        }
-
-        @keyframes gazeDrift1 {
-          0%, 100% { transform: scale(1) translate(0px, 0px); }
-          50% { transform: scale(1.04) translate(-6px, -8px); }
-        }
-        @keyframes gazeDrift2 {
-          0%, 100% { transform: scale(1) translate(0px, 0px); }
-          50% { transform: scale(1.03) translate(6px, -6px); }
-        }
-        @keyframes gazeDrift3 {
-          0%, 100% { transform: scale(1) translate(0px, 0px); }
-          50% { transform: scale(1.05) translate(-4px, 6px); }
-        }
-
-        .animate-gaze-1 { animation: gazeDrift1 16s ease-in-out infinite; }
-        .animate-gaze-2 { animation: gazeDrift2 20s ease-in-out infinite -5s; }
-        .animate-gaze-3 { animation: gazeDrift3 18s ease-in-out infinite -10s; }
-
-        .apple-honey-glass-layer {
-          position: relative;
-          z-index: 2;
-          background: transparent;
-        }
-
-        .apple-card-frosted {
-          background: rgba(255, 255, 255, 0.82);
-          backdrop-filter: saturate(190%) blur(28px);
-          -webkit-backdrop-filter: saturate(190%) blur(28px);
-          border: 1.5px solid rgba(255, 255, 255, 0.95);
-          box-shadow: 0 20px 45px rgba(32, 32, 32, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
-        .apple-pill-frosted {
-          background: rgba(255, 255, 255, 0.78);
-          backdrop-filter: saturate(180%) blur(18px);
-          -webkit-backdrop-filter: saturate(180%) blur(18px);
-          border: 1px solid rgba(255, 255, 255, 0.92);
-          box-shadow: 0 4px 16px rgba(32, 32, 32, 0.06);
-        }
-
-        .apple-pollen-glass {
-          background: rgba(255, 243, 134, 0.78);
-          backdrop-filter: saturate(180%) blur(24px);
-          -webkit-backdrop-filter: saturate(180%) blur(24px);
-          border: 1.5px solid rgba(255, 255, 255, 0.92);
-          box-shadow: 0 20px 50px rgba(32, 32, 32, 0.08);
-        }
-
-        @keyframes slowDrift {
-          0%, 100% { transform: scale(1.03) translate(0px, 0px); }
-          50% { transform: scale(1.08) translate(-10px, 8px); }
-        }
-
-        .ambient-face-drift {
-          animation: slowDrift 16s ease-in-out infinite;
-        }
-
-        /* Cascading & Floating Nigerian Faces Keyframes */
-        @keyframes cascadeFloat1 {
-          0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-          50% { transform: translateY(-16px) rotate(2deg) scale(1.04); }
-        }
-
-        @keyframes cascadeFloat2 {
-          0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-          50% { transform: translateY(-22px) rotate(-2.5deg) scale(1.03); }
-        }
-
-        @keyframes cascadeFloat3 {
-          0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-          50% { transform: translateY(-14px) rotate(1.8deg) scale(1.04); }
-        }
-
-        .animate-cascade-float-1 { animation: cascadeFloat1 7s ease-in-out infinite; }
-        .animate-cascade-float-2 { animation: cascadeFloat2 8.5s ease-in-out infinite; }
-        .animate-cascade-float-3 { animation: cascadeFloat3 6.8s ease-in-out infinite; }
-
-        .floating-face-node {
-          position: absolute;
-          z-index: 15;
-          cursor: pointer;
-          transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
-        }
-        .floating-face-node:hover {
-          transform: scale(1.16) !important;
-          z-index: 35 !important;
-        }
-
-        @keyframes floatLeft {
-          0%, 100% { transform: rotate(-4deg) translateY(0px); }
-          50% { transform: rotate(-3deg) translateY(-8px); }
-        }
-
-        @keyframes floatCenter {
+        @keyframes pureEmblemFloat {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
+          50% { transform: translateY(-9px); }
         }
-
-        @keyframes floatRight {
-          0%, 100% { transform: rotate(4deg) translateY(0px); }
-          50% { transform: rotate(3deg) translateY(-8px); }
+        @keyframes pureStarSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
-
-        .animate-float-left { animation: floatLeft 6s ease-in-out infinite; }
-        .animate-float-center { animation: floatCenter 5.5s ease-in-out infinite; }
-        .animate-float-right { animation: floatRight 6.2s ease-in-out infinite; }
-
-        .interactive-card-hover {
-          transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
-        }
-        .interactive-card-hover:hover {
-          transform: rotate(0deg) translateY(-10px) scale(1.02) !important;
-          box-shadow: 0 28px 60px rgba(32, 32, 32, 0.18) !important;
-          z-index: 20 !important;
-        }
-
-        .editorial-card-lift {
-          transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
-        }
-        .editorial-card-lift:hover {
-          transform: translateY(-5px);
-        }
-
-        .btn-bumble-action {
-          transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .btn-bumble-action:hover {
-          transform: scale(1.03);
-          box-shadow: 0 8px 24px rgba(32, 32, 32, 0.24);
-        }
-        .btn-bumble-action:active {
-          transform: scale(0.98);
-        }
-
-        .pill-interactive {
-          transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease;
-        }
-        .pill-interactive:hover {
-          transform: translateY(-2px);
-          background-color: rgba(255, 255, 255, 0.95) !important;
-        }
-
-        @keyframes slideUpFade {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-slide-up {
-          animation: slideUpFade 0.35s ease-out;
-        }
-
-        .marquee-container {
-          width: 100%;
-          overflow: hidden;
-          mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-          -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
-        }
-        .marquee-track {
-          display: flex;
-          gap: 12px;
-          width: max-content;
-          animation: marqueeScroll 34s linear infinite;
-        }
-        .marquee-track:hover {
-          animation-play-state: paused;
-        }
-        @keyframes marqueeScroll {
-          0% { transform: translateX(0); }
+        @keyframes pureMarqueeScroll {
+          0% { transform: translateX(0%); }
           100% { transform: translateX(-50%); }
         }
-
-        @media (max-width: 860px) {
-          .desktop-nav { display: none !important; }
-          .hero-faces-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .cascading-desktop-faces { display: none !important; }
-          .cascading-mobile-ribbon { display: flex !important; }
+        @keyframes pureFadeRise {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0px); }
         }
-        @media (min-width: 861px) {
-          .cascading-mobile-ribbon { display: none !important; }
+        .pure-optical-hero {
+          position: relative;
+          background-color: #5E081E;
+          overflow: hidden;
+        }
+        .pure-optical-rays {
+          position: absolute;
+          top: 42%;
+          left: 50%;
+          width: 220vmax;
+          height: 220vmax;
+          background-color: #5E081E;
+          background-image:
+            repeating-radial-gradient(
+              circle at center,
+              rgba(255, 31, 106, 0.44) 0px,
+              rgba(255, 31, 106, 0.44) 18px,
+              rgba(130, 10, 42, 0.0) 18px,
+              rgba(130, 10, 42, 0.0) 36px
+            ),
+            repeating-conic-gradient(
+              from 0deg at center,
+              #4A0718 0deg 10deg,
+              #C80A32 10deg 20deg,
+              #7D0A28 20deg 30deg,
+              #FF1F6A 30deg 40deg
+            );
+          background-blend-mode: hard-light, normal;
+          animation: pureSunburstSpin 95s linear infinite;
+          will-change: transform;
+          pointer-events: none;
+        }
+        .pure-optical-vignette {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(circle at 50% 44%, rgba(74, 7, 24, 0.14) 0%, rgba(13, 8, 10, 0.64) 90%),
+            linear-gradient(180deg, rgba(13, 8, 10, 0.18) 0%, rgba(74, 7, 24, 0.25) 60%, rgba(13, 8, 10, 0.56) 100%);
+          pointer-events: none;
+        }
+        .pure-emblem-float {
+          animation: pureEmblemFloat 5.5s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+          will-change: transform;
+        }
+        .pure-starburst-spin {
+          animation: pureStarSpin 28s linear infinite;
+          transform-box: fill-box;
+          transform-origin: center;
+        }
+        .pure-starburst-spin-reverse {
+          animation: pureStarSpin 34s linear infinite reverse;
+          transform-box: fill-box;
+          transform-origin: center;
+        }
+        .pure-marquee-wrap {
+          overflow: hidden;
+          width: 100%;
+          mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+          -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+        }
+        .pure-marquee-track {
+          display: inline-flex;
+          gap: 12px;
+          width: max-content;
+          animation: pureMarqueeScroll 34s linear infinite;
+          will-change: transform;
+        }
+        .pure-marquee-track:hover {
+          animation-play-state: paused;
+        }
+        .pure-fade-rise {
+          animation: pureFadeRise 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pure-cta-white-3d {
+          background-color: #FFFFFF;
+          color: #0D080A;
+          border: 2px solid #0D080A;
+          box-shadow: 5px 5px 0px #0D080A, 7px 7px 0px #FFFFFF;
+          transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s ease, background-color 0.16s ease;
+        }
+        .pure-cta-white-3d:hover {
+          background-color: #FFF3F6;
+          transform: translate(-2px, -2px);
+          box-shadow: 7px 7px 0px #0D080A, 9px 9px 0px #FF1F6A;
+        }
+        .pure-cta-white-3d:active {
+          transform: translate(2px, 2px);
+          box-shadow: 2px 2px 0px #0D080A;
+        }
+        .pure-cta-burgundy-3d {
+          background-color: #4A0718;
+          color: #FFFFFF;
+          border: 2px solid #FFFFFF;
+          box-shadow: 5px 5px 0px #0D080A;
+          transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.16s ease;
+        }
+        .pure-cta-burgundy-3d:hover {
+          background-color: #7D0A28;
+          transform: translate(-2px, -2px);
+        }
+        .pure-store-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 8px 14px;
+          border-radius: 7px;
+          border: 1px solid rgba(255, 255, 255, 0.52);
+          background-color: rgba(13, 8, 10, 0.9);
+          color: #FFFFFF;
+          font-size: 12px;
+          font-weight: 700;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pure-store-pill:hover {
+          border-color: #FF1F6A;
+          background-color: #2A0812;
+          transform: translateY(-1px);
+        }
+        .pure-obsidian-card {
+          background-color: #160B0F;
+          border: 1px solid rgba(255, 31, 106, 0.25);
+          border-radius: 16px;
+          overflow: hidden;
+          transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+        }
+        .pure-obsidian-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(255, 31, 106, 0.65);
+        }
+        .pure-obsidian-card:hover .pure-card-photo {
+          transform: scale(1.04);
+        }
+        .pure-card-photo {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pure-serif {
+          font-family: 'Playfair Display', Georgia, serif;
+        }
+        .pure-nav-link {
+          color: #F5E6EA;
+          font-size: 14px;
+          font-weight: 600;
+          text-decoration: none;
+          white-space: nowrap;
+          transition: color 0.15s ease;
+        }
+        .pure-nav-link:hover {
+          color: #FF85AE;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pure-optical-rays,
+          .pure-emblem-float,
+          .pure-starburst-spin,
+          .pure-starburst-spin-reverse,
+          .pure-marquee-track,
+          .pure-fade-rise {
+            animation: none !important;
+          }
+        }
+        @media (max-width: 900px) {
+          .pure-desktop-only { display: none !important; }
+          .pure-mobile-only { display: inline-flex !important; }
+          .pure-mobile-drawer { display: flex !important; }
+          .pure-grid-3 { grid-template-columns: 1fr !important; }
+          .pure-footer-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+        }
+        @media (min-width: 901px) {
+          .pure-mobile-only { display: none !important; }
+          .pure-mobile-drawer { display: none !important; }
         }
       `}</style>
 
-      {/* 1. APPLE-STYLE FROSTED HONEY STICKY NAV */}
-      <header
-        className="apple-glass-nav"
-        style={{
-          backgroundColor: '#ffdb5b',
-          padding: '14px clamp(16px, 4vw, 32px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-        }}
-      >
+      {/* Anti-Screenshot Privacy Curtain Live Preview */}
+      {shieldDemoActive && (
         <div
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Privacy Curtain Preview"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(13, 8, 10, 0.95)',
+            backdropFilter: 'blur(26px)',
+            WebkitBackdropFilter: 'blur(26px)',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            padding: '24px',
+          }}
         >
-          <CupiddleAppBadge size={38} />
-          <span
-            style={{
-              fontSize: '24px',
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              color: 'var(--color-bumble-ink)',
-            }}
-          >
-            Cupiddle
-          </span>
-        </div>
-
-        {/* Center Nav Pills */}
-        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          {[
-            { id: 'why', href: '#why', label: 'Why Cupiddle' },
-            { id: 'stream', href: '#ideastream', label: 'The Idea Stream' },
-            { id: 'sparks', href: '#sparks', label: 'Sparks' },
-            { id: 'coop', href: '#coop', label: 'Co-op Corner' },
-            { id: 'states', href: '#states', label: 'All 36 States' },
-          ].map((item) => (
-            <a
-              key={item.id}
-              href={item.href}
-              onClick={() => setActiveNav(item.id as any)}
-              className="pill-interactive"
-              style={{
-                padding: '9px 18px',
-                borderRadius: '999px',
-                backgroundColor: activeNav === item.id ? 'rgba(255, 255, 255, 0.9)' : 'transparent',
-                color: 'var(--color-bumble-ink)',
-                fontWeight: 700,
-                fontSize: '14px',
-                textDecoration: 'none',
-                letterSpacing: '0.01em',
-                boxShadow: activeNav === item.id ? '0 2px 10px rgba(32,32,32,0.08)' : 'none',
-              }}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Action Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Install App Trigger */}
+          <ShieldAlert size={52} color="#FF1F6A" style={{ marginBottom: '16px' }} />
+          <h2 className="pure-serif" style={{ fontSize: 'clamp(24px, 3.5vw, 34px)', color: '#FFFFFF', margin: '0 0 10px' }}>
+            Screen Locked. Zero Leaks.
+          </h2>
+          <p style={{ maxWidth: '400px', fontSize: '15px', color: '#E7D4D9', lineHeight: 1.5, margin: '0 0 24px' }}>
+            Switch apps or hit PrintScreen and everything blurs instantly. Nobody keeps receipts.
+          </p>
           <button
-            onClick={() => window.dispatchEvent(new CustomEvent('cupiddle:open-install'))}
-            className="pill-interactive apple-pill-frosted"
-            title="Install Cupiddle PWA to Home Screen"
+            type="button"
+            onClick={() => setShieldDemoActive(false)}
+            className="pure-cta-white-3d"
             style={{
-              color: 'var(--color-bumble-ink)',
-              borderRadius: '999px',
-              padding: '9px 16px',
+              padding: '12px 26px',
               fontSize: '13px',
               fontWeight: 800,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.07em',
               cursor: 'pointer',
-              border: 'none',
+              minHeight: '44px',
             }}
           >
-            <DownloadIcon size={14} />
-            <span>Install</span>
+            Back to Page
           </button>
+        </div>
+      )}
 
-          {onOpenSuggestion && (
-            <button
-              onClick={onOpenSuggestion}
-              className="pill-interactive apple-pill-frosted desktop-nav"
+      <div className="pure-burgundy-root">
+        {/* 1. OBSIDIAN STICKY HEADER */}
+        <header style={{ position: 'sticky', top: 0, zIndex: 60, backgroundColor: '#0D080A' }}>
+          <div
+            style={{
+              maxWidth: '1320px',
+              margin: '0 auto',
+              padding: '12px clamp(16px, 3vw, 28px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '32px',
+            }}
+          >
+            <a
+              href="#top"
               style={{
-                color: 'var(--color-bumble-ink)',
-                borderRadius: '999px',
-                padding: '9px 16px',
-                fontSize: '13px',
-                fontWeight: 700,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer',
-                border: 'none',
+                textDecoration: 'none',
+                color: '#FFFFFF',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
-              <LightbulbIcon size={15} />
-              <span>Suggestions</span>
-            </button>
+              <span
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 800,
+                  fontStyle: 'italic',
+                  letterSpacing: '0.03em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Cupiddle App
+              </span>
+            </a>
+
+            <nav
+              aria-label="Primary navigation"
+              className="pure-desktop-only"
+              style={{ display: 'flex', alignItems: 'center', gap: '28px' }}
+            >
+              <a href="#cravings" className="pure-nav-link">
+                Cravings
+              </a>
+              <a href="#cravings" className="pure-nav-link">
+                Secret Moods
+              </a>
+              <a href="#cravings" className="pure-nav-link">
+                Zero Traces
+              </a>
+              <a href="#mobile-install" className="pure-nav-link">
+                Mobile App
+              </a>
+            </nav>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+              <button
+                type="button"
+                onClick={() => onOpenAuth(undefined, 'login')}
+                className="pure-store-pill"
+                style={{ backgroundColor: '#6E0D25', borderColor: '#FF1F6A' }}
+              >
+                <span>Sign In</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                className="pure-mobile-only"
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(255,255,255,0.35)',
+                  borderRadius: '7px',
+                  color: '#FFFFFF',
+                  padding: '7px 9px',
+                  cursor: 'pointer',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '36px',
+                }}
+              >
+                {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {mobileMenuOpen && (
+            <div
+              className="pure-mobile-drawer"
+              style={{
+                width: '100%',
+                flexDirection: 'column',
+                gap: '12px',
+                padding: '12px 20px 18px',
+                backgroundColor: '#160B0F',
+                borderTop: '1px solid rgba(255,31,106,0.2)',
+              }}
+            >
+              <a
+                href="#cravings"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ color: '#FFFFFF', textDecoration: 'none', fontWeight: 600, fontSize: '15px' }}
+              >
+                Cravings &amp; Secret Moods
+              </a>
+              <a
+                href="#mobile-install"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ color: '#FFFFFF', textDecoration: 'none', fontWeight: 600, fontSize: '15px' }}
+              >
+                Install App (Not on Play Store)
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  triggerInstallModal();
+                }}
+                className="pure-store-pill"
+                style={{ alignSelf: 'flex-start' }}
+              >
+                <Download size={14} color="#FF1F6A" />
+                <span>Install to Phone</span>
+              </button>
+            </div>
           )}
 
-          <button
-            onClick={() => onOpenAuth(undefined, 'login')}
-            className="btn-bumble-action"
-            style={{
-              backgroundColor: 'var(--color-bumble-ink)',
-              color: 'var(--color-paper-white)',
-              borderRadius: '999px',
-              padding: '10px 20px',
-              fontSize: '14px',
-              fontWeight: 700,
-              letterSpacing: '0.01em',
-              boxShadow: '0 6px 20px rgba(32,32,32,0.18)',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Sign In / Join
-          </button>
-        </div>
-      </header>
+          <div style={{ position: 'absolute', left: 0, right: 0, bottom: '-20px', overflow: 'hidden' }}>
+            <TornEdgeDivider fill="#0D080A" />
+          </div>
+        </header>
 
-      {/* 2. TRANSLUCENT HONEY HERO WITH CASCADING / FLOATING NIGERIAN FACES OVERLAY */}
-      <section
-        id="ideastream"
-        style={{
-          backgroundColor: '#ffdb5b',
-          position: 'relative',
-          overflow: 'hidden',
-          minHeight: '860px',
-        }}
-      >
-        {/* CINEMATIC DUOTONE UNDERLAY: Multiple bold, sharp portraits of young Nigerians looking deeply beyond the honey canvas */}
-        <div aria-hidden="true" className="cinematic-duotone-wrapper">
-          {/* Face 1: Left Wing — Amina (Intense curious forward gaze) */}
-          <div
-            className="cinematic-duotone-face animate-gaze-1"
-            style={{
-              top: '-4%',
-              left: '-2%',
-              width: '42%',
-              height: '108%',
-              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgWoman1})`,
-              backgroundPosition: 'center 18%',
-              maskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
-            }}
-          />
-
-          {/* Face 2: Center Gaze — Tunde / Harper Style (Direct gaze deeply through the typography) */}
-          <div
-            className="cinematic-duotone-face animate-gaze-2"
-            style={{
-              top: '2%',
-              left: '26%',
-              width: '48%',
-              height: '100%',
-              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgMan1})`,
-              backgroundPosition: 'center 22%',
-              opacity: 0.38,
-              maskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 36%, rgba(0,0,0,0) 78%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 36%, rgba(0,0,0,0) 78%)',
-            }}
-          />
-
-          {/* Face 3: Right Wing — Folake (Confident upward / thoughtful profile) */}
-          <div
-            className="cinematic-duotone-face animate-gaze-3"
-            style={{
-              top: '-4%',
-              right: '-2%',
-              width: '42%',
-              height: '108%',
-              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgWoman2})`,
-              backgroundPosition: 'center 22%',
-              maskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,1) 42%, rgba(0,0,0,0) 80%)',
-            }}
-          />
-
-          {/* Face 4: Lower Center-Right — Chidi (Refined, smart posture) */}
-          <div
-            className="cinematic-duotone-face animate-gaze-1 desktop-nav"
-            style={{
-              top: '18%',
-              right: '20%',
-              width: '36%',
-              height: '85%',
-              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgMan2})`,
-              backgroundPosition: 'center 20%',
-              opacity: 0.32,
-              maskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 74%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 40%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 74%)',
-            }}
-          />
-
-          {/* Soft Amber Vignette unifying the background */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'radial-gradient(ellipse at 50% 45%, rgba(255, 219, 91, 0.35) 0%, rgba(255, 219, 91, 0.75) 100%)',
-            }}
-          />
-        </div>
-
-        {/* CASCADING & FLOATING NIGERIAN FACES OVERLAY (DESKTOP / TABLET) */}
-        <div
-          className="cascading-desktop-faces"
-          aria-hidden="false"
+        {/* 2. HIGH-VOLTAGE PURE-INSPIRED BURGUNDY & LUST CRIMSON HERO */}
+        <section
+          id="top"
+          className="pure-optical-hero"
           style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 10,
-            pointerEvents: 'none',
+            padding: 'clamp(52px, 6.5vw, 84px) 20px clamp(68px, 8vw, 96px)',
+            textAlign: 'center',
           }}
         >
-          {FLOATING_NIGERIAN_FACES.map((mind) => {
-            const isLeft = mind.side === 'left';
-            return (
-              <div
-                key={mind.id}
-                className={`floating-face-node ${mind.animClass}`}
-                style={{
-                  top: `${mind.topPct}%`,
-                  left: isLeft ? `${mind.offsetPx}px` : undefined,
-                  right: !isLeft ? `${mind.offsetPx}px` : undefined,
-                  animationDelay: mind.delay,
-                  pointerEvents: 'auto',
-                }}
-                onMouseEnter={() => setActiveHoverMind(mind)}
-                onMouseLeave={() => setActiveHoverMind(null)}
-                onClick={() => handleSparkMind(mind)}
-                title={`Click to spark ${mind.name} from ${mind.city}`}
-              >
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {/* Frosted Avatar Squircle */}
-                  <div
-                    style={{
-                      width: '68px',
-                      height: '68px',
-                      borderRadius: '22px',
-                      background: 'rgba(255, 255, 255, 0.85)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                      padding: '3px',
-                      boxShadow: '0 14px 30px rgba(32, 32, 32, 0.22)',
-                      border: '2px solid #ffffff',
-                      position: 'relative',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <img
-                      src={mind.avatar}
-                      alt={mind.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '18px' }}
-                    />
-                    {/* Active green status beacon */}
-                    <span
-                      style={{
-                        position: 'absolute',
-                        bottom: '2px',
-                        right: '2px',
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        backgroundColor: '#10b981',
-                        border: '2px solid #ffffff',
-                        boxShadow: '0 0 8px rgba(16, 185, 129, 0.8)',
-                      }}
-                    />
-                  </div>
+          <div className="pure-optical-rays" aria-hidden="true" />
+          <div className="pure-optical-vignette" aria-hidden="true" />
 
-                  {/* Attached Cute Frosted Tag Pill */}
-                  <div
-                    className="apple-pill-frosted"
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '999px',
-                      fontSize: '12px',
-                      fontWeight: 800,
-                      color: 'var(--color-bumble-ink)',
-                      whiteSpace: 'nowrap',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '1px',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span>{mind.name}, {mind.age}</span>
-                      <span style={{ fontSize: '10px', color: 'var(--color-graphite)', fontWeight: 600 }}>• {mind.city}</span>
-                    </div>
-                    <span style={{ fontSize: '11px', color: '#854d0e', fontWeight: 700 }}>
-                      {mind.badge}
-                    </span>
-                  </div>
-                </div>
+          <div style={{ position: 'relative', zIndex: 2, maxWidth: '1000px', margin: '0 auto' }}>
+            <PureCupiddleEmblem />
 
-                {/* Interactive Tooltip Card on Hover */}
-                {activeHoverMind?.id === mind.id && (
-                  <div
-                    className="apple-card-frosted animate-slide-up"
-                    style={{
-                      position: 'absolute',
-                      top: '76px',
-                      left: isLeft ? '0px' : undefined,
-                      right: !isLeft ? '0px' : undefined,
-                      width: '260px',
-                      padding: '14px',
-                      borderRadius: '20px',
-                      zIndex: 40,
-                      boxShadow: '0 20px 40px rgba(32,32,32,0.25)',
-                    }}
-                  >
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-graphite)' }}>
-                      Defend This Take:
-                    </span>
-                    <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-bumble-ink)', margin: '4px 0 10px', lineHeight: 1.4 }}>
-                      {mind.take}
-                    </p>
-                    <div
-                      style={{
-                        backgroundColor: 'var(--color-bumble-ink)',
-                        color: 'var(--color-paper-white)',
-                        borderRadius: '999px',
-                        padding: '6px 12px',
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        textAlign: 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                      }}
-                    >
-                      <SparklesIcon size={12} color="#ffdb5b" /> Spark {mind.name}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* TRANSLUCENT HONEY GLASS OVERLAY (Apple iOS/macOS Vibrancy & Blur) */}
-        <div
-          className="apple-honey-glass-layer"
-          style={{
-            position: 'relative',
-            zIndex: 1,
-            padding: '64px 24px 104px',
-          }}
-        >
-          <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-            {/* Massive Apple-Clean Display Headline */}
-            <h1
+            <p
               style={{
-                fontSize: 'clamp(42px, 6vw, 76px)',
-                fontWeight: 800,
-                lineHeight: 1.05,
-                letterSpacing: '-0.025em',
-                color: 'var(--color-bumble-ink)',
-                maxWidth: '920px',
-                margin: '0 auto 20px',
-                textShadow: '0 1px 0 rgba(255,255,255,0.45)',
+                fontSize: '13px',
+                fontWeight: 700,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: '#FFD2E2',
+                margin: '0 auto 10px',
               }}
             >
-              Curiosity is attractive.
+              Anonymous · No Real Names · Zero Phone Numbers
+            </p>
+
+            <h1
+              className="pure-serif"
+              style={{
+                fontSize: 'clamp(32px, 4.9vw, 58px)',
+                fontWeight: 500,
+                lineHeight: 1.06,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#FFFFFF',
+                margin: '0 auto 16px',
+                maxWidth: '900px',
+                textShadow: '0 4px 22px rgba(13, 8, 10, 0.65)',
+                textWrap: 'balance',
+              }}
+            >
+              <em style={{ fontStyle: 'italic', fontWeight: 600 }}>Bring Your Desires</em>{' '}
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800 }}>
+                To Reality.
+              </span>
             </h1>
 
             <p
               style={{
-                fontSize: 'clamp(17px, 2.2vw, 22px)',
-                color: 'var(--color-bumble-ink)',
-                fontWeight: 500,
-                lineHeight: 1.48,
-                maxWidth: '680px',
-                margin: '0 auto 36px',
-                letterSpacing: '-0.005em',
+                fontSize: 'clamp(17px, 2vw, 21px)',
+                fontWeight: 600,
+                color: '#FFF3F6',
+                maxWidth: '520px',
+                margin: '0 auto 30px',
+                lineHeight: 1.45,
+                textShadow: '0 2px 12px rgba(13, 8, 10, 0.7)',
               }}
             >
-              Find someone worth getting lost in. Connect through obsessions, unexpected arguments, and ideas you're willing to defend.
+              Are you lonely? Say what you actually want tonight. Nobody knows your name.
             </p>
 
-            {/* Primary Action Button */}
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '36px' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px',
+                flexWrap: 'wrap',
+              }}
+            >
               <button
-                onClick={() => onOpenAuth(undefined, 'register')}
-                className="btn-bumble-action"
+                type="button"
+                onClick={() => onOpenAuth(selectedState, 'register')}
+                className="pure-cta-white-3d"
                 style={{
-                  backgroundColor: 'var(--color-bumble-ink)',
-                  color: 'var(--color-paper-white)',
-                  borderRadius: '999px',
-                  padding: '17px 38px',
-                  fontSize: '18px',
-                  fontWeight: 700,
-                  letterSpacing: '0.01em',
+                  padding: '15px 34px',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  letterSpacing: '0.09em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  minHeight: '52px',
+                  minWidth: '240px',
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '10px',
-                  boxShadow: '0 14px 30px rgba(32, 32, 32, 0.22)',
-                  border: 'none',
-                  cursor: 'pointer',
                 }}
               >
-                Start Exploring Free <ArrowRightIcon size={20} />
+                <span>Enter Secretly</span>
+                <ArrowRight size={17} />
               </button>
-            </div>
 
-            {/* CASCADING MOBILE RIBBON: Horizontal cute floating bubbles for small phone screens */}
-            <div
-              className="cascading-mobile-ribbon"
-              style={{
-                display: 'none',
-                overflowX: 'auto',
-                padding: '10px 0 24px',
-                gap: '12px',
-                justifyContent: 'flex-start',
-                scrollbarWidth: 'none',
-                WebkitOverflowScrolling: 'touch',
-              }}
-            >
-              {FLOATING_NIGERIAN_FACES.map((mind) => (
-                <div
-                  key={mind.id}
-                  onClick={() => handleSparkMind(mind)}
-                  className="apple-pill-frosted"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '8px 14px',
-                    borderRadius: '999px',
-                    flexShrink: 0,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <div style={{ position: 'relative', width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden' }}>
-                    <img src={mind.avatar} alt={mind.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--color-bumble-ink)' }}>
-                      {mind.name} • {mind.city}
-                    </div>
-                    <div style={{ fontSize: '10px', fontWeight: 700, color: '#854d0e' }}>
-                      {mind.badge}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Frosted Glass Marquee Ticker */}
-            <div className="marquee-container" style={{ marginBottom: '56px' }}>
-              <div className="marquee-track">
-                {[...ROTATING_CURIOSITIES, ...ROTATING_CURIOSITIES].map((topic, i) => (
-                  <span
-                    key={i}
-                    className="pill-interactive apple-pill-frosted"
-                    onClick={() => onOpenAuth()}
-                    style={{
-                      padding: '10px 22px',
-                      borderRadius: '999px',
-                      fontSize: '14px',
-                      fontWeight: 700,
-                      color: 'var(--color-bumble-ink)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <SparklesIcon size={14} /> {topic}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* FROSTED GLASS PROFILE CARDS COLLAGE — NIGERIAN MEMBERS */}
-            <div
-              style={{
-                position: 'relative',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: '24px',
-                flexWrap: 'wrap',
-                paddingTop: '12px',
-                maxWidth: '100%',
-              }}
-            >
-              {/* Left Card: Tunde (Port Harcourt) */}
-              <div
-                className="interactive-card-hover animate-float-left desktop-nav apple-card-frosted"
-                style={{
-                  width: '310px',
-                  borderRadius: '28px',
-                  padding: '18px',
-                  textAlign: 'left',
-                }}
-              >
-                <div style={{ position: 'relative', height: '230px', borderRadius: '20px', overflow: 'hidden', marginBottom: '14px' }}>
-                  <img
-                    src={NIGERIAN_PORTRAITS.tunde}
-                    alt="Tunde, 28 from Port Harcourt"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
-                  />
-                  <span
-                    className="apple-pill-frosted"
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      left: '10px',
-                      color: 'var(--color-bumble-ink)',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      padding: '5px 11px',
-                      borderRadius: '999px',
-                    }}
-                  >
-                    ✓ 100% Verified
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 2px', color: 'var(--color-bumble-ink)' }}>Tunde, 28</h3>
-                <p style={{ fontSize: '13px', color: 'var(--color-graphite)', margin: '0 0 10px', fontWeight: 500 }}>Port Harcourt • Filmmaker</p>
-                <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.72)', padding: '11px 13px', borderRadius: '16px', border: '1px solid rgba(32,32,32,0.06)' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-charcoal)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Defend This Take
-                  </span>
-                  <p style={{ fontSize: '13px', color: 'var(--color-bumble-ink)', margin: '3px 0 0', lineHeight: 1.4, fontWeight: 500 }}>
-                    "Streaming algorithms have flattened cinematic bravery."
-                  </p>
-                </div>
-              </div>
-
-              {/* Center Card: Amina (Lagos) — Elevated Apple Frosted Card */}
-              <div
-                className="interactive-card-hover animate-float-center apple-card-frosted"
-                style={{
-                  width: '335px',
-                  maxWidth: 'calc(100vw - 40px)',
-                  background: 'rgba(255, 255, 255, 0.88)',
-                  borderRadius: '30px',
-                  boxShadow: '0 24px 60px rgba(32, 32, 32, 0.18), inset 0 1px 0 rgba(255, 255, 255, 1)',
-                  padding: '22px',
-                  textAlign: 'left',
-                  zIndex: 10,
-                }}
-              >
-                <div style={{ position: 'relative', height: '250px', borderRadius: '22px', overflow: 'hidden', marginBottom: '14px' }}>
-                  <img
-                    src={NIGERIAN_PORTRAITS.amina}
-                    alt="Amina, 24 from Lagos"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 18%' }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      left: '10px',
-                      backgroundColor: 'rgba(255, 219, 91, 0.92)',
-                      backdropFilter: 'blur(12px)',
-                      color: 'var(--color-bumble-ink)',
-                      fontSize: '12px',
-                      fontWeight: 800,
-                      padding: '5px 12px',
-                      borderRadius: '999px',
-                      border: '1px solid rgba(255,255,255,0.8)',
-                    }}
-                  >
-                    ✓ Verified Mind
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '22px', fontWeight: 800, margin: '0 0 2px', color: 'var(--color-bumble-ink)' }}>Amina, 24</h3>
-                <p style={{ fontSize: '14px', color: 'var(--color-graphite)', margin: '0 0 12px', fontWeight: 500 }}>Lagos • ML Researcher</p>
-
-                <div style={{ backgroundColor: 'rgba(255, 243, 134, 0.65)', padding: '12px 14px', borderRadius: '16px', marginBottom: '12px', border: '1px solid rgba(255, 219, 91, 0.7)' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-bumble-ink)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    My Rabbit Hole
-                  </span>
-                  <p style={{ fontSize: '14px', color: 'var(--color-bumble-ink)', fontWeight: 600, margin: '3px 0 0', lineHeight: 1.4 }}>
-                    "Cellular automata and latent semantics in transformer geometry."
-                  </p>
-                </div>
-
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ backgroundColor: 'rgba(32,32,32,0.06)', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 700 }}>Dune</span>
-                  <span style={{ backgroundColor: 'rgba(32,32,32,0.06)', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 700 }}>Philosophy</span>
-                  <span style={{ backgroundColor: 'rgba(32,32,32,0.06)', padding: '5px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: 700 }}>PyTorch</span>
-                </div>
-              </div>
-
-              {/* Right Card: Chidi (Abuja) */}
-              <div
-                className="interactive-card-hover animate-float-right desktop-nav apple-card-frosted"
-                style={{
-                  width: '310px',
-                  borderRadius: '28px',
-                  padding: '18px',
-                  textAlign: 'left',
-                }}
-              >
-                <div style={{ position: 'relative', height: '230px', borderRadius: '20px', overflow: 'hidden', marginBottom: '14px' }}>
-                  <img
-                    src={NIGERIAN_PORTRAITS.chidi}
-                    alt="Chidi, 27 from Abuja"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
-                  />
-                  <span
-                    className="apple-pill-frosted"
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      left: '10px',
-                      color: 'var(--color-bumble-ink)',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      padding: '5px 11px',
-                      borderRadius: '999px',
-                    }}
-                  >
-                    ✓ 100% Verified
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 2px', color: 'var(--color-bumble-ink)' }}>Chidi, 27</h3>
-                <p style={{ fontSize: '13px', color: 'var(--color-graphite)', margin: '0 0 10px', fontWeight: 500 }}>Abuja • Game Audio</p>
-                <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.72)', padding: '11px 13px', borderRadius: '16px', border: '1px solid rgba(32,32,32,0.06)' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-charcoal)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Teach Me Something
-                  </span>
-                  <p style={{ fontSize: '13px', color: 'var(--color-bumble-ink)', margin: '3px 0 0', lineHeight: 1.4, fontWeight: 500 }}>
-                    "How to create interactive tension in roguelikes using audio."
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. SECTION: THE CURIOSITY PHILOSOPHY (2-COLUMN FEATURE WITH ZAINAB) */}
-      <section
-        id="why"
-        style={{
-          padding: '100px 24px',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '64px',
-            alignItems: 'center',
-          }}
-        >
-          {/* Nigerian Lifestyle Portrait with Apple-style soft depth */}
-          <div
-            className="editorial-card-lift"
-            style={{
-              borderRadius: '32px',
-              overflow: 'hidden',
-              boxShadow: '0 24px 54px rgba(32, 32, 32, 0.12)',
-              height: '490px',
-              position: 'relative',
-              border: '1px solid rgba(32, 32, 32, 0.08)',
-            }}
-          >
-            <img
-              src={NIGERIAN_PORTRAITS.philosophyFeature}
-              alt="Zainab, young Nigerian woman smiling thoughtfully"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }}
-            />
-            <div
-              className="apple-pill-frosted"
-              style={{
-                position: 'absolute',
-                bottom: '18px',
-                left: '18px',
-                right: '18px',
-                padding: '12px 18px',
-                borderRadius: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink)' }}>
-                Zainab, 25 • Architect & Essayist
-              </span>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-graphite)' }}>
-                Lagos, NG
-              </span>
-            </div>
-          </div>
-
-          {/* Copy Column */}
-          <div>
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '7px 16px',
-                backgroundColor: 'rgba(255, 219, 91, 0.85)',
-                backdropFilter: 'blur(12px)',
-                borderRadius: '999px',
-                fontSize: '13px',
-                fontWeight: 700,
-                color: 'var(--color-bumble-ink)',
-                marginBottom: '18px',
-              }}
-            >
-              The Philosophy
-            </span>
-            <h2
-              style={{
-                fontSize: 'clamp(32px, 3.6vw, 46px)',
-                fontWeight: 800,
-                lineHeight: 1.12,
-                color: 'var(--color-bumble-ink)',
-                margin: '0 0 20px',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              There's more to you than your pictures.
-            </h2>
-            <p
-              style={{
-                fontSize: '17px',
-                lineHeight: 1.6,
-                color: 'var(--color-charcoal)',
-                margin: '0 0 20px',
-              }}
-            >
-              Conventional dating apps reduce people to flat photos and endless repetitive introductions that lead nowhere.
-            </p>
-            <p
-              style={{
-                fontSize: '17px',
-                lineHeight: 1.6,
-                color: 'var(--color-charcoal)',
-                margin: '0 0 32px',
-              }}
-            >
-              People don't fall in love because they have identical checklists. They connect because someone challenges their perspective, introduces them to a fascinating new rabbit hole, makes them laugh, or opens a conversation they never expected to have.
-            </p>
-
-            {/* Pill badges */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {['My Rabbit Hole', 'Defend This Take', 'Teach Me Something', 'My World Tags'].map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    padding: '9px 16px',
-                    backgroundColor: 'rgba(32, 32, 32, 0.05)',
-                    borderRadius: '999px',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    color: 'var(--color-bumble-ink)',
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. SECTION: THE SPARK SYSTEM (FROSTED POLLEN GLASS FRAME) */}
-      <section
-        id="sparks"
-        style={{
-          padding: '0 24px 80px',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        <div
-          className="editorial-card-lift apple-pollen-glass"
-          style={{
-            borderRadius: '32px',
-            padding: '56px 40px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '48px',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            <span
-              className="apple-pill-frosted"
-              style={{
-                padding: '6px 14px',
-                borderRadius: '999px',
-                fontSize: '13px',
-                fontWeight: 700,
-                display: 'inline-block',
-                marginBottom: '16px',
-              }}
-            >
-              The Signature Interaction
-            </span>
-            <h2
-              style={{
-                fontSize: 'clamp(30px, 3.2vw, 42px)',
-                fontWeight: 800,
-                lineHeight: 1.14,
-                letterSpacing: '-0.02em',
-                color: 'var(--color-bumble-ink)',
-                margin: '0 0 18px',
-              }}
-            >
-              Don't just say 'Hey'. Spark a real thought.
-            </h2>
-            <p
-              style={{
-                fontSize: '17px',
-                lineHeight: 1.55,
-                color: 'var(--color-charcoal)',
-                margin: '0 0 28px',
-              }}
-            >
-              A Spark is not an empty swipe. When someone posts an obsession, a controversial opinion, or a piece of art they love, you respond directly to that specific statement. Senders start with substantive ideas, recipients gain immediate conversational context.
-            </p>
-
-            <button
-              onClick={() => onOpenAuth()}
-              className="btn-bumble-action"
-              style={{
-                backgroundColor: 'var(--color-bumble-ink)',
-                color: 'var(--color-paper-white)',
-                borderRadius: '999px',
-                padding: '15px 30px',
-                fontSize: '16px',
-                fontWeight: 700,
-                boxShadow: '0 10px 24px rgba(32,32,32,0.16)',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              Experience The Spark System
-            </button>
-          </div>
-
-          {/* Interactive Frosted Card Showing a Real Spark */}
-          <div
-            className="editorial-card-lift apple-card-frosted"
-            style={{
-              borderRadius: '28px',
-              padding: '28px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <CupiddleIcon size={20} color="var(--color-bumble-ink)" />
-              <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Incoming Spark
-              </span>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: 'rgba(255, 219, 91, 0.28)',
-                padding: '14px',
-                borderRadius: '16px',
-                marginBottom: '14px',
-                borderLeft: '4px solid var(--color-bumble-honey)',
-              }}
-            >
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-graphite)' }}>
-                Responding to: Defend This Take
-              </span>
-              <p style={{ fontSize: '14px', fontStyle: 'italic', margin: '4px 0 0', color: 'var(--color-bumble-ink)' }}>
-                "Streaming algorithms have flattened cinematic bravery."
-              </p>
-            </div>
-
-            <p style={{ fontSize: '15px', color: 'var(--color-bumble-ink)', lineHeight: 1.5, fontWeight: 500, margin: '0 0 20px' }}>
-              "I completely agree! Especially with mid-budget auteur features. Have you explored how 1970s West African cinema handled creative funding?"
-            </p>
-
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
               <button
-                onClick={() => onOpenAuth(undefined, 'register')}
-                className="btn-bumble-action"
+                type="button"
+                onClick={triggerInstallModal}
+                className="pure-cta-burgundy-3d"
                 style={{
-                  backgroundColor: 'var(--color-bumble-ink)',
-                  color: 'var(--color-paper-white)',
-                  padding: '11px 24px',
-                  borderRadius: '999px',
+                  padding: '15px 28px',
                   fontSize: '14px',
                   fontWeight: 700,
-                  border: 'none',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
                   cursor: 'pointer',
+                  minHeight: '52px',
+                  minWidth: '240px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
                 }}
               >
-                Accept & Match
+                <Smartphone size={17} color="#FF1F6A" />
+                <span>Install Mobile App</span>
               </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 5. SECTION: CO-OP CORNER & RABBIT HOLES (3-CARD FROSTED GRID) */}
-      <section
-        id="coop"
-        style={{
-          padding: '60px 24px 80px',
-          maxWidth: '1200px',
-          margin: '0 auto',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.02em', margin: 0, color: 'var(--color-bumble-ink)' }}>
-            More Than Endless Chatting
-          </h2>
-          <p style={{ fontSize: '17px', color: 'var(--color-graphite)', marginTop: '8px' }}>
-            Interactive features designed to create genuine connection.
-          </p>
+        {/* TORN EDGE SEAM */}
+        <div style={{ marginTop: '-21px', position: 'relative', zIndex: 5 }}>
+          <TornEdgeDivider flip fill="#0D080A" />
         </div>
 
-        <div
+        {/* 3. CONTINUOUS LATE-NIGHT MOOD MARQUEE */}
+        <section
+          aria-label="Live Moods Strip"
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
+            backgroundColor: '#0D080A',
+            padding: '18px 0 8px',
+            borderBottom: '1px solid rgba(255, 31, 106, 0.14)',
           }}
         >
-          {[
-            {
-              icon: <Gamepad2Icon size={24} color="var(--color-bumble-ink)" />,
-              title: 'Co-op Corner',
-              desc: 'Play asynchronous 2-player logic riddles, Would You Rather dilemmas, and Two Truths & A Lie together inside your conversation room.',
-            },
-            {
-              icon: <UsersIcon size={24} color="var(--color-bumble-ink)" />,
-              title: 'Rabbit Holes',
-              desc: 'Topic spaces for developers, researchers, book lovers, filmmakers, and gamers. Spark meaningful discussions and connect directly from community posts.',
-            },
-            {
-              icon: <CompassIcon size={24} color="var(--color-bumble-ink)" />,
-              title: 'RabbitHole Radar',
-              desc: 'Automatic topic matching in chat that identifies shared passions and generates thought-provoking conversation starters for both participants.',
-            },
-          ].map((card) => (
-            <div
-              key={card.title}
-              className="editorial-card-lift"
-              style={{
-                backgroundColor: 'rgba(247, 245, 240, 0.85)',
-                backdropFilter: 'blur(16px)',
-                borderRadius: '28px',
-                padding: '32px',
-                border: '1px solid rgba(32, 32, 32, 0.08)',
-                boxShadow: '0 10px 30px rgba(32, 32, 32, 0.04)',
-              }}
-            >
-              <div
-                style={{
-                  width: '46px',
-                  height: '46px',
-                  borderRadius: '14px',
-                  backgroundColor: 'var(--color-bumble-honey)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '18px',
-                  boxShadow: '0 4px 12px rgba(255, 219, 91, 0.4)',
-                }}
-              >
-                {card.icon}
-              </div>
-              <h3 style={{ fontSize: '22px', fontWeight: 800, margin: '0 0 10px', color: 'var(--color-bumble-ink)' }}>{card.title}</h3>
-              <p style={{ fontSize: '15px', color: 'var(--color-charcoal)', lineHeight: 1.55, margin: 0 }}>
-                {card.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 6. SECTION: NATIONWIDE NIGERIA — TRANSLUCENT HONEY BAND WITH NIGERIAN FACES */}
-      <section
-        id="states"
-        style={{
-          backgroundColor: '#ffdb5b',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        <div aria-hidden="true" className="cinematic-duotone-wrapper">
-          <div
-            className="cinematic-duotone-face animate-gaze-2"
-            style={{
-              top: '0%',
-              left: '-5%',
-              width: '50%',
-              height: '100%',
-              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgWoman2})`,
-              backgroundPosition: 'center 20%',
-              opacity: 0.32,
-              maskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
-            }}
-          />
-          <div
-            className="cinematic-duotone-face animate-gaze-1"
-            style={{
-              top: '0%',
-              right: '-5%',
-              width: '50%',
-              height: '100%',
-              backgroundImage: `url(${NIGERIAN_PORTRAITS.bgMan1})`,
-              backgroundPosition: 'center 20%',
-              opacity: 0.32,
-              maskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 80%)',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 219, 91, 0.4) 0%, rgba(255, 219, 91, 0.8) 100%)',
-            }}
-          />
-        </div>
-
-        <div
-          className="apple-honey-glass-layer"
-          style={{
-            position: 'relative',
-            zIndex: 1,
-            padding: '84px 24px',
-          }}
-        >
-          <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--color-bumble-ink)', padding: '7px 18px', borderRadius: '999px', marginBottom: '20px' }}>
-              <MapPinIcon size={16} color="var(--color-bumble-honey)" />
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-paper-white)' }}>
-                Nationwide Nigeria Discovery
-              </span>
-            </div>
-
-            <h2
-              style={{
-                fontSize: 'clamp(32px, 3.8vw, 48px)',
-                fontWeight: 800,
-                color: 'var(--color-bumble-ink)',
-                margin: '0 0 14px',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Connecting Curious Minds Across All 36 States & Abuja
-            </h2>
-
-            <p
-              style={{
-                fontSize: '17px',
-                color: 'var(--color-bumble-ink)',
-                fontWeight: 500,
-                maxWidth: '680px',
-                margin: '0 auto 40px',
-                lineHeight: 1.5,
-              }}
-            >
-              No artificial geographic silos. Whether you're in Lagos, Abuja, Ibadan, Port Harcourt, Enugu, or Kano — discover people who share your curiosity. Click your state to join:
-            </p>
-
-            {/* All 36 States + FCT Frosted Interactive Pill Grid */}
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: '10px',
-                maxWidth: '1040px',
-                margin: '0 auto 40px',
-              }}
-            >
-              {NIGERIAN_STATES.map((state) => (
+          <div className="pure-marquee-wrap">
+            <div className="pure-marquee-track">
+              {[...MARQUEE_WHISPERS, ...MARQUEE_WHISPERS].map((mood, idx) => (
                 <button
-                  key={state}
-                  onClick={() => handleStateClick(state)}
-                  className="pill-interactive apple-pill-frosted"
+                  key={`${mood}-${idx}`}
+                  type="button"
+                  onClick={() => onOpenAuth(selectedState, 'register')}
+                  className="pure-store-pill"
                   style={{
-                    color: 'var(--color-bumble-ink)',
-                    borderRadius: '999px',
-                    padding: '10px 20px',
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
+                    backgroundColor: '#160B0F',
+                    borderColor: 'rgba(255, 31, 106, 0.28)',
+                    fontSize: '13px',
                   }}
                 >
-                  {state}
+                  <span>{mood}</span>
                 </button>
               ))}
             </div>
-
-            <button
-              onClick={() => onOpenAuth(undefined, 'register')}
-              className="btn-bumble-action"
-              style={{
-                backgroundColor: 'var(--color-bumble-ink)',
-                color: 'var(--color-paper-white)',
-                borderRadius: '999px',
-                padding: '17px 38px',
-                fontSize: '17px',
-                fontWeight: 700,
-                boxShadow: '0 14px 30px rgba(32,32,32,0.2)',
-                border: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              Join Cupiddle Nationwide (100% Free)
-            </button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 7. UNHURRIED EDITORIAL FOOTER */}
-      <footer
-        style={{
-          backgroundColor: 'var(--color-paper-white)',
-          borderTop: '1px solid rgba(32,32,32,0.08)',
-          padding: '60px 24px 40px',
-        }}
-      >
-        <div
+        {/* 4. VISUAL DESIRE SHOWCASE (SHOW, DON'T WRITE ESSAYS) */}
+        <section
+          id="cravings"
           style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '40px',
-            marginBottom: '40px',
+            backgroundColor: '#0D080A',
+            padding: '48px 24px 72px',
           }}
         >
-          <div>
-            <h4 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 12px' }}>Cupiddle</h4>
-            <p style={{ fontSize: '14px', color: 'var(--color-graphite)', lineHeight: 1.6, margin: 0 }}>
-              Curiosity is attractive. The curiosity-first dating and social discovery platform for people who care about ideas.
-            </p>
-          </div>
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', maxWidth: '620px', margin: '0 auto 40px' }}>
+              <h2
+                className="pure-serif"
+                style={{
+                  fontSize: 'clamp(30px, 4vw, 46px)',
+                  fontWeight: 600,
+                  lineHeight: 1.1,
+                  color: '#FFFFFF',
+                  margin: '0 0 10px',
+                  textWrap: 'balance',
+                }}
+              >
+                No dry small talk. Only mutual heat.
+              </h2>
+              <p style={{ fontSize: '16px', color: '#D6BCC3', margin: 0 }}>
+                Verified adults only. No fake paywalls.
+              </p>
+            </div>
 
-          <div>
-            <h5 style={{ fontSize: '15px', fontWeight: 700, margin: '0 0 12px' }}>Platform</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--color-charcoal)', padding: 0, margin: 0 }}>
-              <li>The Idea Stream</li>
-              <li>The Spark System</li>
-              <li>Co-op Corner Games</li>
-              <li>Rabbit Holes Communities</li>
-              <li>RabbitHole Radar</li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 style={{ fontSize: '15px', fontWeight: 700, margin: '0 0 12px' }}>Trust & Safety</h5>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--color-charcoal)', padding: 0, margin: 0 }}>
-              <li>Adults Only (18+)</li>
-              <li>NDPA Compliant Privacy</li>
-              <li>Approximate Distance Protection</li>
-              <li>Community Guidelines</li>
-              <li>Permanent Account Deletion</li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 style={{ fontSize: '15px', fontWeight: 700, margin: '0 0 12px' }}>Get Started</h5>
-            <p style={{ fontSize: '14px', color: 'var(--color-graphite)', margin: '0 0 14px' }}>
-              No app store download required. Runs instantly on your phone or desktop.
-            </p>
-            <button
-              onClick={() => onOpenAuth(undefined, 'login')}
+            <div
+              className="pure-grid-3"
               style={{
-                backgroundColor: 'var(--color-bumble-ink)',
-                color: 'var(--color-paper-white)',
-                padding: '10px 22px',
-                borderRadius: '999px',
-                fontSize: '14px',
-                fontWeight: 600,
-                border: 'none',
-                cursor: 'pointer',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                gap: '24px',
               }}
             >
-              Sign In Free
-            </button>
-          </div>
-        </div>
+              {/* Card 1: Midnight Satin Portrait + Instant Gate Whisper */}
+              <div
+                className="pure-obsidian-card"
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              >
+                <div>
+                  <div style={{ position: 'relative', height: '270px', overflow: 'hidden', backgroundColor: '#2B0611' }}>
+                    <img
+                      src="/assets/images/desire_late_night_1795196440905.jpg"
+                      alt="@amaka_x late at night"
+                      referrerPolicy="no-referrer"
+                      className="pure-card-photo"
+                      style={{ objectPosition: 'center 22%' }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background:
+                          'linear-gradient(to top, rgba(13,8,10,0.96) 0%, rgba(13,8,10,0.45) 48%, transparent 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        padding: '18px',
+                      }}
+                    >
+                      <span style={{ fontSize: '12px', color: '#FF85AE', fontWeight: 700 }}>
+                        @amaka_x · 2:14 AM
+                      </span>
+                      <span style={{ fontSize: '20px', fontWeight: 700, color: '#FFFFFF' }}>
+                        &ldquo;What keeps you up tonight?&rdquo;
+                      </span>
+                    </div>
+                  </div>
 
-        <div
+                  <div style={{ padding: '18px 20px 6px' }}>
+                    <label htmlFor="gate-preview-input" style={{ display: 'none' }}>
+                      Whisper your answer
+                    </label>
+                    <input
+                      id="gate-preview-input"
+                      type="text"
+                      value={gateReply}
+                      onChange={(e) => setGateReply(e.target.value)}
+                      placeholder="Whisper your answer..."
+                      style={{
+                        width: '100%',
+                        padding: '11px 13px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 31, 106, 0.35)',
+                        backgroundColor: '#0D080A',
+                        color: '#FFFFFF',
+                        fontSize: '13px',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ padding: '12px 20px 20px' }}>
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth(selectedState, 'register')}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: '#6E0D25',
+                      border: '1px solid #FF1F6A',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      minHeight: '44px',
+                    }}
+                  >
+                    <Sparkles size={15} color="#FF1F6A" />
+                    <span>{gateReply.trim() ? 'Send Whisper' : 'Unlock Conversation'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 2: Silhouette Tension + Interactive Mood Picker */}
+              <div
+                className="pure-obsidian-card"
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              >
+                <div>
+                  <div style={{ position: 'relative', height: '270px', overflow: 'hidden', backgroundColor: '#2B0611' }}>
+                    <img
+                      src="/assets/images/desire_tension_1795196442130.jpg"
+                      alt="Late night tension in burgundy candlelight"
+                      referrerPolicy="no-referrer"
+                      className="pure-card-photo"
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background:
+                          'linear-gradient(to top, rgba(13,8,10,0.96) 0%, rgba(13,8,10,0.45) 48%, transparent 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        padding: '18px',
+                      }}
+                    >
+                      <span style={{ fontSize: '12px', color: '#FF85AE', fontWeight: 700 }}>
+                        {activeMood.emoji} {activeMood.handle}
+                      </span>
+                      <span
+                        key={activeMood.id}
+                        className="pure-fade-rise"
+                        style={{ fontSize: '19px', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.28 }}
+                      >
+                        &ldquo;{activeMood.whisper}&rdquo;
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: '16px 20px 6px',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '6px',
+                    }}
+                  >
+                    {DESIRE_MOODS.map((mood) => {
+                      const active = selectedMood === mood.id;
+                      return (
+                        <button
+                          key={mood.id}
+                          type="button"
+                          onClick={() => setSelectedMood(mood.id)}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '7px',
+                            backgroundColor: active ? '#C80A32' : '#241218',
+                            border: active ? '1px solid #FF85AE' : '1px solid rgba(255,255,255,0.12)',
+                            color: '#FFFFFF',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {mood.emoji} {mood.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ padding: '12px 20px 20px' }}>
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth(selectedState, 'register')}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: '#FFFFFF',
+                      color: '#0D080A',
+                      fontSize: '14px',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      minHeight: '44px',
+                    }}
+                  >
+                    Match This Mood
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 3: Secret Midnight Portrait + Discreet Protection */}
+              <div
+                className="pure-obsidian-card"
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              >
+                <div>
+                  <div style={{ position: 'relative', height: '270px', overflow: 'hidden', backgroundColor: '#2B0611' }}>
+                    <img
+                      src="/assets/images/desire_secret_1795196442185.jpg"
+                      alt="Discreet private profile"
+                      referrerPolicy="no-referrer"
+                      className="pure-card-photo"
+                      style={{ objectPosition: 'center 18%' }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background:
+                          'linear-gradient(to top, rgba(13,8,10,0.96) 0%, rgba(13,8,10,0.45) 48%, transparent 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        padding: '18px',
+                      }}
+                    >
+                      <span style={{ fontSize: '12px', color: '#FF85AE', fontWeight: 700 }}>
+                        Zero Receipts · Zero Leaks
+                      </span>
+                      <span style={{ fontSize: '20px', fontWeight: 700, color: '#FFFFFF' }}>
+                        What happens here stays dark.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: '16px 20px 6px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '9px',
+                      fontSize: '13.5px',
+                      color: '#E7D4D9',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                      <PhoneOff size={15} color="#FF1F6A" style={{ flexShrink: 0 }} />
+                      <span>Zero phone numbers or WhatsApp leaks</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                      <EyeOff size={15} color="#FF1F6A" style={{ flexShrink: 0 }} />
+                      <span>Screens blur on screenshot attempts</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                      <Lock size={15} color="#FF1F6A" style={{ flexShrink: 0 }} />
+                      <span>No escorts. No tfare begging. Purely mutual</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ padding: '12px 20px 20px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShieldDemoActive(true)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: '#241218',
+                      border: '1px solid rgba(255, 31, 106, 0.5)',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      minHeight: '44px',
+                    }}
+                  >
+                    Test Privacy Blur
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. DIRECT MOBILE INSTALL + QUICK ENTRY BAND (BURGUNDY VELVET) */}
+        <section
+          id="mobile-install"
           style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            paddingTop: '20px',
-            borderTop: '1px solid rgba(32,32,32,0.06)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '12px',
-            fontSize: '13px',
-            color: 'var(--color-graphite)',
+            backgroundColor: '#4A0718',
+            borderTop: '1px solid rgba(255, 31, 106, 0.28)',
+            padding: '68px 24px 82px',
           }}
         >
-          <span>© 2026 Cupiddle Inc. All rights reserved. Registered in Nigeria.</span>
-          <span>100% Free • Curiosity is attractive.</span>
+          <div
+            style={{
+              maxWidth: '1120px',
+              margin: '0 auto',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '44px',
+              alignItems: 'center',
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: '#FF9EC0',
+                  margin: '0 0 10px',
+                }}
+              >
+                Not on Play Store or App Store
+              </p>
+              <h2
+                className="pure-serif"
+                style={{
+                  fontSize: 'clamp(30px, 3.8vw, 44px)',
+                  fontWeight: 600,
+                  lineHeight: 1.1,
+                  color: '#FFFFFF',
+                  margin: '0 0 14px',
+                  textWrap: 'balance',
+                }}
+              >
+                Discreet on your phone in 10 seconds.
+              </h2>
+              <p style={{ fontSize: '16px', lineHeight: 1.55, color: '#F5DCE3', margin: '0 0 24px' }}>
+                Install straight from your browser. Lightweight, discreet, yours in seconds.
+              </p>
+
+              {/* State picker + Enter CTA inline */}
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                <label
+                  htmlFor="pure-state-select"
+                  style={{
+                    position: 'absolute',
+                    width: '1px',
+                    height: '1px',
+                    padding: 0,
+                    margin: '-1px',
+                    overflow: 'hidden',
+                    clip: 'rect(0, 0, 0, 0)',
+                    whiteSpace: 'nowrap',
+                    border: 0,
+                  }}
+                >
+                  Select location
+                </label>
+                <div style={{ position: 'relative', minWidth: '175px' }}>
+                  <MapPin
+                    size={15}
+                    color="#FF1F6A"
+                    style={{
+                      position: 'absolute',
+                      left: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                  <select
+                    id="pure-state-select"
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px 11px 34px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 31, 106, 0.5)',
+                      backgroundColor: '#0D080A',
+                      color: '#FFFFFF',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      minHeight: '46px',
+                    }}
+                  >
+                    {NIGERIAN_STATES.map((state) => (
+                      <option key={state} value={state}>
+                        {state}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth(selectedState, 'register')}
+                  className="pure-cta-white-3d"
+                  style={{
+                    padding: '12px 24px',
+                    fontSize: '13px',
+                    fontWeight: 800,
+                    letterSpacing: '0.07em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    minHeight: '46px',
+                  }}
+                >
+                  Join Free in {selectedState}
+                </button>
+              </div>
+            </div>
+
+            <div
+              style={{
+                backgroundColor: '#0D080A',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 31, 106, 0.35)',
+                padding: '24px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  marginBottom: '18px',
+                }}
+              >
+                <div
+                  role="tablist"
+                  aria-label="Mobile device platform"
+                  style={{
+                    display: 'inline-flex',
+                    padding: '4px',
+                    backgroundColor: '#241218',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={installOs === 'android'}
+                    onClick={() => setInstallOs('android')}
+                    style={{
+                      padding: '7px 14px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      backgroundColor: installOs === 'android' ? '#C80A32' : 'transparent',
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    Android
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={installOs === 'ios'}
+                    onClick={() => setInstallOs('ios')}
+                    style={{
+                      padding: '7px 14px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      backgroundColor: installOs === 'ios' ? '#C80A32' : 'transparent',
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    iPhone
+                  </button>
+                </div>
+
+                <button type="button" onClick={triggerInstallModal} className="pure-store-pill">
+                  <Download size={14} color="#FF1F6A" />
+                  <span>Install Now</span>
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: '#E7D4D9' }}>
+                {(installOs === 'android'
+                  ? [
+                      '1. Tap Install Now or Chrome menu',
+                      '2. Tap "Add to Home screen"',
+                      '3. Open full-screen with real-time alerts',
+                    ]
+                  : [
+                      '1. Tap Safari Share button below',
+                      '2. Select "Add to Home Screen"',
+                      '3. Open full-screen. Under 2 MB.',
+                    ]
+                ).map((line) => (
+                  <div
+                    key={line}
+                    style={{
+                      padding: '10px 12px',
+                      borderRadius: '8px',
+                      backgroundColor: '#160B0F',
+                      fontWeight: 600,
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    {line}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* TORN EDGE SEAM INTO FOOTER */}
+        <div style={{ marginTop: '-21px', position: 'relative', zIndex: 5 }}>
+          <TornEdgeDivider flip fill="#0D080A" />
         </div>
-      </footer>
+
+        {/* 6. OBSIDIAN FOOTER ADAPTED FROM PURE.APP */}
+        <footer
+          style={{
+            backgroundColor: '#0D080A',
+            padding: '52px 24px 36px',
+            color: '#FFFFFF',
+          }}
+        >
+          <div
+            className="pure-footer-grid"
+            style={{
+              maxWidth: '1200px',
+              margin: '0 auto',
+              display: 'grid',
+              gridTemplateColumns: '1.2fr 1fr 1fr',
+              gap: '44px',
+              alignItems: 'start',
+            }}
+          >
+            <div>
+              <h3 className="pure-serif" style={{ fontSize: '20px', fontWeight: 500, color: '#FFFFFF', margin: '0 0 14px' }}>
+                Get the mobile app
+              </h3>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '22px' }}>
+                <button type="button" onClick={triggerInstallModal} className="pure-store-pill">
+                  <Smartphone size={14} color="#FF1F6A" />
+                  <span>iPhone Safari</span>
+                </button>
+                <button type="button" onClick={triggerInstallModal} className="pure-store-pill">
+                  <Download size={14} color="#FF1F6A" />
+                  <span>Android Chrome</span>
+                </button>
+              </div>
+
+              <p style={{ fontSize: '13px', fontStyle: 'italic', color: '#A98D96', margin: 0 }}>
+                &copy; 2026 Cupiddle · 18+ Private &amp; Anonymous.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '15px' }}>
+              <a href="#cravings" style={{ color: '#F5E6EA', textDecoration: 'none' }}>
+                Cravings
+              </a>
+              <a href="#cravings" style={{ color: '#F5E6EA', textDecoration: 'none' }}>
+                Secret Moods
+              </a>
+              <a href="#mobile-install" style={{ color: '#F5E6EA', textDecoration: 'none' }}>
+                Direct Mobile Install
+              </a>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '15px' }}>
+              <button
+                type="button"
+                onClick={() => onOpenAuth(undefined, 'login')}
+                style={{
+                  textAlign: 'left',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  color: '#FF1F6A',
+                  fontWeight: 700,
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                }}
+              >
+                Sign in with Email or @username
+              </button>
+              {onOpenSuggestion && (
+                <button
+                  type="button"
+                  onClick={onOpenSuggestion}
+                  style={{
+                    textAlign: 'left',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: '#F5E6EA',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Suggest a feature
+                </button>
+              )}
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 };
