@@ -557,10 +557,12 @@ func (h *AuthHandler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return code directly in response for immediate, seamless verification
+	// SECURITY: Never expose the reset code in the HTTP response.
+	// In production: send via email (SMTP). For now, store server-side only.
+	// Students must receive the code out-of-band. Returning it here allows
+	// any attacker who knows the email to reset the password without email access.
 	respondJSON(w, http.StatusOK, map[string]interface{}{
-		"message": "A 6-digit reset code has been created.",
-		"code":    code,
+		"message": "If an account with that email exists, a 6-digit reset code has been stored. Contact your campus admin or check your registered email.",
 		"sent":    true,
 	})
 }

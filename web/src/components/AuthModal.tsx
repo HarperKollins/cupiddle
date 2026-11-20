@@ -30,7 +30,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [resetCode, setResetCode] = useState('');
-  const [generatedCodeNotice, setGeneratedCodeNotice] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [birthdate, setBirthdate] = useState('2000-01-01');
   const [gender, setGender] = useState('Woman');
@@ -38,6 +37,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  // Google inline fallback state (shown when no Google GSI SDK is configured)
+  const [showGoogleEmailInput, setShowGoogleEmailInput] = useState(false);
+  const [googleEmail, setGoogleEmail] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -129,20 +131,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // 2. Direct student Google sign-in fallback (zero external setup required)
-    const userGmail = prompt('Enter your Gmail address to connect with Google 1-Tap:', email.trim() || '');
-    if (!userGmail) return;
+    // 2. No GSI SDK configured — show inline Gmail input instead of browser prompt()
+    setShowGoogleEmailInput(true);
+  };
 
-    if (!userGmail.includes('@') || !userGmail.includes('.')) {
-      setError('Please provide a valid Gmail address.');
+  const handleGoogleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const trimmed = googleEmail.trim().toLowerCase();
+    if (!trimmed.includes('@') || !trimmed.includes('.')) {
+      setError('Please enter a valid Gmail address.');
       return;
     }
-
     try {
       setLoading(true);
       await api.googleAuth({
-        email: userGmail.trim().toLowerCase(),
-        name: displayName.trim() || userGmail.split('@')[0],
+        email: trimmed,
+        name: displayName.trim() || trimmed.split('@')[0],
         username: username.trim() || undefined,
         campus: campus,
         faculty: faculty || undefined,
@@ -151,7 +156,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Google authentication failed. Please sign in below.');
+      setError(err.message || 'Google authentication failed. Please sign up with email below.');
     } finally {
       setLoading(false);
     }
@@ -222,12 +227,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onSuccess();
         onClose();
       } else if (mode === 'forgot') {
-        const res = await api.forgotPassword(cleanIdentifier);
-        if (res.code) {
-          setResetCode(res.code);
-          setGeneratedCodeNotice(res.code);
-        }
-        setInfoMessage('6-digit code generated! Enter your code and new password.');
+        await api.forgotPassword(cleanIdentifier);
+        setInfoMessage('Reset code sent! Check with your campus admin or registered email to get your 6-digit code.');
         setMode('reset');
       } else if (mode === 'reset') {
         if (!resetCode.trim()) {
@@ -427,38 +428,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
-        {/* Informational Alert / Code Notice */}
-        {generatedCodeNotice && (
-          <div
-            style={{
-              padding: '14px 16px',
-              backgroundColor: '#fff386',
-              border: '2px solid #202020',
-              borderRadius: 'var(--radius-buttons, 16px)',
-              color: '#202020',
-              fontSize: '14px',
-              fontWeight: 700,
-              marginBottom: '20px',
-              textAlign: 'center',
-            }}
-          >
-            Your 6-Digit Password Reset Code:
-            <span
-              style={{
-                display: 'block',
-                fontSize: '24px',
-                fontWeight: 900,
-                letterSpacing: '6px',
-                marginTop: '4px',
-                color: '#202020',
-              }}
-            >
-              {generatedCodeNotice}
-            </span>
-          </div>
-        )}
-
-        {infoMessage && !generatedCodeNotice && (
+        {/* Informational Alert */}
+        {infoMessage && (
           <div
             style={{
               padding: '12px 16px',
@@ -496,35 +467,84 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Google 1-Tap Option for Register and Login */}
         {(mode === 'register' || mode === 'login') && (
           <div style={{ marginBottom: '16px' }}>
-            <button
-              type="button"
-              onClick={handleGoogleClick}
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                backgroundColor: '#ffffff',
-                border: '1.5px solid var(--color-bumble-ink, #202020)',
-                borderRadius: 'var(--radius-buttons, 16px)',
-                fontSize: '14px',
-                fontWeight: 700,
-                color: 'var(--color-bumble-ink, #202020)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                cursor: loading ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-              </svg>
-              Continue with Google (1-Tap)
-            </button>
+            {!showGoogleEmailInput ? (
+              <button
+                type="button"
+                onClick={handleGoogleClick}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  backgroundColor: '#ffffff',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  borderRadius: 'var(--radius-buttons, 16px)',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  color: 'var(--color-bumble-ink, #202020)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                Continue with Google (1-Tap)
+              </button>
+            ) : (
+              <form onSubmit={handleGoogleEmailSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#202020' }}>Enter your Gmail to continue:</div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="email"
+                    required
+                    autoFocus
+                    value={googleEmail}
+                    onChange={(e) => setGoogleEmail(e.target.value)}
+                    placeholder="you@gmail.com"
+                    style={{
+                      flex: 1,
+                      padding: '12px 14px',
+                      fontSize: '14px',
+                      borderRadius: 'var(--radius-buttons, 16px)',
+                      border: '1.5px solid #202020',
+                      backgroundColor: '#fff',
+                      color: '#202020',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      padding: '12px 16px',
+                      borderRadius: 'var(--radius-buttons, 16px)',
+                      backgroundColor: '#202020',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      border: 'none',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {loading ? '…' : 'Go →'}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setShowGoogleEmailInput(false); setGoogleEmail(''); setError(null); }}
+                  style={{ fontSize: '12px', color: '#777', textDecoration: 'underline', cursor: 'pointer', border: 'none', background: 'none', textAlign: 'left' }}
+                >
+                  ← Back
+                </button>
+              </form>
+            )}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '14px 0 6px 0' }}>
               <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #e0e0e0' }} />
               <span style={{ fontSize: '11px', color: '#777', fontWeight: 700, letterSpacing: '0.04em' }}>
@@ -1069,7 +1089,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setMode('login');
                   setError(null);
                   setInfoMessage(null);
-                  setGeneratedCodeNotice(null);
                 }}
                 style={{
                   fontSize: '13px',
