@@ -7,6 +7,8 @@ interface SparkModalProps {
   onClose: () => void;
   receiverId: string;
   receiverName: string;
+  receiverHandle?: string;
+  gateQuestion?: string;
   targetType: string;
   targetContent: string;
   onSuccess: () => void;
@@ -18,6 +20,8 @@ export const SparkModal: React.FC<SparkModalProps> = ({
   onClose,
   receiverId,
   receiverName,
+  receiverHandle,
+  gateQuestion,
   targetType,
   targetContent,
   onSuccess,
@@ -165,7 +169,7 @@ export const SparkModal: React.FC<SparkModalProps> = ({
         {/* Prompt Context Box */}
         <div
           style={{
-            marginBottom: '20px',
+            marginBottom: '16px',
             padding: '16px 18px',
             backgroundColor: 'var(--color-pollen, #fff386)',
             borderRadius: 'var(--radius-buttons, 16px)',
@@ -178,6 +182,25 @@ export const SparkModal: React.FC<SparkModalProps> = ({
         >
           "{targetContent}"
         </div>
+
+        {gateQuestion && (
+          <div
+            style={{
+              marginBottom: '16px',
+              padding: '14px 16px',
+              backgroundColor: '#fffbeb',
+              borderRadius: '16px',
+              border: '1.5px dashed #f59e0b',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, color: '#b45309', marginBottom: '4px' }}>
+              <span>🔒 REQUIRED: Answer {receiverHandle ? `@${receiverHandle}'s` : receiverName + "'s"} Gate Question:</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1c1917', lineHeight: 1.4 }}>
+              "{gateQuestion}"
+            </p>
+          </div>
+        )}
 
         {error && (
           <div
@@ -208,13 +231,17 @@ export const SparkModal: React.FC<SparkModalProps> = ({
                 letterSpacing: '0.01em',
               }}
             >
-              Your Thoughtful Opening
+              {gateQuestion ? 'Your Answer & Opening Message' : 'Your Thoughtful Opening'}
             </label>
             <textarea
               rows={4}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Introduce your perspective, ask a probing question, or share why this sparked your curiosity..."
+              placeholder={
+                gateQuestion
+                  ? 'Answer their gate question and write your spark message here...'
+                  : 'Introduce your perspective, ask a probing question, or share why this sparked your curiosity...'
+              }
               maxLength={350}
               style={{
                 width: '100%',

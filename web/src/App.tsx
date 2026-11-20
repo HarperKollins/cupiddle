@@ -11,14 +11,17 @@ import { OnboardingModal } from './components/OnboardingModal';
 import { SunlitLandingPage } from './components/SunlitLandingPage';
 import { PwaInstallBanner } from './components/PwaInstallBanner';
 import { SuggestionModal } from './components/SuggestionModal';
+import { MoodTagSelector } from './components/MoodTagSelector';
+import { useScreenshotProtection } from './hooks/useScreenshotProtection';
 import { NotificationToast, ToastData } from './components/NotificationToast';
 import { notifications } from './utils/notifications';
 import { User, Profile, DiscoveryCandidate, Spark, Conversation } from './types';
 import { api } from './api';
-import { Compass, Heart, MessageCircle, Users, User as UserIcon } from 'lucide-react';
+import { Compass, Heart, MessageCircle, Users, User as UserIcon, ShieldAlert } from 'lucide-react';
 import './styles/design-tokens.css';
 
 export const App: React.FC = () => {
+  const isShieldActive = useScreenshotProtection();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [myProfile, setMyProfile] = useState<Profile | null>(null);
   const [activeTab, setActiveTab] = useState<'stream' | 'sparks' | 'chat' | 'communities' | 'profile'>('stream');
@@ -42,12 +45,16 @@ export const App: React.FC = () => {
     isOpen: boolean;
     receiverId: string;
     receiverName: string;
+    receiverHandle?: string;
+    gateQuestion?: string;
     targetType: string;
     targetContent: string;
   }>({
     isOpen: false,
     receiverId: '',
     receiverName: '',
+    receiverHandle: '',
+    gateQuestion: '',
     targetType: 'general',
     targetContent: '',
   });
@@ -197,6 +204,8 @@ export const App: React.FC = () => {
       isOpen: true,
       receiverId: current.profile.user_id,
       receiverName: current.profile.display_name,
+      receiverHandle: current.profile.username,
+      gateQuestion: current.profile.gate_question,
       targetType,
       targetContent,
     });
@@ -304,7 +313,23 @@ export const App: React.FC = () => {
   const currentCandidate = candidates[candidateIndex];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--surface-page-canvas, #ffffff)', color: 'var(--color-bumble-ink, #202020)' }}>
+    <div
+      className="secure-student-app"
+      style={{ minHeight: '100vh', backgroundColor: 'var(--surface-page-canvas, #ffffff)', color: 'var(--color-bumble-ink, #202020)' }}
+    >
+      {/* Anti-Screenshot & Screen Recording Privacy Shield */}
+      {isShieldActive && currentUser && (
+        <div className="privacy-curtain">
+          <ShieldAlert size={52} color="var(--color-bumble-honey, #ffdb5b)" style={{ marginBottom: '16px' }} />
+          <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px', color: '#fff' }}>
+            🔒 Student Privacy Shield Active
+          </h2>
+          <p style={{ fontSize: '14px', maxWidth: '420px', color: '#e5e5e5', lineHeight: 1.5, margin: 0 }}>
+            Cupiddle protects student identity and campus chats against screenshots, screen recording, and unauthorized leaks.
+          </p>
+        </div>
+      )}
+
       {/* Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -323,6 +348,43 @@ export const App: React.FC = () => {
         {/* Tab 1: The Idea Stream */}
         {activeTab === 'stream' && (
           <div>
+            {myProfile && (
+              <div
+                style={{
+                  maxWidth: '680px',
+                  margin: '0 auto 16px',
+                  padding: '12px 18px',
+                  backgroundColor: 'var(--color-paper-white, #ffffff)',
+                  borderRadius: '20px',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--color-bumble-ink, #202020)' }}>
+                    Your Campus Vibe (Live Broadcast)
+                  </span>
+                  {myProfile.username && (
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1' }}>
+                      @{myProfile.username} · {myProfile.campus || 'EBSU'}
+                    </span>
+                  )}
+                </div>
+                <MoodTagSelector
+                  compact
+                  selectedTag={myProfile.vibe_tag}
+                  onSelectTag={async (tagId) => {
+                    try {
+                      const updated = await api.updateProfile({ vibe_tag: tagId });
+                      setMyProfile(updated);
+                    } catch (err) {
+                      console.error('Failed to update vibe tag', err);
+                    }
+                  }}
+                />
+              </div>
+            )}
+
             {currentCandidate ? (
               <IdeaStreamCard
                 candidate={currentCandidate}
@@ -423,6 +485,8 @@ export const App: React.FC = () => {
         onClose={() => setSparkModalData((prev) => ({ ...prev, isOpen: false }))}
         receiverId={sparkModalData.receiverId}
         receiverName={sparkModalData.receiverName}
+        receiverHandle={sparkModalData.receiverHandle}
+        gateQuestion={sparkModalData.gateQuestion}
         targetType={sparkModalData.targetType}
         targetContent={sparkModalData.targetContent}
         onSuccess={() => {

@@ -1,6 +1,12 @@
 export interface User {
   id: string;
   email: string;
+  username?: string;
+  campus?: string;
+  faculty?: string;
+  department?: string;
+  level?: string;
+  is_student_verified?: boolean;
   role: string;
   status: string;
   email_verified: boolean;
@@ -19,7 +25,16 @@ export interface Photo {
 
 export interface Profile {
   user_id: string;
+  username?: string;
   display_name: string;
+  campus?: string;
+  faculty?: string;
+  department?: string;
+  level?: string;
+  is_student_verified?: boolean;
+  gate_question?: string;
+  vibe_tag?: string;
+  vibe_expires_at?: string;
   birthdate: string;
   age: number;
   gender: string;

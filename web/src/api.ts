@@ -69,12 +69,23 @@ class ApiClient {
   }
 
   // Auth
+  async checkUsername(username: string): Promise<{ available: boolean; username: string; error?: string }> {
+    return this.request<{ available: boolean; username: string; error?: string }>(
+      `/auth/check-username?username=${encodeURIComponent(username)}`
+    );
+  }
+
   async register(body: {
     email: string;
+    username?: string;
     password: string;
     display_name: string;
     birthdate: string;
     gender: string;
+    campus?: string;
+    faculty?: string;
+    department?: string;
+    level?: string;
     city: string;
     country?: string;
   }): Promise<{ token: string; user: User; profile: Profile }> {
@@ -351,6 +362,35 @@ class ApiClient {
     return this.request('/safety/report', {
       method: 'POST',
       body: JSON.stringify({ reported_user_id: reportedUserId, reason, details }),
+    });
+  }
+
+  // Zero-Cost Campus & Identity Verification
+  async verifyRemita(rrr: string): Promise<{ success: boolean; rrr: string; payer_name: string; school: string; message: string }> {
+    return this.request('/verify/remita', {
+      method: 'POST',
+      body: JSON.stringify({ rrr }),
+    });
+  }
+
+  async verifyJAMB(jambRegNo: string): Promise<{ success: boolean; jamb_reg_no: string; message: string }> {
+    return this.request('/verify/jamb', {
+      method: 'POST',
+      body: JSON.stringify({ jamb_reg_no: jambRegNo }),
+    });
+  }
+
+  async verifyNINSlip(nin: string, matchScore: number): Promise<{ success: boolean; verified: boolean; message: string }> {
+    return this.request('/verify/nin-slip', {
+      method: 'POST',
+      body: JSON.stringify({ nin, match_score: matchScore }),
+    });
+  }
+
+  async peerVouch(targetUsername: string): Promise<{ success: boolean; target_user: string; total_vouches: number; fully_verified: boolean; message: string }> {
+    return this.request('/verify/vouch', {
+      method: 'POST',
+      body: JSON.stringify({ target_username: targetUsername }),
     });
   }
 

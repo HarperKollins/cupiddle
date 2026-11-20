@@ -6,20 +6,35 @@ import (
 
 // User represents the core authentication account
 type User struct {
-	ID            string    `json:"id"`
-	Email         string    `json:"email"`
-	PasswordHash  string    `json:"-"`
-	Role          string    `json:"role"` // "user", "moderator", "admin"
-	Status        string    `json:"status"` // "active", "suspended", "banned", "pending_deletion"
-	EmailVerified bool      `json:"email_verified"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID                string    `json:"id"`
+	Email             string    `json:"email"`
+	Username          string    `json:"username"` // Unique handle e.g. "kollins_dev"
+	PasswordHash      string    `json:"-"`
+	Role              string    `json:"role"`   // "user", "moderator", "admin"
+	Status            string    `json:"status"` // "active", "suspended", "banned", "pending_deletion"
+	EmailVerified     bool      `json:"email_verified"`
+	Campus            string    `json:"campus"`              // e.g. "EBSU", "UNN"
+	Faculty           string    `json:"faculty"`             // e.g. "Law", "Medicine"
+	Department        string    `json:"department"`          // e.g. "Commercial Law"
+	Level             string    `json:"level"`               // e.g. "100L", "200L", "300L"
+	NINHash           string    `json:"-"`                   // SHA256(nin + salt) - never exposed
+	IsStudentVerified bool      `json:"is_student_verified"` // True if Remita/JAMB/Vouched
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }
 
 // Profile represents the complete curiosity-first profile
 type Profile struct {
 	UserID              string    `json:"user_id"`
+	Username            string    `json:"username"` // Display handle e.g. "@kollins_dev"
 	DisplayName         string    `json:"display_name"`
+	Campus              string    `json:"campus"`
+	Faculty             string    `json:"faculty"`
+	Department          string    `json:"department"`
+	Level               string    `json:"level"`
+	GateQuestion        string    `json:"gate_question"` // User-written question to connect
+	VibeTag             string    `json:"vibe_tag"`      // e.g. "feeling_lonely", "study_buddy"
+	VibeExpiresAt       *time.Time `json:"vibe_expires_at,omitempty"`
 	Birthdate           string    `json:"birthdate"` // YYYY-MM-DD
 	Age                 int       `json:"age"`
 	Gender              string    `json:"gender"`
@@ -200,5 +215,31 @@ type DiscoveryCandidate struct {
 	DistanceKm      float64  `json:"distance_km"`
 	SharedInterests []string `json:"shared_interests"`
 	MatchScore      float64  `json:"match_score"`
+}
+
+// RadarSlot represents an in-app crush tracker slot
+type RadarSlot struct {
+	ID             string    `json:"id"`
+	UserID         string    `json:"user_id"`
+	SlotNumber     int       `json:"slot_number"` // 1, 2, 3
+	TargetUsername string    `json:"target_username"`
+	CreatedAt      time.Time `json:"created_at"`
+}
+
+// NINBlacklist stores permanent hashes of banned users
+type NINBlacklist struct {
+	NINHash   string    `json:"nin_hash"`
+	Reason    string    `json:"reason"`
+	BannedAt  time.Time `json:"banned_at"`
+}
+
+// PeerVouch represents a verified coursemate vouching for another
+type PeerVouch struct {
+	ID        string    `json:"id"`
+	VoucherID string    `json:"voucher_id"`
+	TargetID  string    `json:"target_id"`
+	Campus    string    `json:"campus"`
+	Faculty   string    `json:"faculty"`
+	CreatedAt time.Time `json:"created_at"`
 }
 

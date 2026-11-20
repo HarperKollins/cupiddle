@@ -23,6 +23,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
   const [gameAnswerInput, setGameAnswerInput] = useState('');
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [radarData, setRadarData] = useState<{ shared_interests: string[]; shared_tags: string[]; suggestions: string[] } | null>(null);
+  const [safetyError, setSafetyError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -75,11 +76,13 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
     if (!selectedConvId || !inputContent.trim()) return;
 
     try {
+      setSafetyError(null);
       const newMsg = await api.sendMessage(selectedConvId, inputContent.trim());
       setMessages((prev) => [...prev, newMsg]);
       setInputContent('');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to send message', err);
+      setSafetyError(err.message || 'Safety Alert: Phone numbers, WhatsApp redirects, and off-app contacts are strictly prohibited.');
     }
   };
 
@@ -350,9 +353,15 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
                     fontWeight: 800,
                     color: 'var(--color-bumble-ink, #202020)',
                     letterSpacing: '-0.01em',
+                    margin: 0,
                   }}
                 >
                   {selectedConv.partner?.display_name}, {selectedConv.partner?.age}
+                  {selectedConv.partner?.username && (
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#6366f1', marginLeft: '8px' }}>
+                      @{selectedConv.partner.username}
+                    </span>
+                  )}
                 </h4>
                 <div
                   style={{
@@ -588,7 +597,10 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
           )}
 
           {/* Messages Scroll Area */}
-          <div style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div
+            className="secure-student-app"
+            style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}
+          >
             {messages.map((msg) => {
               const isMine = msg.sender_id === currentUserId;
 
@@ -657,6 +669,27 @@ export const ChatRoom: React.FC<ChatRoomProps> = ({
             })}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Safety Error Alert (Anti-Leak & Community Standards) */}
+          {safetyError && (
+            <div
+              style={{
+                margin: '10px 20px 0',
+                padding: '12px 16px',
+                backgroundColor: '#fff1f2',
+                border: '1.5px solid #f43f5e',
+                borderRadius: '14px',
+                color: '#9f1239',
+                fontSize: '13px',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span>🔒 {safetyError}</span>
+            </div>
+          )}
 
           {/* Message Input Box */}
           <form

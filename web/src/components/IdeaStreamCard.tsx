@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { MapPin, CheckCircle, Volume2, X, Compass, Lightbulb, Flame, BookOpen } from 'lucide-react';
+import { MapPin, CheckCircle, Volume2, X, Compass, Lightbulb, Flame, BookOpen, GraduationCap, ShieldCheck, Lock } from 'lucide-react';
 import { CupiddleIcon } from './CupiddleLogo';
 import { DiscoveryCandidate } from '../types';
+import { VIBE_TAGS } from './MoodTagSelector';
 
 interface IdeaStreamCardProps {
   candidate: DiscoveryCandidate;
-  onSpark: (targetType: 'rabbit_hole' | 'defend_take' | 'teach_me' | 'photo' | 'general', targetContent: string) => void;
+  onSpark: (targetType: string, targetContent: string) => void;
   onPass: () => void;
 }
 
 export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpark, onPass }) => {
   const { profile, distance_km, shared_interests } = candidate;
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  const matchedVibe = VIBE_TAGS.find((v) => v.id === profile.vibe_tag);
 
   const primaryPhoto = profile.photos && profile.photos.length > 0 
     ? profile.photos[0].url 
@@ -77,25 +80,46 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
             Active now
           </span>
 
-          <span
-            className="animate-pulse-gentle"
-            style={{
-              backgroundColor: 'var(--color-paper-white, #ffffff)',
-              color: 'var(--color-bumble-ink, #202020)',
-              fontSize: '12px',
-              fontWeight: 700,
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-badges, 1000px)',
-              border: '1.5px solid var(--color-bumble-ink, #202020)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              boxShadow: '0 2px 8px rgba(32, 32, 32, 0.15)',
-            }}
-          >
-            <CheckCircle size={14} color="var(--color-bumble-ink, #202020)" />
-            {profile.verification_badge || 'Verified Human'}
-          </span>
+          {profile.is_student_verified ? (
+            <span
+              style={{
+                backgroundColor: '#dcfce7',
+                color: '#166534',
+                fontSize: '12px',
+                fontWeight: 800,
+                padding: '6px 12px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                border: '1.5px solid #16a34a',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(22, 163, 74, 0.2)',
+              }}
+            >
+              <ShieldCheck size={14} color="#16a34a" />
+              Verified Student
+            </span>
+          ) : (
+            <span
+              className="animate-pulse-gentle"
+              style={{
+                backgroundColor: 'var(--color-paper-white, #ffffff)',
+                color: 'var(--color-bumble-ink, #202020)',
+                fontSize: '12px',
+                fontWeight: 700,
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(32, 32, 32, 0.15)',
+              }}
+            >
+              <CheckCircle size={14} color="var(--color-bumble-ink, #202020)" />
+              {profile.verification_badge || 'Student Member'}
+            </span>
+          )}
         </div>
 
         {/* Spark Photo Action (Top Right) */}
@@ -131,32 +155,63 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
             left: 0,
             right: 0,
             padding: '24px',
-            background: 'linear-gradient(to top, rgba(32, 32, 32, 0.88) 0%, rgba(32, 32, 32, 0.4) 65%, transparent 100%)',
+            background: 'linear-gradient(to top, rgba(32, 32, 32, 0.92) 0%, rgba(32, 32, 32, 0.45) 65%, transparent 100%)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
             <h2
               style={{
-                fontSize: '32px',
+                fontSize: '30px',
                 fontWeight: 800,
                 color: '#ffffff',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,
+                margin: 0,
               }}
             >
               {profile.display_name}, {profile.age}
             </h2>
+            {profile.username && (
+              <span
+                style={{
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  color: 'var(--color-bumble-honey, #ffdb5b)',
+                }}
+              >
+                @{profile.username}
+              </span>
+            )}
           </div>
 
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
-              marginTop: '8px',
+              gap: '8px',
+              marginTop: '10px',
               flexWrap: 'wrap',
             }}
           >
+            {/* Campus & Level Chip */}
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                color: '#ffffff',
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                fontSize: '12px',
+                fontWeight: 700,
+                backdropFilter: 'blur(4px)',
+              }}
+            >
+              <GraduationCap size={14} />
+              {profile.campus || 'EBSU'} · {profile.level || '300L'}{profile.faculty ? ` (${profile.faculty})` : ''}
+            </span>
+
             <span
               style={{
                 display: 'inline-flex',
@@ -208,7 +263,93 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
       </div>
 
       {/* Profile Details & Curiosity Prompts */}
-      <div style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Live Broadcast Campus Vibe */}
+        {matchedVibe && (
+          <div
+            style={{
+              padding: '12px 16px',
+              backgroundColor: '#eef2ff',
+              borderRadius: '16px',
+              border: '1.5px solid #6366f1',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
+            <span style={{ fontSize: '24px' }}>{matchedVibe.emoji}</span>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', color: '#4338ca', display: 'block' }}>
+                Campus Vibe Right Now
+              </span>
+              <span style={{ fontSize: '15px', fontWeight: 700, color: '#1e1b4b' }}>
+                {matchedVibe.label}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Gatekeeper Question Section */}
+        {profile.gate_question && (
+          <div
+            style={{
+              padding: '20px',
+              backgroundColor: '#fffbeb',
+              borderRadius: 'var(--radius-buttons, 16px)',
+              border: '1.5px dashed #f59e0b',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: '#b45309',
+                }}
+              >
+                <Lock size={14} />
+                Connection Gate Question
+              </span>
+              <button
+                onClick={() => onSpark('gate_question', profile.gate_question || '')}
+                className="pill-interactive"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  color: '#1c1917',
+                  backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                  border: '1.5px solid var(--color-bumble-ink, #202020)',
+                  padding: '6px 14px',
+                  borderRadius: 'var(--radius-badges, 1000px)',
+                  cursor: 'pointer',
+                }}
+              >
+                <CupiddleIcon size={14} color="var(--color-bumble-ink, #202020)" />
+                Answer to Connect
+              </button>
+            </div>
+            <p
+              style={{
+                fontSize: '16px',
+                color: '#1c1917',
+                lineHeight: 1.5,
+                fontWeight: 700,
+                margin: 0,
+              }}
+            >
+              "{profile.gate_question}"
+            </p>
+          </div>
+        )}
+
         {/* Bio */}
         {profile.bio && (
           <p
@@ -560,7 +701,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
           </button>
 
           <button
-            onClick={() => onSpark('general', `Curiosity Profile of ${profile.display_name}`)}
+            onClick={() => onSpark(profile.gate_question ? 'gate_question' : 'general', profile.gate_question ? profile.gate_question : `Curiosity Profile of ${profile.display_name}`)}
             className="btn-bumble-action"
             style={{
               padding: '16px 36px',
@@ -577,7 +718,7 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
             }}
           >
             <CupiddleIcon size={20} color="var(--color-bumble-honey, #ffdb5b)" />
-            Send a Spark Free
+            {profile.gate_question ? 'Answer Gate & Spark' : 'Send a Spark Free'}
           </button>
         </div>
       </div>

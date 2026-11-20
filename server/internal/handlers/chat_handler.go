@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cupiddle/server/internal/database"
@@ -14,6 +16,42 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
+
+var (
+	// Nigerian GSM & international phone patterns
+	phoneRegexes = []*regexp.Regexp{
+		regexp.MustCompile(`(?i)\b(0[7-9][0-1]\d{8})\b`),                           // 080xxxxxxxx, 081xxxxxxxx, 070xxxxxxxx, 090xxxxxxxx, 091xxxxxxxx
+		regexp.MustCompile(`(?i)\+?234\s?[7-9][0-1]\d\s?\d{3}\s?\d{4}`),           // +234 803 123 4567
+		regexp.MustCompile(`(?i)\b(zero\s?eight\s?zero|o8o|0-8-0|zero\s?seven)\b`), // Spelled out numbers
+	}
+
+	// Off-app redirect patterns
+	offAppRegex = regexp.MustCompile(`(?i)\b(whatsapp|snapchat|telegram|wa\.me|t\.me|instagram\.com|ig\s?dm|drop\s?ur\s?number|give\s?me\s?your\s?number)\b`)
+
+	// Transactional money-for-sex / billing patterns
+	transactionalRegex = regexp.MustCompile(`(?i)\b(how much for sex|how much for night|send aza|pay my aza|send account number|my account is|runs girl|hookup fee|pay me before|pay me tfare|tfare first)\b`)
+)
+
+func validateMessageSafety(content string) (bool, string) {
+	// 1. Phone number blocking
+	for _, reg := range phoneRegexes {
+		if reg.MatchString(content) {
+			return false, "Sharing phone numbers isn't allowed here — stay in the app 🔒"
+		}
+	}
+
+	// 2. Off-app redirect blocking
+	if offAppRegex.MatchString(content) {
+		return false, "Keep the conversation on Cupiddle — it's safer and protected 🔒"
+	}
+
+	// 3. Transactional solicitation blocking (mutual consensual intimacy is allowed, money-for-sex is not)
+	if transactionalRegex.MatchString(content) {
+		return false, "Transactional financial requests violate campus community guidelines."
+	}
+
+	return true, ""
+}
 
 // ChatHandler manages persistent conversations, messages, reactions, and RabbitHole Radar
 type ChatHandler struct {
@@ -203,8 +241,14 @@ func (h *ChatHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req SendMessageRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(req.Content) == 0 {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || len(strings.TrimSpace(req.Content)) == 0 {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "content cannot be empty"})
+		return
+	}
+
+	// Safety validation (Anti-phone-number leaks, anti-off-app redirects, anti-transactional runs)
+	if safe, reason := validateMessageSafety(req.Content); !safe {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": reason})
 		return
 	}
 

@@ -54,6 +54,7 @@ func main() {
 	adminH := handlers.NewAdminHandler(db)
 	mediaH := handlers.NewMediaHandler(cfg)
 	suggestionH := handlers.NewSuggestionHandler(db)
+	verifyH := handlers.NewVerificationHandler(db)
 
 	// Router setup
 	r := chi.NewRouter()
@@ -91,6 +92,7 @@ func main() {
 	r.Route("/api", func(r chi.Router) {
 		r.Post("/auth/register", authH.Register)
 		r.Post("/auth/login", authH.Login)
+		r.Get("/auth/check-username", authH.CheckUsername)
 		r.Post("/auth/forgot-password", authH.ForgotPassword)
 		r.Post("/auth/reset-password", authH.ResetPassword)
 		r.Post("/suggestions", suggestionH.SubmitSuggestion)
@@ -160,6 +162,12 @@ func main() {
 			r.Delete("/safety/block/{userId}", safetyH.UnblockUser)
 			r.Get("/safety/blocks", safetyH.GetBlockedUsers)
 			r.Post("/safety/report", safetyH.SubmitReport)
+
+			// Zero-Cost Campus & Identity Verification
+			r.Post("/verify/remita", verifyH.VerifyRemita)
+			r.Post("/verify/jamb", verifyH.VerifyJAMB)
+			r.Post("/verify/nin-slip", verifyH.VerifyNINSlip)
+			r.Post("/verify/vouch", verifyH.PeerVouch)
 
 			// Administration & Moderation
 			r.Group(func(r chi.Router) {

@@ -30,10 +30,15 @@ func NewAuthHandler(db *database.DB, cfg *config.Config) *AuthHandler {
 
 type RegisterRequest struct {
 	Email       string `json:"email"`
+	Username    string `json:"username"` // Custom unique campus handle e.g. "kollins_dev"
 	Password    string `json:"password"`
 	DisplayName string `json:"display_name"`
 	Birthdate   string `json:"birthdate"` // YYYY-MM-DD
 	Gender      string `json:"gender"`
+	Campus      string `json:"campus"`     // e.g. "EBSU", "UNN"
+	Faculty     string `json:"faculty"`    // e.g. "Law", "Medicine"
+	Department  string `json:"department"` // e.g. "Commercial Law"
+	Level       string `json:"level"`      // e.g. "300L"
 	City        string `json:"city"`
 	Country     string `json:"country"`
 }
@@ -47,6 +52,53 @@ type AuthResponse struct {
 	Token   string          `json:"token"`
 	User    *models.User    `json:"user"`
 	Profile *models.Profile `json:"profile,omitempty"`
+}
+
+func cleanUsername(u string) string {
+	u = strings.ToLower(strings.TrimSpace(u))
+	u = strings.TrimPrefix(u, "@")
+	var valid strings.Builder
+	for _, ch := range u {
+		if (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '_' {
+			valid.WriteRune(ch)
+		}
+	}
+	res := valid.String()
+	if len(res) > 25 {
+		res = res[:25]
+	}
+	return res
+}
+
+// CheckUsername checks if a given handle is available
+func (h *AuthHandler) CheckUsername(w http.ResponseWriter, r *http.Request) {
+	raw := r.URL.Query().Get("username")
+	username := cleanUsername(raw)
+
+	if len(username) < 3 {
+		respondJSON(w, http.StatusOK, map[string]interface{}{
+			"available": false,
+			"username":  username,
+			"error":     "username must be at least 3 characters",
+		})
+		return
+	}
+
+	var existingID string
+	err := h.DB.QueryRow("SELECT id FROM users WHERE username = $1", username).Scan(&existingID)
+	if err == nil {
+		respondJSON(w, http.StatusOK, map[string]interface{}{
+			"available": false,
+			"username":  username,
+			"error":     "username is already taken",
+		})
+		return
+	}
+
+	respondJSON(w, http.StatusOK, map[string]interface{}{
+		"available": true,
+		"username":  username,
+	})
 }
 
 // Register creates a new adult user account and initializes their curiosity profile
@@ -70,6 +122,29 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	if strings.TrimSpace(req.DisplayName) == "" {
 		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "display name is required"})
+		return
+	}
+
+	username := cleanUsername(req.Username)
+	if username == "" {
+		base := cleanUsername(req.DisplayName)
+		if len(base) < 3 {
+			base = "student"
+		}
+		randNum, _ := rand.Int(rand.Reader, big.NewInt(9000))
+		username = fmt.Sprintf("%s_%d", base, randNum.Int64()+1000)
+	}
+
+	if len(username) < 3 {
+		respondJSON(w, http.StatusBadRequest, map[string]string{"error": "username must be at least 3 characters"})
+		return
+	}
+
+	// Check if username taken
+	var existingUsernameID string
+	err := h.DB.QueryRow("SELECT id FROM users WHERE username = $1", username).Scan(&existingUsernameID)
+	if err == nil {
+		respondJSON(w, http.StatusConflict, map[string]string{"error": "this username is already claimed"})
 		return
 	}
 
@@ -102,22 +177,31 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if country == "" {
 		country = "Nigeria"
 	}
+	campus := req.Campus
+	if campus == "" {
+		campus = "EBSU"
+	}
 
-	// Insert user
+	// Insert user with campus & username
 	_, err = h.DB.Exec(
-		`INSERT INTO users (id, email, password_hash, role, status, email_verified, created_at, updated_at)
-		 VALUES ($1, $2, $3, 'user', 'active', false, $4, $5)`,
-		userID, req.Email, pwHash, now, now,
+		`INSERT INTO users (id, email, username, password_hash, role, status, email_verified, campus, faculty, department, level, created_at, updated_at)
+		 VALUES ($1, $2, $3, $4, 'user', 'active', false, $5, $6, $7, $8, $9, $10)`,
+		userID, req.Email, username, pwHash, campus, req.Faculty, req.Department, req.Level, now, now,
 	)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to create user account: " + err.Error()})
 		return
 	}
 
-	// Insert default profile (Nationwide Nigeria discovery enabled by default)
+	// Insert default profile
 	profile := &models.Profile{
 		UserID:           userID,
+		Username:         username,
 		DisplayName:      req.DisplayName,
+		Campus:           campus,
+		Faculty:          req.Faculty,
+		Department:       req.Department,
+		Level:            req.Level,
 		Birthdate:        req.Birthdate,
 		Age:              age,
 		Gender:           req.Gender,
@@ -126,7 +210,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		TargetGenders:    []string{},
 		AgeMin:           18,
 		AgeMax:           99,
-		MaxDistanceKm:    2000, // Nationwide Nigeria coverage
+		MaxDistanceKm:    2000,
 		MyWorldTags:      []string{},
 		Interests:        []string{},
 		Photos:           []models.Photo{},
@@ -135,13 +219,13 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = h.DB.Exec(
-		`INSERT INTO profiles (user_id, display_name, birthdate, age, gender, pronouns, city, country,
+		`INSERT INTO profiles (user_id, username, display_name, campus, faculty, department, level, birthdate, age, gender, pronouns, city, country,
 		 latitude, longitude, bio, dating_intentions, target_genders, age_min, age_max, max_distance_km,
 		 is_paused, is_verified, verification_badge, audio_intro_url, audio_intro_duration,
 		 rabbit_hole, defend_take, teach_me, my_world_tags, interests, created_at, updated_at)
-		 VALUES ($1, $2, $3, $4, $5, '', $6, $7, 0, 0, '', '', '[]', 18, 99, 2000,
-		 false, false, '', '', 0, '', '', '', '[]', '[]', $8, $9)`,
-		userID, req.DisplayName, req.Birthdate, age, req.Gender, req.City, country, now, now,
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, '', $11, $12, 0, 0, '', '', '[]', 18, 99, 2000,
+		 false, false, '', '', 0, '', '', '', '[]', '[]', $13, $14)`,
+		userID, username, req.DisplayName, campus, req.Faculty, req.Department, req.Level, req.Birthdate, age, req.Gender, req.City, country, now, now,
 	)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to initialize profile: " + err.Error()})
@@ -157,6 +241,11 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{
 		ID:            userID,
 		Email:         req.Email,
+		Username:      username,
+		Campus:        campus,
+		Faculty:       req.Faculty,
+		Department:    req.Department,
+		Level:         req.Level,
 		Role:          "user",
 		Status:        "active",
 		EmailVerified: false,
@@ -171,7 +260,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Login authenticates an existing user
+// Login authenticates an existing user (accepts either email or @username)
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -179,15 +268,25 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.Email = strings.ToLower(strings.TrimSpace(req.Email))
+	loginIdentifier := strings.ToLower(strings.TrimSpace(req.Email))
 	var user models.User
-	err := h.DB.QueryRow(
-		`SELECT id, email, password_hash, role, status, email_verified, created_at, updated_at
-		 FROM users WHERE email = $1`, req.Email,
-	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Role, &user.Status, &user.EmailVerified, &user.CreatedAt, &user.UpdatedAt)
+	var err error
+
+	if strings.Contains(loginIdentifier, "@") && strings.Contains(loginIdentifier, ".") {
+		err = h.DB.QueryRow(
+			`SELECT id, email, COALESCE(username, ''), COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''), password_hash, role, status, email_verified, COALESCE(is_student_verified, false), created_at, updated_at
+			 FROM users WHERE email = $1`, loginIdentifier,
+		).Scan(&user.ID, &user.Email, &user.Username, &user.Campus, &user.Faculty, &user.Department, &user.Level, &user.PasswordHash, &user.Role, &user.Status, &user.EmailVerified, &user.IsStudentVerified, &user.CreatedAt, &user.UpdatedAt)
+	} else {
+		cleanHandle := cleanUsername(loginIdentifier)
+		err = h.DB.QueryRow(
+			`SELECT id, email, COALESCE(username, ''), COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''), password_hash, role, status, email_verified, COALESCE(is_student_verified, false), created_at, updated_at
+			 FROM users WHERE username = $1`, cleanHandle,
+		).Scan(&user.ID, &user.Email, &user.Username, &user.Campus, &user.Faculty, &user.Department, &user.Level, &user.PasswordHash, &user.Role, &user.Status, &user.EmailVerified, &user.IsStudentVerified, &user.CreatedAt, &user.UpdatedAt)
+	}
 
 	if err != nil {
-		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid email or password"})
+		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid username/email or password"})
 		return
 	}
 
@@ -197,7 +296,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !auth.CheckPasswordHash(req.Password, user.PasswordHash) {
-		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid email or password"})
+		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid username/email or password"})
 		return
 	}
 
@@ -226,9 +325,9 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 
 	var user models.User
 	err := h.DB.QueryRow(
-		`SELECT id, email, role, status, email_verified, created_at, updated_at
+		`SELECT id, email, COALESCE(username, ''), COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''), role, status, email_verified, COALESCE(is_student_verified, false), created_at, updated_at
 		 FROM users WHERE id = $1`, userID,
-	).Scan(&user.ID, &user.Email, &user.Role, &user.Status, &user.EmailVerified, &user.CreatedAt, &user.UpdatedAt)
+	).Scan(&user.ID, &user.Email, &user.Username, &user.Campus, &user.Faculty, &user.Department, &user.Level, &user.Role, &user.Status, &user.EmailVerified, &user.IsStudentVerified, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		respondJSON(w, http.StatusNotFound, map[string]string{"error": "user not found"})
 		return
@@ -398,13 +497,17 @@ func (h *AuthHandler) getProfileByUserID(userID string) *models.Profile {
 	var targetGendersJSON, myWorldJSON, interestsJSON string
 
 	err := h.DB.QueryRow(
-		`SELECT user_id, display_name, birthdate, age, gender, pronouns, city, country,
+		`SELECT user_id, COALESCE(username, ''), display_name, COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''),
+		 COALESCE(gate_question, ''), COALESCE(vibe_tag, ''), vibe_expires_at,
+		 birthdate, age, gender, pronouns, city, country,
 		 latitude, longitude, bio, dating_intentions, target_genders, age_min, age_max, max_distance_km,
 		 is_paused, is_verified, verification_badge, audio_intro_url, audio_intro_duration,
 		 rabbit_hole, defend_take, teach_me, my_world_tags, interests, created_at, updated_at
 		 FROM profiles WHERE user_id = $1`, userID,
 	).Scan(
-		&p.UserID, &p.DisplayName, &p.Birthdate, &p.Age, &p.Gender, &p.Pronouns, &p.City, &p.Country,
+		&p.UserID, &p.Username, &p.DisplayName, &p.Campus, &p.Faculty, &p.Department, &p.Level,
+		&p.GateQuestion, &p.VibeTag, &p.VibeExpiresAt,
+		&p.Birthdate, &p.Age, &p.Gender, &p.Pronouns, &p.City, &p.Country,
 		&p.Latitude, &p.Longitude, &p.Bio, &p.DatingIntentions, &targetGendersJSON, &p.AgeMin, &p.AgeMax, &p.MaxDistanceKm,
 		&p.IsPaused, &p.IsVerified, &p.VerificationBadge, &p.AudioIntroURL, &p.AudioIntroDuration,
 		&p.RabbitHole, &p.DefendTake, &p.TeachMe, &myWorldJSON, &interestsJSON, &p.CreatedAt, &p.UpdatedAt,

@@ -51,17 +51,32 @@ func (db *DB) RunMigrations() error {
 	CREATE TABLE IF NOT EXISTS users (
 		id TEXT PRIMARY KEY,
 		email TEXT UNIQUE NOT NULL,
+		username TEXT UNIQUE,
 		password_hash TEXT NOT NULL,
 		role TEXT NOT NULL DEFAULT 'user',
 		status TEXT NOT NULL DEFAULT 'active',
 		email_verified BOOLEAN DEFAULT FALSE,
+		campus TEXT DEFAULT '',
+		faculty TEXT DEFAULT '',
+		department TEXT DEFAULT '',
+		level TEXT DEFAULT '',
+		nin_hash TEXT DEFAULT '',
+		is_student_verified BOOLEAN DEFAULT FALSE,
 		created_at TIMESTAMP NOT NULL,
 		updated_at TIMESTAMP NOT NULL
 	);
 
 	CREATE TABLE IF NOT EXISTS profiles (
 		user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+		username TEXT DEFAULT '',
 		display_name TEXT NOT NULL,
+		campus TEXT DEFAULT '',
+		faculty TEXT DEFAULT '',
+		department TEXT DEFAULT '',
+		level TEXT DEFAULT '',
+		gate_question TEXT DEFAULT '',
+		vibe_tag TEXT DEFAULT '',
+		vibe_expires_at TIMESTAMP,
 		birthdate TEXT NOT NULL,
 		age INTEGER NOT NULL,
 		gender TEXT NOT NULL,
@@ -263,14 +278,64 @@ func (db *DB) RunMigrations() error {
 		created_at TIMESTAMP NOT NULL
 	);
 
+	CREATE TABLE IF NOT EXISTS radar_slots (
+		id TEXT PRIMARY KEY,
+		user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		slot_number INTEGER NOT NULL,
+		target_username TEXT NOT NULL,
+		created_at TIMESTAMP NOT NULL,
+		UNIQUE(user_id, slot_number)
+	);
+
+	CREATE TABLE IF NOT EXISTS nin_blacklists (
+		nin_hash TEXT PRIMARY KEY,
+		reason TEXT NOT NULL DEFAULT '',
+		banned_at TIMESTAMP NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS peer_vouches (
+		id TEXT PRIMARY KEY,
+		voucher_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		target_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+		campus TEXT NOT NULL,
+		faculty TEXT NOT NULL,
+		created_at TIMESTAMP NOT NULL,
+		UNIQUE(voucher_id, target_id)
+	);
+
 	CREATE INDEX IF NOT EXISTS idx_sparks_receiver ON sparks(receiver_id, status);
 	CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id, created_at);
 	CREATE INDEX IF NOT EXISTS idx_posts_comm ON community_posts(community_id, created_at);
+	CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+	CREATE INDEX IF NOT EXISTS idx_profiles_campus ON profiles(campus, faculty);
 	`
 
 	_, err := db.Exec(schema)
 	if err != nil {
 		return err
+	}
+
+	// Safe column additions for pre-existing tables
+	safeMigrations := []string{
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS username TEXT UNIQUE",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS campus TEXT DEFAULT ''",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS faculty TEXT DEFAULT ''",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS department TEXT DEFAULT ''",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS level TEXT DEFAULT ''",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS nin_hash TEXT DEFAULT ''",
+		"ALTER TABLE users ADD COLUMN IF NOT EXISTS is_student_verified BOOLEAN DEFAULT FALSE",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS username TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS campus TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS faculty TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS department TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS level TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS gate_question TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS vibe_tag TEXT DEFAULT ''",
+		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS vibe_expires_at TIMESTAMP",
+	}
+
+	for _, stmt := range safeMigrations {
+		_, _ = db.Exec(stmt)
 	}
 
 	return nil
