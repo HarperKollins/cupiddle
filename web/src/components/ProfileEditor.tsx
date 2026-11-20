@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Plus, Trash2, Check, ShieldAlert, Compass, Flame, Lightbulb, MapPin, Tag, Heart, Upload, Loader2, Link as LinkIcon, Smartphone, Download } from 'lucide-react';
+import { Camera, Plus, Trash2, Check, ShieldAlert, Compass, Flame, Lightbulb, MapPin, Tag, Heart, Upload, Loader2, Link as LinkIcon, Smartphone, Download, ShieldCheck, GraduationCap } from 'lucide-react';
 import { CupiddleIcon } from './CupiddleLogo';
 import { Profile } from '../types';
 import { api } from '../api';
 import { NIGERIAN_STATES } from '../constants/nigerianStates';
+import { VerificationModal } from './VerificationModal';
+import { MoodTagSelector } from './MoodTagSelector';
 
 interface ProfileEditorProps {
   profile: Profile;
@@ -14,7 +16,12 @@ interface ProfileEditorProps {
 export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate, onDeleteAccount }) => {
   const [displayName, setDisplayName] = useState(profile.display_name);
   const [bio, setBio] = useState(profile.bio || '');
-  const [city, setCity] = useState(profile.city || 'Lagos');
+  const [campus, setCampus] = useState(profile.campus || 'EBSU');
+  const [faculty, setFaculty] = useState(profile.faculty || '');
+  const [level, setLevel] = useState(profile.level || '300L');
+  const [gateQuestion, setGateQuestion] = useState(profile.gate_question || '');
+  const [vibeTag, setVibeTag] = useState(profile.vibe_tag || '');
+  const [city, setCity] = useState(profile.city || 'Ebonyi');
   const [datingIntentions, setDatingIntentions] = useState(profile.dating_intentions || '');
   const [rabbitHole, setRabbitHole] = useState(profile.rabbit_hole || '');
   const [defendTake, setDefendTake] = useState(profile.defend_take || '');
@@ -28,6 +35,7 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
   const [loading, setLoading] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const handleSaveBasic = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +46,11 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         bio,
         city,
         dating_intentions: datingIntentions,
+        campus,
+        faculty,
+        level,
+        gate_question: gateQuestion,
+        vibe_tag: vibeTag,
       });
       onUpdate(updated);
       setSavedSuccess(true);
@@ -759,6 +772,196 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
         </button>
       </form>
 
+      {/* 2.5 Campus Identity, Verification & Gatekeeper (Nigerian Campus Hub) */}
+      <div
+        style={{
+          padding: '32px',
+          backgroundColor: 'var(--color-paper-white, #ffffff)',
+          borderRadius: 'var(--radius-cards, 24px)',
+          border: '1.5px solid var(--color-bumble-ink, #202020)',
+          boxShadow: 'var(--shadow-sm, 0px 1px 8px rgba(32, 32, 32, 0.12))',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <GraduationCap size={22} color="var(--color-bumble-ink, #202020)" />
+              <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', margin: 0 }}>
+                Campus Identity & Verification
+              </h2>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--color-charcoal, #3a3a3a)', marginTop: '4px', marginBottom: 0 }}>
+              Exclusive to Nigerian University Students. 100% Free, zero paid identity apps.
+            </p>
+          </div>
+
+          {profile.is_student_verified ? (
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '20px', backgroundColor: '#dcfce7', color: '#166534', fontWeight: 800, fontSize: '13px' }}>
+              <ShieldCheck size={16} /> Verified Student @ {profile.campus || 'EBSU'}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowVerificationModal(true)}
+              className="btn-bumble-action"
+              style={{
+                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                color: 'var(--color-bumble-ink, #202020)',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                borderRadius: '16px',
+                padding: '8px 18px',
+                fontWeight: 800,
+                fontSize: '13px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              <ShieldCheck size={16} /> Verify Student ID (₦0)
+            </button>
+          )}
+        </div>
+
+        {/* Live Broadcast Campus Mood / Vibe */}
+        <div>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '8px' }}>
+            Broadcast Campus Vibe (What are you in the mood for?)
+          </label>
+          <MoodTagSelector selectedTag={vibeTag} onSelectTag={setVibeTag} />
+        </div>
+
+        {/* Gate Question */}
+        <div style={{ backgroundColor: '#fffbeb', borderRadius: '16px', padding: '18px', border: '1.5px dashed var(--color-bumble-ink, #202020)' }}>
+          <label style={{ display: 'block', fontSize: '14px', fontWeight: 800, color: 'var(--color-bumble-ink, #202020)', marginBottom: '4px' }}>
+            🔒 Your Connection Gate Question
+          </label>
+          <p style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
+            No random unverified slides. Candidates must submit an answer to this question before their Spark connects to your inbox.
+          </p>
+          <textarea
+            rows={2}
+            value={gateQuestion}
+            onChange={(e) => setGateQuestion(e.target.value)}
+            placeholder="e.g. Which 300L lecturer tests hardest? / Favorite midnight spot on campus? / Are you a night owl or morning reader?"
+            style={{
+              width: '100%',
+              padding: '12px 14px',
+              fontSize: '14px',
+              borderRadius: '12px',
+              border: '1.5px solid var(--color-bumble-ink, #202020)',
+              backgroundColor: '#fff',
+              color: 'var(--color-bumble-ink, #202020)',
+            }}
+          />
+        </div>
+
+        {/* Campus, Level, Faculty Details */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
+              Campus
+            </label>
+            <select
+              value={campus}
+              onChange={(e) => setCampus(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                fontSize: '14px',
+                borderRadius: '14px',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: '#fff',
+                color: 'var(--color-bumble-ink, #202020)',
+                fontWeight: 600,
+              }}
+            >
+              <option value="EBSU">Ebonyi State University (EBSU)</option>
+              <option value="UNN">University of Nigeria, Nsukka (UNN)</option>
+              <option value="UNILAG">University of Lagos (UNILAG)</option>
+              <option value="OAU">Obafemi Awolowo University (OAU)</option>
+              <option value="UI">University of Ibadan (UI)</option>
+              <option value="ABU">Ahmadu Bello University (ABU)</option>
+              <option value="FUTO">Fed. Univ. of Tech Owerri (FUTO)</option>
+              <option value="ESUT">Enugu State Univ. of Science & Tech (ESUT)</option>
+              <option value="IMSU">Imo State University (IMSU)</option>
+              <option value="DELSU">Delta State University (DELSU)</option>
+              <option value="OTHER">Other Nigerian University</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
+              Academic Level
+            </label>
+            <select
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                fontSize: '14px',
+                borderRadius: '14px',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: '#fff',
+                color: 'var(--color-bumble-ink, #202020)',
+                fontWeight: 600,
+              }}
+            >
+              <option value="100L">100 Level (Fresher)</option>
+              <option value="200L">200 Level</option>
+              <option value="300L">300 Level</option>
+              <option value="400L">400 Level (Finalist/Penultimate)</option>
+              <option value="500L">500 Level (Finalist)</option>
+              <option value="PG">Postgraduate</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--color-bumble-ink, #202020)', marginBottom: '6px' }}>
+              Faculty / Department
+            </label>
+            <input
+              type="text"
+              value={faculty}
+              onChange={(e) => setFaculty(e.target.value)}
+              placeholder="e.g. Law, Medicine, CS, Mass Comm"
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                fontSize: '14px',
+                borderRadius: '14px',
+                border: '1.5px solid var(--color-bumble-ink, #202020)',
+                backgroundColor: '#fff',
+                color: 'var(--color-bumble-ink, #202020)',
+              }}
+            />
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleSaveBasic}
+          disabled={loading}
+          className="btn-bumble-action"
+          style={{
+            alignSelf: 'flex-end',
+            padding: '12px 28px',
+            borderRadius: 'var(--radius-buttons, 16px)',
+            backgroundColor: 'var(--color-bumble-ink, #202020)',
+            color: 'var(--color-paper-white, #ffffff)',
+            fontWeight: 800,
+            fontSize: '14px',
+            cursor: 'pointer',
+          }}
+        >
+          {loading ? 'Saving Campus Profile...' : 'Save Campus Profile'}
+        </button>
+      </div>
+
       {/* 3. Basic Identity & Location Form (All 37 Nigerian States) */}
       <form
         onSubmit={handleSaveBasic}
@@ -786,17 +989,22 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '13px',
-                fontWeight: 700,
-                color: 'var(--color-bumble-ink, #202020)',
-                marginBottom: '6px',
-              }}
-            >
-              Display Name
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: 'var(--color-bumble-ink, #202020)',
+                }}
+              >
+                Display Name
+              </label>
+              {profile.username && (
+                <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', backgroundColor: '#eef2ff', padding: '2px 8px', borderRadius: '10px' }}>
+                  @{profile.username}
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={displayName}
@@ -1088,6 +1296,17 @@ export const ProfileEditor: React.FC<ProfileEditorProps> = ({ profile, onUpdate,
           </button>
         )}
       </div>
+
+      <VerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onSuccess={() => {
+          setShowVerificationModal(false);
+          api.getMe().then((me) => onUpdate(me.profile));
+        }}
+        currentCampus={campus}
+        userHandle={profile.username}
+      />
     </div>
   );
 };

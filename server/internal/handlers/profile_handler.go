@@ -25,6 +25,12 @@ func NewProfileHandler(db *database.DB) *ProfileHandler {
 type UpdateProfileRequest struct {
 	DisplayName      *string  `json:"display_name,omitempty"`
 	Bio              *string  `json:"bio,omitempty"`
+	Campus           *string  `json:"campus,omitempty"`
+	Faculty          *string  `json:"faculty,omitempty"`
+	Department       *string  `json:"department,omitempty"`
+	Level            *string  `json:"level,omitempty"`
+	GateQuestion     *string  `json:"gate_question,omitempty"`
+	VibeTag          *string  `json:"vibe_tag,omitempty"`
 	City             *string  `json:"city,omitempty"`
 	Country          *string  `json:"country,omitempty"`
 	Latitude         *float64 `json:"latitude,omitempty"`
@@ -76,6 +82,26 @@ func (h *ProfileHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	if req.Bio != nil {
 		p.Bio = *req.Bio
 	}
+	if req.Campus != nil {
+		p.Campus = *req.Campus
+	}
+	if req.Faculty != nil {
+		p.Faculty = *req.Faculty
+	}
+	if req.Department != nil {
+		p.Department = *req.Department
+	}
+	if req.Level != nil {
+		p.Level = *req.Level
+	}
+	if req.GateQuestion != nil {
+		p.GateQuestion = *req.GateQuestion
+	}
+	if req.VibeTag != nil {
+		p.VibeTag = *req.VibeTag
+		exp := time.Now().Add(6 * time.Hour)
+		p.VibeExpiresAt = &exp
+	}
 	if req.City != nil {
 		p.City = *req.City
 	}
@@ -113,16 +139,20 @@ func (h *ProfileHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	_, err := h.DB.Exec(
 		`UPDATE profiles SET display_name = $1, bio = $2, city = $3, country = $4,
 		 latitude = $5, longitude = $6, dating_intentions = $7, target_genders = $8,
-		 age_min = $9, age_max = $10, max_distance_km = $11, is_paused = $12, updated_at = $13
-		 WHERE user_id = $14`,
+		 age_min = $9, age_max = $10, max_distance_km = $11, is_paused = $12,
+		 campus = $13, faculty = $14, department = $15, level = $16, gate_question = $17, vibe_tag = $18, vibe_expires_at = $19, updated_at = $20
+		 WHERE user_id = $21`,
 		p.DisplayName, p.Bio, p.City, p.Country, p.Latitude, p.Longitude,
 		p.DatingIntentions, string(targetGendersBytes), p.AgeMin, p.AgeMax, p.MaxDistanceKm,
-		p.IsPaused, now, userID,
+		p.IsPaused, p.Campus, p.Faculty, p.Department, p.Level, p.GateQuestion, p.VibeTag, p.VibeExpiresAt, now, userID,
 	)
 	if err != nil {
 		respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to update profile"})
 		return
 	}
+
+	// Also sync campus fields to users table
+	_, _ = h.DB.Exec(`UPDATE users SET campus = $1, faculty = $2, department = $3, level = $4, updated_at = $5 WHERE id = $6`, p.Campus, p.Faculty, p.Department, p.Level, now, userID)
 
 	respondJSON(w, http.StatusOK, p)
 }
@@ -313,13 +343,17 @@ func (h *ProfileHandler) fetchFullProfile(userID string) *models.Profile {
 	var targetGendersJSON, myWorldJSON, interestsJSON string
 
 	err := h.DB.QueryRow(
-		`SELECT user_id, display_name, birthdate, age, gender, pronouns, city, country,
+		`SELECT user_id, COALESCE(username, ''), display_name, COALESCE(campus, ''), COALESCE(faculty, ''), COALESCE(department, ''), COALESCE(level, ''),
+		 COALESCE(gate_question, ''), COALESCE(vibe_tag, ''), vibe_expires_at,
+		 birthdate, age, gender, pronouns, city, country,
 		 latitude, longitude, bio, dating_intentions, target_genders, age_min, age_max, max_distance_km,
 		 is_paused, is_verified, verification_badge, audio_intro_url, audio_intro_duration,
 		 rabbit_hole, defend_take, teach_me, my_world_tags, interests, created_at, updated_at
 		 FROM profiles WHERE user_id = $1`, userID,
 	).Scan(
-		&p.UserID, &p.DisplayName, &p.Birthdate, &p.Age, &p.Gender, &p.Pronouns, &p.City, &p.Country,
+		&p.UserID, &p.Username, &p.DisplayName, &p.Campus, &p.Faculty, &p.Department, &p.Level,
+		&p.GateQuestion, &p.VibeTag, &p.VibeExpiresAt,
+		&p.Birthdate, &p.Age, &p.Gender, &p.Pronouns, &p.City, &p.Country,
 		&p.Latitude, &p.Longitude, &p.Bio, &p.DatingIntentions, &targetGendersJSON, &p.AgeMin, &p.AgeMax, &p.MaxDistanceKm,
 		&p.IsPaused, &p.IsVerified, &p.VerificationBadge, &p.AudioIntroURL, &p.AudioIntroDuration,
 		&p.RabbitHole, &p.DefendTake, &p.TeachMe, &myWorldJSON, &interestsJSON, &p.CreatedAt, &p.UpdatedAt,
