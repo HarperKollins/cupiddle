@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Download, X, Share2, PlusSquare } from 'lucide-react';
 import { CupiddleAppBadge } from './CupiddleLogo';
 
-export const PwaInstallBanner: React.FC = () => {
+interface PwaInstallBannerProps {
+  hideFloatingBanner?: boolean;
+}
+
+export const PwaInstallBanner: React.FC<PwaInstallBannerProps> = ({ hideFloatingBanner = false }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [isDismissed, setIsDismissed] = useState<boolean>(() => {
@@ -77,8 +81,8 @@ export const PwaInstallBanner: React.FC = () => {
 
   return (
     <>
-      {/* Floating Install Banner - only shown if not dismissed */}
-      {!isDismissed && (
+      {/* Floating Install Banner - only shown if not dismissed and not hidden on landing */}
+      {!hideFloatingBanner && !isDismissed && (
         <aside
           aria-label="Install Cupiddle application"
           style={{
@@ -184,15 +188,16 @@ export const PwaInstallBanner: React.FC = () => {
         </aside>
       )}
 
-      {/* Guided Install Modal for iOS & Desktop Fallback */}
+      {/* Guided Install Modal for Android Chrome & iPhone Safari (No Play Store Needed) */}
       {showIosGuide && (
         <div
           role="dialog"
           aria-modal="true"
+          aria-label="Install Cupiddle Mobile App"
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(32, 32, 32, 0.7)',
+            backgroundColor: 'rgba(14, 15, 16, 0.72)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
@@ -200,82 +205,106 @@ export const PwaInstallBanner: React.FC = () => {
             zIndex: 10000,
             padding: '20px',
           }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowIosGuide(false);
+          }}
         >
           <div
             className="animate-modal-spring"
             style={{
               backgroundColor: '#ffffff',
               borderRadius: '24px',
-              border: '2px solid #202020',
+              border: '1px solid rgba(14, 15, 16, 0.12)',
               padding: '32px',
-              maxWidth: '440px',
+              maxWidth: '460px',
               width: '100%',
-              boxShadow: '0 24px 60px rgba(32, 32, 32, 0.3)',
+              boxShadow: 'rgba(38, 42, 62, 0.16) 0px 12px 40px 0px',
               position: 'relative',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CupiddleAppBadge size={40} />
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    backgroundColor: '#7B112C',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    fontSize: '18px',
+                    flexShrink: 0,
+                  }}
+                >
+                  C
+                </div>
                 <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#202020', margin: 0 }}>
-                    Install Cupiddle
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0e0f10', margin: 0 }}>
+                    Install Cupiddle Mobile App
                   </h3>
-                  <span style={{ fontSize: '12px', color: '#575656', fontWeight: 600 }}>
-                    Add to your Home Screen in 2 clicks
+                  <span style={{ fontSize: '13px', color: '#666666', fontWeight: 500 }}>
+                    Direct install to your phone · Not on Play Store
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setShowIosGuide(false)}
+                aria-label="Close install guide"
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#202020',
+                  color: '#0e0f10',
                   padding: '6px',
                   cursor: 'pointer',
+                  minWidth: '40px',
+                  minHeight: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', margin: '20px 0' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', margin: '20px 0' }}>
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '12px',
-                  padding: '12px',
+                  padding: '14px',
                   borderRadius: '16px',
-                  backgroundColor: '#f8f8f8',
-                  border: '1px solid #e0e0e0',
+                  backgroundColor: '#f4f4f8',
                 }}
               >
                 <div
                   style={{
                     width: '32px',
                     height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: '#ffdb5b',
-                    border: '1px solid #202020',
+                    borderRadius: '100px',
+                    backgroundColor: '#7B112C',
+                    color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '13px',
                   }}
                 >
                   1
                 </div>
                 <div>
-                  <strong style={{ fontSize: '14px', color: '#202020', display: 'block' }}>
-                    Tap the Share Icon
+                  <strong style={{ fontSize: '14px', color: '#0e0f10', display: 'block' }}>
+                    Open browser menu or Share bar
                   </strong>
-                  <span style={{ fontSize: '12px', color: '#575656' }}>
-                    In Safari (bottom bar) or Chrome menu, tap the{' '}
-                    <Share2 size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> Share button.
+                  <span style={{ fontSize: '13px', color: '#666666', lineHeight: 1.4 }}>
+                    On Android Chrome tap the 3-dot menu; on iPhone Safari tap{' '}
+                    <Share2 size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> Share.
                   </span>
                 </div>
               </div>
@@ -285,36 +314,34 @@ export const PwaInstallBanner: React.FC = () => {
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '12px',
-                  padding: '12px',
+                  padding: '14px',
                   borderRadius: '16px',
-                  backgroundColor: '#f8f8f8',
-                  border: '1px solid #e0e0e0',
+                  backgroundColor: '#f4f4f8',
                 }}
               >
                 <div
                   style={{
                     width: '32px',
                     height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: '#ffdb5b',
-                    border: '1px solid #202020',
+                    borderRadius: '100px',
+                    backgroundColor: '#7B112C',
+                    color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '13px',
                   }}
                 >
                   2
                 </div>
                 <div>
-                  <strong style={{ fontSize: '14px', color: '#202020', display: 'block' }}>
-                    Select "Add to Home Screen"
+                  <strong style={{ fontSize: '14px', color: '#0e0f10', display: 'block' }}>
+                    Tap &quot;Install app&quot; or &quot;Add to Home Screen&quot;
                   </strong>
-                  <span style={{ fontSize: '12px', color: '#575656' }}>
-                    Scroll down and choose{' '}
-                    <PlusSquare size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> "Add to Home Screen".
+                  <span style={{ fontSize: '13px', color: '#666666', lineHeight: 1.4 }}>
+                    Choose <PlusSquare size={13} style={{ display: 'inline', verticalAlign: 'middle' }} /> Add to Home Screen — installs in under 10 seconds with zero Play Store download.
                   </span>
                 </div>
               </div>
@@ -324,35 +351,34 @@ export const PwaInstallBanner: React.FC = () => {
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '12px',
-                  padding: '12px',
+                  padding: '14px',
                   borderRadius: '16px',
-                  backgroundColor: '#fff386',
-                  border: '1px solid #202020',
+                  backgroundColor: '#F9EBEF',
                 }}
               >
                 <div
                   style={{
                     width: '32px',
                     height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: '#202020',
-                    color: '#ffdb5b',
+                    borderRadius: '100px',
+                    backgroundColor: '#0e0f10',
+                    color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '13px',
                   }}
                 >
                   3
                 </div>
                 <div>
-                  <strong style={{ fontSize: '14px', color: '#202020', display: 'block' }}>
-                    Launch Cupiddle Anytime!
+                  <strong style={{ fontSize: '14px', color: '#0e0f10', display: 'block' }}>
+                    Launch full-screen anytime
                   </strong>
-                  <span style={{ fontSize: '12px', color: '#3b3b3b' }}>
-                    The official app badge will appear on your phone home screen with full offline and push support.
+                  <span style={{ fontSize: '13px', color: '#2f3133', lineHeight: 1.4 }}>
+                    Runs natively on your phone with private chats, real-time notifications, and discreet home-screen icon.
                   </span>
                 </div>
               </div>
@@ -360,19 +386,18 @@ export const PwaInstallBanner: React.FC = () => {
 
             <button
               onClick={() => setShowIosGuide(false)}
-              className="btn-bumble-action"
               style={{
                 width: '100%',
-                padding: '12px',
-                borderRadius: '16px',
-                backgroundColor: '#202020',
+                padding: '13px 24px',
+                borderRadius: '100px',
+                backgroundColor: '#7B112C',
                 color: '#ffffff',
-                fontWeight: 800,
-                fontSize: '14px',
+                fontWeight: 600,
+                fontSize: '15px',
                 cursor: 'pointer',
               }}
             >
-              Got it!
+              Got it
             </button>
           </div>
         </div>

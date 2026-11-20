@@ -4,8 +4,8 @@
   "description": "Curiosity-first dating and social discovery. Discover people through ideas, obsessions, and unexpected perspectives across Nigeria and beyond.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffdb5b",
+  "background_color": "#0D080A",
+  "theme_color": "#5E081E",
   "orientation": "portrait-primary",
   "categories": ["lifestyle", "social"],
   "icons": [

@@ -41,6 +41,7 @@ export const App: React.FC = () => {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [authInitialState, setAuthInitialState] = useState<string | undefined>(undefined);
+  const [authInitialCampus, setAuthInitialCampus] = useState<string | undefined>(undefined);
   const [sparkModalData, setSparkModalData] = useState<{
     isOpen: boolean;
     receiverId: string;
@@ -282,8 +283,9 @@ export const App: React.FC = () => {
     return (
       <div style={{ backgroundColor: 'var(--surface-page-canvas, #ffffff)', minHeight: '100vh' }}>
         <SunlitLandingPage
-          onOpenAuth={(preselectedState, mode) => {
+          onOpenAuth={(preselectedState, mode, preselectedCampus) => {
             setAuthInitialState(preselectedState);
+            setAuthInitialCampus(preselectedCampus);
             setAuthMode(mode || 'register');
             setIsAuthOpen(true);
           }}
@@ -292,6 +294,7 @@ export const App: React.FC = () => {
         <AuthModal
           isOpen={isAuthOpen}
           initialState={authInitialState}
+          initialCampus={authInitialCampus}
           initialMode={authMode}
           onClose={() => setIsAuthOpen(false)}
           onSuccess={async () => {
@@ -306,6 +309,7 @@ export const App: React.FC = () => {
           isOpen={isSuggestionOpen}
           onClose={() => setIsSuggestionOpen(false)}
         />
+        <PwaInstallBanner hideFloatingBanner />
       </div>
     );
   }
@@ -623,6 +627,7 @@ export const App: React.FC = () => {
       <AuthModal
         isOpen={isAuthOpen}
         initialState={authInitialState}
+        initialCampus={authInitialCampus}
         initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={async () => {
