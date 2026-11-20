@@ -7,7 +7,6 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	_ "modernc.org/sqlite"
 )
 
 // DB wraps standard database connection
