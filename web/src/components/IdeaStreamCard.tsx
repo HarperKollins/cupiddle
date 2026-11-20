@@ -42,16 +42,62 @@ export const IdeaStreamCard: React.FC<IdeaStreamCardProps> = ({ candidate, onSpa
         position: 'relative',
       }}
     >
-      {/* Photo & Header */}
-      <div style={{ position: 'relative', height: 'clamp(300px, 44vh, 440px)', backgroundColor: '#e5e5e5' }}>
+      {/* Photo & Header with Progressive 40px Silhouette Blur */}
+      <div style={{ position: 'relative', height: 'clamp(300px, 44vh, 440px)', backgroundColor: '#e5e5e5', overflow: 'hidden' }}>
         <img
           src={primaryPhoto}
           alt={profile.display_name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            filter: 'blur(36px)',
+            transform: 'scale(1.15)',
+            transition: 'filter 0.3s ease',
+          }}
         />
 
-        {/* Verification and Active Green Light Badges (Top Left) */}
+        {/* Compatibility and Privacy Badges (Top Left) */}
         <div style={{ position: 'absolute', top: '16px', left: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {candidate.compatibility_pct ? (
+            <span
+              style={{
+                backgroundColor: 'var(--color-bumble-honey, #ffdb5b)',
+                color: '#202020',
+                fontSize: '12px',
+                fontWeight: 800,
+                padding: '6px 12px',
+                borderRadius: 'var(--radius-badges, 1000px)',
+                border: '1.5px solid #202020',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              }}
+            >
+              ⚡ {candidate.compatibility_pct}% Match
+            </span>
+          ) : null}
+
+          <span
+            style={{
+              backgroundColor: 'rgba(32, 32, 32, 0.75)',
+              color: '#ffffff',
+              fontSize: '11px',
+              fontWeight: 700,
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-badges, 1000px)',
+              backdropFilter: 'blur(8px)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Lock size={12} />
+            Photo reveals on Spark
+          </span>
+
           <span
             style={{
               backgroundColor: '#ffffff',

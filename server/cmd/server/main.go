@@ -118,6 +118,9 @@ func main() {
 			// Profile & Curiosity
 			r.Put("/profile", profileH.UpdateProfile)
 			r.Put("/profile/curiosity", profileH.UpdateCuriosity)
+			r.Put("/profile/lifestyle", profileH.UpdateLifestyle)
+			r.Post("/profile/vibe", profileH.SetVibeTag)
+			r.Post("/profile/gate-question", profileH.SetGateQuestion)
 			r.Put("/profile/audio", profileH.UpdateAudioIntro)
 			r.Post("/profile/photos", profileH.AddPhoto)
 			r.Delete("/profile/photos/{id}", profileH.DeletePhoto)

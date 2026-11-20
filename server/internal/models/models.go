@@ -211,10 +211,16 @@ type AuditLog struct {
 
 // DiscoveryCandidate represents a scored recommendation for the Idea Stream
 type DiscoveryCandidate struct {
-	Profile         Profile  `json:"profile"`
-	DistanceKm      float64  `json:"distance_km"`
-	SharedInterests []string `json:"shared_interests"`
-	MatchScore      float64  `json:"match_score"`
+	Profile          Profile  `json:"profile"`
+	DistanceKm       float64  `json:"distance_km"`
+	SharedInterests  []string `json:"shared_interests"`
+	MatchScore       float64  `json:"match_score"`
+	CompatibilityPct int      `json:"compatibility_pct"`
+	GateQuestion     string   `json:"gate_question"`
+	VibeTag          string   `json:"vibe_tag"`
+	Faculty          string   `json:"faculty"`
+	Level            string   `json:"level"`
+	BlurLevel        int      `json:"blur_level"`
 }
 
 // RadarSlot represents an in-app crush tracker slot
