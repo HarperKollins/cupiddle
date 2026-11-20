@@ -14,6 +14,7 @@ import (
 	"github.com/cupiddle/server/internal/handlers"
 	"github.com/cupiddle/server/internal/middleware"
 	"github.com/go-chi/chi/v5"
+	_ "modernc.org/sqlite"
 )
 
 func setupTestApp(t *testing.T) (*chi.Mux, *database.DB, func()) {

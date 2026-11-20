@@ -7,7 +7,6 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	_ "modernc.org/sqlite"
 )
 
 // DB wraps standard database connection
@@ -311,8 +310,6 @@ func (db *DB) RunMigrations() error {
 	CREATE INDEX IF NOT EXISTS idx_sparks_receiver ON sparks(receiver_id, status);
 	CREATE INDEX IF NOT EXISTS idx_messages_conv ON messages(conversation_id, created_at);
 	CREATE INDEX IF NOT EXISTS idx_posts_comm ON community_posts(community_id, created_at);
-	CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
-	CREATE INDEX IF NOT EXISTS idx_profiles_campus ON profiles(campus, faculty);
 	`
 
 	_, err := db.Exec(schema)
@@ -337,6 +334,8 @@ func (db *DB) RunMigrations() error {
 		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS gate_question TEXT DEFAULT ''",
 		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS vibe_tag TEXT DEFAULT ''",
 		"ALTER TABLE profiles ADD COLUMN IF NOT EXISTS vibe_expires_at TIMESTAMP",
+		"CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)",
+		"CREATE INDEX IF NOT EXISTS idx_profiles_campus ON profiles(campus, faculty)",
 	}
 
 	for _, stmt := range safeMigrations {
