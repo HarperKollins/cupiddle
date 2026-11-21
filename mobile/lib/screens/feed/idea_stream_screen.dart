@@ -393,7 +393,7 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen>
 
   // Authentic Tinder/Bumble Dating Card
   Widget _buildDatingCard(UserProfile target, {required bool isTopCard}) {
-    final photoList = target.photos.isNotEmpty ? target.photos : [ProfilePhoto(id: '0', url: target.primaryPhotoUrl, isPrimary: true)];
+    final photoList = target.photos.isNotEmpty ? target.photos : [ProfilePhoto(id: '0', url: target.primaryPhotoUrl, isPrimary: true, order: 0)];
     final safePhotoIndex = _currentPhotoIndex.clamp(0, photoList.length - 1);
     final activePhotoUrl = photoList[safePhotoIndex].url;
     final matchScore = target.matchPercentage != null ? (target.matchPercentage! * 100).round() : 91;

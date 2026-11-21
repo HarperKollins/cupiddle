@@ -7,8 +7,8 @@ class ProfilePhoto {
   ProfilePhoto({
     required this.id,
     required this.url,
-    required this.isPrimary,
-    required this.order,
+    this.isPrimary = false,
+    this.order = 0,
   });
 
   factory ProfilePhoto.fromJson(dynamic json) {
