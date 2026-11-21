@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/config.dart';
@@ -115,45 +116,102 @@ class ApiService {
     }
   }
 
-  // --- ONBOARDING ---
+  // --- ONBOARDING & PROFILE SETUP ---
   Future<UserProfile> completeOnboarding({
-    required String rabbitHole,
-    required String defendTake,
-    required String teachMe,
-    required List<String> myWorldTags,
-    required Map<String, int> dimensionScores,
     required String campus,
-    required String level,
     required String faculty,
+    required String department,
+    required String level,
+    required String datingIntentions,
     required String gateQuestion,
     required String vibeTag,
+    String? bio,
+    required Map<String, int> dimensionScores,
     String? photoUrl,
   }) async {
-    final url = Uri.parse('$_baseUrl/onboarding/complete');
-    final response = await http.post(
-      url,
-      headers: _headers(),
-      body: jsonEncode({
-        'rabbit_hole': rabbitHole,
-        'defend_take': defendTake,
-        'teach_me': teachMe,
-        'my_world_tags': myWorldTags,
-        'dimension_scores': dimensionScores,
-        'campus': campus,
-        'level': level,
-        'faculty': faculty,
-        'gate_question': gateQuestion,
-        'vibe_tag': vibeTag,
-        if (photoUrl != null) 'photo_url': photoUrl,
-      }),
+    // 1. Update Profile (Identity, Academic, Intention, Gate Question, Vibe Tag)
+    final profilePayload = <String, dynamic>{
+      'campus': campus,
+      'faculty': faculty,
+      'department': department,
+      'level': level,
+      'dating_intentions': datingIntentions,
+      'gate_question': gateQuestion,
+      'vibe_tag': vibeTag,
+      if (bio != null && bio.isNotEmpty) 'bio': bio,
+    };
+    await updateProfile(profilePayload);
+
+    // 2. Update Lifestyle Dimensions
+    final lifestyleMap = <String, double>{};
+    dimensionScores.forEach((k, v) {
+      lifestyleMap[k] = v.toDouble();
+    });
+    try {
+      await updateLifestyle(lifestyleMap);
+    } catch (_) {}
+
+    // 3. Register Primary Photo if provided
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      try {
+        await addPhoto(photoUrl, true);
+      } catch (_) {}
+    }
+
+    // 4. Return refreshed profile from server
+    try {
+      final me = await getMe();
+      return UserProfile.fromJson(me['profile'] as Map<String, dynamic>);
+    } catch (_) {
+      // Fallback: return basic profile representation
+      return UserProfile(
+        id: '',
+        userId: '',
+        displayName: '',
+        campus: campus,
+        faculty: faculty,
+        department: department,
+        level: level,
+        gateQuestion: gateQuestion,
+        vibeTag: vibeTag,
+        datingIntentions: datingIntentions,
+        bio: bio,
+        photos: photoUrl != null
+            ? [Photo(id: 'primary', url: photoUrl, isPrimary: true)]
+            : [],
+      );
+    }
+  }
+
+  // --- PHOTO UPLOAD (MULTIPART) ---
+  Future<String> uploadPhoto(Uint8List bytes, String filename) async {
+    final uri = Uri.parse('$_baseUrl/media/photo');
+    final request = http.MultipartRequest('POST', uri);
+    if (_token != null && _token!.isNotEmpty) {
+      request.headers['Authorization'] = 'Bearer $_token';
+    }
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'photo',
+        bytes,
+        filename: filename,
+      ),
     );
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final data = jsonDecode(response.body);
-      return UserProfile.fromJson(data['profile'] as Map<String, dynamic>);
+      final rawUrl = data['url'] as String;
+      if (rawUrl.startsWith('http')) {
+        return rawUrl;
+      }
+      final hostRoot = _baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+      return '$hostRoot$rawUrl';
     } else {
       final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Onboarding failed');
+      throw Exception(err['error'] ?? 'Failed to upload photo (${response.statusCode})');
     }
   }
 
@@ -477,6 +535,20 @@ class ApiService {
     } else {
       final err = jsonDecode(response.body);
       throw Exception(err['error'] ?? 'Failed to update curiosity');
+    }
+  }
+
+  Future<void> updateLifestyle(Map<String, double> lifestyle, [List<double>? valuesVector, int? cgpaTier]) async {
+    final url = Uri.parse('$_baseUrl/profile/lifestyle');
+    final body = {
+      'lifestyle': lifestyle,
+      if (valuesVector != null) 'values_vector': valuesVector,
+      if (cgpaTier != null) 'cgpa_tier': cgpaTier,
+    };
+    final response = await http.put(url, headers: _headers(), body: jsonEncode(body));
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to update lifestyle');
     }
   }
 

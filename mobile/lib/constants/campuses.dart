@@ -34,13 +34,13 @@ class NigerianCampuses {
   ];
 
   static const List<String> moodTags = [
-    '🔥 Late Night Banter',
-    '📚 Library Study Date',
-    '💡 Intellectual Sparring',
-    '☕ Midnight Coffee & Chill',
-    '🎧 Afrobeats & Deep Talks',
-    '🍿 Movie & Series Watch',
-    '🚀 Building & Tech Talk',
-    '🎨 Arts & Literature',
+    '🫠 Feeling lonely rn',
+    '📚 Need a study buddy',
+    '🌙 Late night, bored',
+    '🔥 Ready to meet someone',
+    '💭 Just want to talk',
+    '🎮 Vibes only, no pressure',
+    '⚡ Looking for my campus spark',
+    '😶‍🌫️ Secret mode — curious',
   ];
 }
