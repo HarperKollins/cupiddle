@@ -124,7 +124,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         _messages.add(newMsg);
       });
       _scrollToBottom();
-    } catch (err: any) {
+    } catch (err) {
       setState(() {
         _safetyError = err.toString().replaceAll('Exception: ', '');
       });

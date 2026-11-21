@@ -98,7 +98,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
       _commNameCtrl.clear();
       _commDescCtrl.clear();
       _loadPosts(created.slug);
-    } catch (err: any) {
+    } catch (err) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(err.toString()), backgroundColor: AppColors.error),
       );
@@ -117,7 +117,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
       Navigator.of(context).pop();
       _postTitleCtrl.clear();
       _postContentCtrl.clear();
-    } catch (err: any) {
+    } catch (err) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(err.toString()), backgroundColor: AppColors.error),
       );
@@ -178,7 +178,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
               SnackBar(content: Text('Spark sent to ${post.author?.displayName}!'), backgroundColor: AppColors.rose),
             );
           }
-        } catch (err: any) {
+        } catch (err) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(err.toString()), backgroundColor: AppColors.error),

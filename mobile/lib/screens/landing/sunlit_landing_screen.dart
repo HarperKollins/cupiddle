@@ -218,7 +218,7 @@ class _SunlitLandingScreenState extends State<SunlitLandingScreen> {
                     GlowButton(
                       text: 'Join $_selectedCampus Circle Free',
                       onPressed: () => _openAuth(isSignUp: true),
-                      icon: const Icon(Icons.sparkles, color: Colors.white, size: 16),
+                      icon: const Icon(Icons.auto_awesome, color: Colors.white, size: 16),
                     ),
                     const SizedBox(height: 10),
 

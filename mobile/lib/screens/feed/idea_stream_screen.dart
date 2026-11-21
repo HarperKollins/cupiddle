@@ -76,7 +76,7 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
               _profiles.removeWhere((p) => p.id == target.id);
             });
           }
-        } catch (err: any) {
+        } catch (err) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

@@ -61,7 +61,7 @@ class _SparksInboxScreenState extends State<SparksInboxScreen> {
           );
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

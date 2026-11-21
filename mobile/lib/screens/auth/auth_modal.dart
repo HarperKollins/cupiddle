@@ -118,7 +118,7 @@ class _AuthModalState extends State<AuthModal> {
         Navigator.of(context).pop();
         widget.onSuccess(auth);
       }
-    } catch (err: any) {
+    } catch (err) {
       setState(() {
         _errorMessage = err.toString().replaceAll('Exception: ', '');
         _isLoading = false;
@@ -407,7 +407,7 @@ class _AuthModalState extends State<AuthModal> {
               text: _isSignUp ? 'Join $_selectedCampus Circle Free' : 'Sign In',
               isLoading: _isLoading,
               onPressed: _handleSubmit,
-              icon: Icon(_isSignUp ? Icons.sparkles : Icons.arrow_forward, color: Colors.white, size: 16),
+              icon: Icon(_isSignUp ? Icons.auto_awesome : Icons.arrow_forward, color: Colors.white, size: 16),
             ),
             const SizedBox(height: 10),
 

@@ -115,7 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
 
       widget.onCompleted(updated);
-    } catch (err: any) {
+    } catch (err) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(err.toString().replaceAll('Exception: ', '')),

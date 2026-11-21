@@ -97,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) setState(() => _savedSuccess = false);
       });
-    } catch (err: any) {
+    } catch (err) {
       setState(() => _isSaving = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(err.toString()), backgroundColor: AppColors.error),
@@ -188,7 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Verification check passed!'), backgroundColor: AppColors.success),
                     );
-                  } catch (err: any) {
+                  } catch (err) {
                     setDialogState(() => _isVerifying = false);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(err.toString()), backgroundColor: AppColors.error),
