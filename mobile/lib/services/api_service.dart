@@ -168,6 +168,7 @@ class ApiService {
         id: '',
         userId: '',
         displayName: '',
+        age: 20,
         campus: campus,
         faculty: faculty,
         department: department,
@@ -177,7 +178,7 @@ class ApiService {
         datingIntentions: datingIntentions,
         bio: bio,
         photos: photoUrl != null
-            ? [Photo(id: 'primary', url: photoUrl, isPrimary: true)]
+            ? [ProfilePhoto(id: 'primary', url: photoUrl, isPrimary: true, order: 0)]
             : [],
       );
     }

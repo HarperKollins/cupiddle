@@ -39,6 +39,7 @@ class UserProfile {
   final String? city;
   final String? campus;
   final String? faculty;
+  final String? department;
   final String? level;
   final bool isStudentVerified;
   final String? vibeTag;
@@ -64,6 +65,7 @@ class UserProfile {
     this.city,
     this.campus,
     this.faculty,
+    this.department,
     this.level,
     this.isStudentVerified = false,
     this.vibeTag,
@@ -103,6 +105,7 @@ class UserProfile {
       city: json['city']?.toString() ?? 'Nigeria',
       campus: json['campus']?.toString() ?? 'EBSU',
       faculty: json['faculty']?.toString(),
+      department: json['department']?.toString(),
       level: json['level']?.toString(),
       isStudentVerified: json['is_student_verified'] == true,
       vibeTag: json['vibe_tag']?.toString(),

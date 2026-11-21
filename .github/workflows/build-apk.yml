@@ -44,6 +44,9 @@ jobs:
           flutter create . --org com.cupiddle --platforms=android,web --project-name cupiddle
           # Add Internet, Network State, and Camera permissions to AndroidManifest.xml
           sed -i 's/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android">/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android">\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" \/>\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" \/>/g' android/app/src/main/AndroidManifest.xml
+          # Ensure compileSdk 35 for plugins requiring Android SDK 35
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/g' android/app/build.gradle || true
+          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 35/g' android/app/build.gradle || true
           flutter pub get
 
       - name: Build Android Release APK
