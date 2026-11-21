@@ -13,6 +13,8 @@ class AppColors {
   static const Color burgundy = Color(0xFF5E081E);
   static const Color burgundyDeep = Color(0xFF380512);
   static const Color burgundyBright = Color(0xFF7B112C);
+  static const Color gold = Color(0xFFF59E0B);
+  static const Color goldSunlit = Color(0xFFFFB703);
 
   // Functional & Semantic
   static const Color success = Color(0xFF10B981);
