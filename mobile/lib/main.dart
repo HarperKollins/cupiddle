@@ -104,14 +104,117 @@ class _CupiddleAppState extends State<CupiddleApp> {
         ),
       ),
       builder: (context, child) {
-        return Container(
-          color: AppColors.canvas,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: child ?? const SizedBox.shrink(),
-            ),
-          ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            // On mobile / small screens, render 100% full-screen native edge-to-edge
+            if (constraints.maxWidth <= 650) {
+              return child ?? const SizedBox.shrink();
+            }
+
+            // On desktop / tablet, render inside a luxury mobile smartphone mockup frame
+            return Container(
+              color: const Color(0xFF080406),
+              alignment: Alignment.center,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Smartphone Chassis
+                      Container(
+                        width: 395,
+                        height: 830,
+                        decoration: BoxDecoration(
+                          color: AppColors.canvas,
+                          borderRadius: BorderRadius.circular(46),
+                          border: Border.all(
+                            color: const Color(0xFF2E1C24),
+                            width: 6,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.rose.withOpacity(0.2),
+                              blurRadius: 40,
+                              spreadRadius: 2,
+                            ),
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.85),
+                              blurRadius: 60,
+                              offset: const Offset(0, 20),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Stack(
+                            children: [
+                              child ?? const SizedBox.shrink(),
+                              // Subtle Camera Punch Hole / Dynamic Island
+                              Positioned(
+                                top: 10,
+                                left: 0,
+                                right: 0,
+                                child: Center(
+                                  child: Container(
+                                    width: 90,
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFF1A1A2E),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      // Desktop Info Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.cardSecondary,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.phone_android_rounded, size: 16, color: AppColors.rose),
+                            SizedBox(width: 8),
+                            Text(
+                              'Mobile Simulator • Press F12 > Ctrl+Shift+M for Mobile Emulation',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: AppColors.textMuted,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
       home: _isLoading
