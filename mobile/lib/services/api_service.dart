@@ -259,7 +259,7 @@ class ApiService {
   }
 
   Future<List<Spark>> getReceivedSparks() async {
-    final url = Uri.parse('$_baseUrl/sparks/received');
+    final url = Uri.parse('$_baseUrl/sparks/inbox');
     final response = await http.get(url, headers: _headers());
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -272,11 +272,11 @@ class ApiService {
   }
 
   Future<void> respondSpark(String sparkId, String status) async {
-    final url = Uri.parse('$_baseUrl/sparks/$sparkId/respond');
+    final action = (status.toLowerCase() == 'accepted' || status.toLowerCase() == 'accept') ? 'accept' : 'pass';
+    final url = Uri.parse('$_baseUrl/sparks/$sparkId/$action');
     final response = await http.post(
       url,
       headers: _headers(),
-      body: jsonEncode({'status': status}),
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -330,7 +330,7 @@ class ApiService {
   }
 
   Future<void> addReaction(String messageId, String emoji) async {
-    final url = Uri.parse('$_baseUrl/messages/$messageId/reactions');
+    final url = Uri.parse('$_baseUrl/conversations/messages/$messageId/reactions');
     await http.post(
       url,
       headers: _headers(),
@@ -340,7 +340,7 @@ class ApiService {
 
   // --- CO-OP CORNER GAMES ---
   Future<CoopGame?> getActiveCoopGame(String conversationId) async {
-    final url = Uri.parse('$_baseUrl/conversations/$conversationId/coop-game');
+    final url = Uri.parse('$_baseUrl/conversations/$conversationId/games/active');
     final response = await http.get(url, headers: _headers());
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -353,7 +353,7 @@ class ApiService {
   }
 
   Future<CoopGame> startCoopGame(String conversationId, String gameType) async {
-    final url = Uri.parse('$_baseUrl/conversations/$conversationId/coop-game');
+    final url = Uri.parse('$_baseUrl/conversations/$conversationId/games');
     final response = await http.post(
       url,
       headers: _headers(),
@@ -370,7 +370,7 @@ class ApiService {
   }
 
   Future<CoopGame> submitCoopAnswer(String gameId, String answer) async {
-    final url = Uri.parse('$_baseUrl/coop-games/$gameId/turn');
+    final url = Uri.parse('$_baseUrl/games/$gameId/answer');
     final response = await http.post(
       url,
       headers: _headers(),
@@ -572,47 +572,82 @@ class ApiService {
   }
 
   // --- VERIFICATION (₦0 NIGERIAN CAMPUS) ---
-  Future<void> verifyStudent({
+  Future<Map<String, dynamic>> verifyStudent({
     required String method, // 'nin', 'jamb', 'rrr'
     required String identifier,
     required String campus,
   }) async {
-    final url = Uri.parse('$_baseUrl/student-verification/verify');
+    Uri url;
+    Map<String, dynamic> payload;
+
+    final cleanId = identifier.trim();
+    final lowerMethod = method.toLowerCase();
+
+    if (lowerMethod == 'rrr' || lowerMethod == 'remita') {
+      url = Uri.parse('$_baseUrl/verify/remita');
+      payload = {'rrr': cleanId.replaceAll('-', '').replaceAll(' ', '')};
+    } else if (lowerMethod == 'jamb') {
+      url = Uri.parse('$_baseUrl/verify/jamb');
+      payload = {'jamb_reg_no': cleanId.toUpperCase()};
+    } else if (lowerMethod == 'nin') {
+      url = Uri.parse('$_baseUrl/verify/nin-slip');
+      payload = {'nin': cleanId.replaceAll(' ', ''), 'match_score': 0.85};
+    } else {
+      throw Exception('Unsupported verification method: $method');
+    }
+
     final response = await http.post(
       url,
       headers: _headers(),
-      body: jsonEncode({
-        'method': method,
-        'identifier': identifier.trim(),
-        'campus': campus,
-      }),
+      body: jsonEncode(payload),
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Verification check failed');
+      try {
+        final err = jsonDecode(response.body);
+        throw Exception(err['error'] ?? 'Verification check failed');
+      } catch (e) {
+        if (e is Exception && !e.toString().contains('FormatException')) rethrow;
+        throw Exception('Verification check failed (status ${response.statusCode})');
+      }
+    }
+
+    try {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      return {'success': true, 'message': 'Verification approved!'};
     }
   }
 
-  Future<void> vouchPeer({
+  Future<Map<String, dynamic>> vouchPeer({
     required String targetUsername,
     required String campus,
     String? note,
   }) async {
-    final url = Uri.parse('$_baseUrl/student-verification/vouch');
+    final url = Uri.parse('$_baseUrl/verify/vouch');
+    final cleanHandle = targetUsername.trim().toLowerCase().replaceAll('@', '');
     final response = await http.post(
       url,
       headers: _headers(),
       body: jsonEncode({
-        'target_username': targetUsername.trim().toLowerCase(),
-        'campus': campus,
-        'note': note ?? 'Verified coursemate',
+        'target_username': cleanHandle,
       }),
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Peer vouch failed');
+      try {
+        final err = jsonDecode(response.body);
+        throw Exception(err['error'] ?? 'Peer vouch failed');
+      } catch (e) {
+        if (e is Exception && !e.toString().contains('FormatException')) rethrow;
+        throw Exception('Peer vouch failed (status ${response.statusCode})');
+      }
+    }
+
+    try {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      return {'success': true, 'message': 'Vouch recorded successfully.'};
     }
   }
 }

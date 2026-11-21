@@ -52,6 +52,7 @@ class UserProfile {
   final String? department;
   final String? level;
   final bool isStudentVerified;
+  final String verificationBadge;
   final String? vibeTag;
   final String? gateQuestion;
   final String? datingIntentions;
@@ -78,6 +79,7 @@ class UserProfile {
     this.department,
     this.level,
     this.isStudentVerified = false,
+    this.verificationBadge = '',
     this.vibeTag,
     this.gateQuestion,
     this.datingIntentions,
@@ -136,7 +138,8 @@ class UserProfile {
       faculty: map['faculty']?.toString(),
       department: map['department']?.toString(),
       level: map['level']?.toString(),
-      isStudentVerified: map['is_student_verified'] == true,
+      isStudentVerified: map['is_student_verified'] == true || map['is_verified'] == true,
+      verificationBadge: map['verification_badge']?.toString() ?? '',
       vibeTag: map['vibe_tag']?.toString(),
       gateQuestion: map['gate_question']?.toString(),
       datingIntentions: map['dating_intentions']?.toString(),

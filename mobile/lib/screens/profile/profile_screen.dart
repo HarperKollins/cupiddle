@@ -142,8 +142,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: const TextStyle(color: Colors.white, fontSize: 13),
                       decoration: InputDecoration(
                         prefixText: '@',
-                        hintText: 'coursemate_handle',
+                        hintText: 'coursemate_handle (e.g. amina)',
                         hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                        helperText: 'Requires 2 verified coursemates to vouch for you.',
+                        helperStyle: const TextStyle(color: AppColors.textMuted, fontSize: 11),
                         filled: true,
                         fillColor: AppColors.cardSecondary,
                       ),
@@ -154,11 +156,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: const TextStyle(color: Colors.white, fontSize: 13),
                       decoration: InputDecoration(
                         hintText: _verifyMethod == 'nin'
-                            ? '11-digit NIN Number'
+                            ? '11-digit NIN (e.g. 12345678901)'
                             : _verifyMethod == 'jamb'
-                                ? 'JAMB Registration Number'
-                                : 'Remita RRR Transaction Code',
+                                ? 'JAMB Reg No (e.g. 10234567AB)'
+                                : '12-digit Remita RRR (e.g. 123456789012)',
                         hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                        helperText: _verifyMethod == 'nin'
+                            ? 'Instant verification via 11-digit NIN.'
+                            : _verifyMethod == 'jamb'
+                                ? 'Instant admission verification via JAMB.'
+                                : 'Instant verification via 12-digit tuition RRR.',
+                        helperStyle: const TextStyle(color: AppColors.textMuted, fontSize: 11),
                         filled: true,
                         fillColor: AppColors.cardSecondary,
                       ),
@@ -177,21 +185,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () async {
                   setDialogState(() => _isVerifying = true);
                   try {
+                    Map<String, dynamic> res;
                     if (_verifyMethod == 'vouch') {
-                      await ApiService().vouchPeer(targetUsername: _peerHandleCtrl.text.trim(), campus: _campus);
+                      res = await ApiService().vouchPeer(targetUsername: _peerHandleCtrl.text.trim(), campus: _campus);
                     } else {
-                      await ApiService().verifyStudent(method: _verifyMethod, identifier: _verifyIdCtrl.text.trim(), campus: _campus);
+                      res = await ApiService().verifyStudent(method: _verifyMethod, identifier: _verifyIdCtrl.text.trim(), campus: _campus);
                     }
                     Navigator.of(ctx).pop();
                     final me = await ApiService().getMe();
-                    widget.onProfileUpdated(UserProfile.fromJson(me['profile']));
+                    final updatedProfile = UserProfile.fromJson(me['profile']);
+                    widget.onProfileUpdated(updatedProfile);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Verification check passed!'), backgroundColor: AppColors.success),
+                      SnackBar(
+                        content: Text(res['message']?.toString() ?? 'Verification check passed!'),
+                        backgroundColor: AppColors.success,
+                      ),
                     );
                   } catch (err) {
                     setDialogState(() => _isVerifying = false);
+                    final msg = err.toString().replaceAll('Exception: ', '');
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(err.toString()), backgroundColor: AppColors.error),
+                      SnackBar(content: Text(msg), backgroundColor: AppColors.error),
                     );
                   }
                 },
