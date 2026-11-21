@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../constants/app_colors.dart';
 import '../../models/profile.dart';
 import '../../services/api_service.dart';
@@ -21,60 +22,127 @@ class IdeaStreamScreen extends StatefulWidget {
   State<IdeaStreamScreen> createState() => _IdeaStreamScreenState();
 }
 
-class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
+class _IdeaStreamScreenState extends State<IdeaStreamScreen>
+    with SingleTickerProviderStateMixin {
   List<UserProfile> _profiles = [];
   bool _isLoading = true;
   String? _selectedVibe;
   bool _blurPortraits = false; // Silhouette blur mode
+  int _currentPhotoIndex = 0;
+
+  // Animation for card swipe / dismissal
+  late AnimationController _cardAnimCtrl;
+  late Animation<Offset> _cardSlideAnim;
+  late Animation<double> _cardRotateAnim;
+  late Animation<double> _cardOpacityAnim;
+  bool _isDismissing = false;
 
   @override
   void initState() {
     super.initState();
+    _cardAnimCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+    );
+
+    _cardSlideAnim = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(1.2, 0.0),
+    ).animate(CurvedAnimation(parent: _cardAnimCtrl, curve: Curves.easeOutCubic));
+
+    _cardRotateAnim = Tween<double>(begin: 0.0, end: 0.15)
+        .animate(CurvedAnimation(parent: _cardAnimCtrl, curve: Curves.easeOutCubic));
+
+    _cardOpacityAnim = Tween<double>(begin: 1.0, end: 0.0)
+        .animate(CurvedAnimation(parent: _cardAnimCtrl, curve: Curves.easeOut));
+
     _loadStream();
+  }
+
+  @override
+  void dispose() {
+    _cardAnimCtrl.dispose();
+    super.dispose();
   }
 
   Future<void> _loadStream() async {
     setState(() => _isLoading = true);
     try {
       final list = await ApiService().getDiscoveryStream(vibeTag: _selectedVibe);
-      // Filter out self
       setState(() {
         _profiles = list.where((p) => p.userId != widget.currentProfile.userId).toList();
         _isLoading = false;
+        _currentPhotoIndex = 0;
       });
-    } catch (e) {
+    } catch (_) {
       setState(() => _isLoading = false);
     }
   }
 
-  void _handleSpark(UserProfile target, String targetType, String targetId, String targetContent) {
+  void _triggerDismiss({required bool isSpark, required UserProfile target}) async {
+    if (_isDismissing || _profiles.isEmpty) return;
+    _isDismissing = true;
+
+    // Set slide direction: Right for spark, Left for pass
+    _cardSlideAnim = Tween<Offset>(
+      begin: Offset.zero,
+      end: Offset(isSpark ? 1.4 : -1.4, 0.1),
+    ).animate(CurvedAnimation(parent: _cardAnimCtrl, curve: Curves.easeOutCubic));
+
+    _cardRotateAnim = Tween<double>(
+      begin: 0.0,
+      end: isSpark ? 0.2 : -0.2,
+    ).animate(CurvedAnimation(parent: _cardAnimCtrl, curve: Curves.easeOutCubic));
+
+    await _cardAnimCtrl.forward();
+
+    if (mounted) {
+      setState(() {
+        _profiles.removeWhere((p) => p.id == target.id);
+        _currentPhotoIndex = 0;
+      });
+      _cardAnimCtrl.reset();
+      _isDismissing = false;
+    }
+  }
+
+  void _handlePass(UserProfile target) {
+    _triggerDismiss(isSpark: false, target: target);
+  }
+
+  void _handleSpark(UserProfile target, {String? targetType, String? targetId, String? targetContent}) {
     SparkModal.show(
       context,
       profile: target,
-      targetType: targetType,
-      targetId: targetId,
-      targetContent: targetContent,
+      targetType: targetType ?? 'profile',
+      targetId: targetId ?? target.id,
+      targetContent: targetContent ?? (target.bio ?? target.displayName),
       onSendSpark: (comment, gateAnswer) async {
         try {
           await ApiService().sendSpark(
             receiverId: target.userId,
-            targetType: targetType,
-            targetId: targetId,
-            targetContent: targetContent,
+            targetType: targetType ?? 'profile',
+            targetId: targetId ?? target.id,
+            targetContent: targetContent ?? (target.bio ?? target.displayName),
             comment: comment,
             gateAnswer: gateAnswer,
           );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Spark sent to ${target.displayName}!'),
+                content: Row(
+                  children: [
+                    const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
+                    Text('Spark sent to ${target.displayName}!'),
+                  ],
+                ),
                 backgroundColor: AppColors.rose,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
             );
-            // Move to next card
-            setState(() {
-              _profiles.removeWhere((p) => p.id == target.id);
-            });
+            _triggerDismiss(isSpark: true, target: target);
           }
         } catch (err) {
           if (mounted) {
@@ -90,12 +158,6 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
     );
   }
 
-  void _handlePass(UserProfile target) {
-    setState(() {
-      _profiles.removeWhere((p) => p.id == target.id);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,37 +165,41 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top App Bar
+            // Top Dating Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               child: Row(
                 children: [
-                  const CupiddleLogo(size: 26, showText: true),
+                  const CupiddleLogo(size: 28, showText: true, subtitle: 'CAMPUS'),
                   const Spacer(),
-                  // Silhouette blur toggle
+
+                  // Silhouette Mystery Mode Toggle
                   GestureDetector(
                     onTap: () => setState(() => _blurPortraits = !_blurPortraits),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: _blurPortraits ? AppColors.rose.withOpacity(0.18) : AppColors.cardSecondary,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: _blurPortraits ? AppColors.rose : AppColors.border),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: _blurPortraits ? AppColors.rose : AppColors.border,
+                          width: 1.2,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _blurPortraits ? Icons.visibility_off : Icons.visibility,
-                            size: 14,
+                            _blurPortraits ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                            size: 15,
                             color: _blurPortraits ? AppColors.rose : AppColors.textMuted,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 5),
                           Text(
-                            _blurPortraits ? 'Silhouette' : 'Unblurred',
+                            _blurPortraits ? 'Silhouette' : 'Revealed',
                             style: TextStyle(
                               fontSize: 11,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
                               color: _blurPortraits ? AppColors.rose : AppColors.textMuted,
                             ),
                           ),
@@ -141,27 +207,39 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  // Campus Pill
+                  const SizedBox(width: 8),
+
+                  // Campus Indicator Pill
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.rose.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppColors.borderRose),
+                      color: AppColors.cardSecondary,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.borderRose, width: 1.2),
                     ),
-                    child: Text(
-                      widget.currentProfile.campus ?? 'EBSU',
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.rose),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.school_rounded, color: AppColors.rose, size: 13),
+                        const SizedBox(width: 4),
+                        Text(
+                          widget.currentProfile.campus ?? 'EBSU',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
 
-            // Campus Vibe Quick Filter
-            Padding(
-              padding: const EdgeInsets.only(left: 20, bottom: 12),
+            // Live Campus Vibe Filter Strip
+            SizedBox(
+              height: 42,
               child: MoodTagSelector(
                 selectedTag: _selectedVibe,
                 onSelectTag: (vibe) {
@@ -170,404 +248,450 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
                 },
               ),
             ),
+            const SizedBox(height: 6),
 
-            // Card Deck Stream
+            // Card Stack Area
             Expanded(
               child: _isLoading
                   ? const Center(
                       child: CircularProgressIndicator(color: AppColors.rose),
                     )
                   : _profiles.isEmpty
-                      ? _buildEmptyState()
-                      : ListView.separated(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          itemCount: _profiles.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 24),
-                          itemBuilder: (context, index) {
-                            final target = _profiles[index];
-                            return _buildProfileCard(target);
-                          },
+                      ? _buildCampusRadarEmpty()
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Background next card preview (adds authentic 3D deck depth)
+                            if (_profiles.length > 1)
+                              Transform.scale(
+                                scale: 0.94,
+                                child: Opacity(
+                                  opacity: 0.5,
+                                  child: _buildDatingCard(_profiles[1], isTopCard: false),
+                                ),
+                              ),
+
+                            // Top active card with animated gesture dismissal
+                            AnimatedBuilder(
+                              animation: _cardAnimCtrl,
+                              builder: (context, child) {
+                                return Transform.translate(
+                                  offset: Offset(
+                                    _cardSlideAnim.value.dx * MediaQuery.of(context).size.width,
+                                    _cardSlideAnim.value.dy * MediaQuery.of(context).size.height,
+                                  ),
+                                  child: Transform.rotate(
+                                    angle: _cardRotateAnim.value,
+                                    child: Opacity(
+                                      opacity: _cardOpacityAnim.value,
+                                      child: _buildDatingCard(_profiles[0], isTopCard: true),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
             ),
+
+            // Pinned Floating Dating Action Controls (Only when profiles exist)
+            if (_profiles.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 10, 24, 14),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 1. Pass Button (X)
+                    GestureDetector(
+                      onTap: () => _handlePass(_profiles[0]),
+                      child: Container(
+                        width: 58,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          color: AppColors.cardSecondary.withOpacity(0.95),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFF3A1A22), width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.close_rounded, color: Color(0xFFFF5252), size: 28),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+
+                    // 2. Connection Gate Prompt Answer Button
+                    if (_profiles[0].gateQuestion != null && _profiles[0].gateQuestion!.isNotEmpty)
+                      GestureDetector(
+                        onTap: () => _handleSpark(
+                          _profiles[0],
+                          targetType: 'gate_question',
+                          targetId: _profiles[0].id,
+                          targetContent: _profiles[0].gateQuestion!,
+                        ),
+                        child: Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: AppColors.cardSecondary.withOpacity(0.95),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.gold.withOpacity(0.8), width: 1.5),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.gold.withOpacity(0.25),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(Icons.lock_open_rounded, color: AppColors.gold, size: 22),
+                        ),
+                      ),
+                    if (_profiles[0].gateQuestion != null && _profiles[0].gateQuestion!.isNotEmpty)
+                      const SizedBox(width: 20),
+
+                    // 3. Primary Spark / Like Button
+                    GestureDetector(
+                      onTap: () => _handleSpark(_profiles[0]),
+                      child: Container(
+                        width: 68,
+                        height: 68,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFFFF1B6B),
+                              Color(0xFFE60045),
+                            ],
+                          ),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.rose.withOpacity(0.45),
+                              blurRadius: 22,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 36),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Container(
-          padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
-            color: AppColors.card,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.borderRose, width: 1.2),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CupiddleLogo(size: 40),
-              const SizedBox(height: 14),
-              const Text(
-                'All Campus Sparks Explored',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Playfair Display',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'You\'ve seen all current campus profiles matching your criteria. Check back soon or change your vibe filter!',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: AppColors.textMuted, height: 1.4),
-              ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  setState(() => _selectedVibe = null);
-                  _loadStream();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Text('Refresh Discovery Feed', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard(UserProfile target) {
-    final matchScore = target.matchPercentage != null ? (target.matchPercentage! * 100).round() : 88;
+  // Authentic Tinder/Bumble Dating Card
+  Widget _buildDatingCard(UserProfile target, {required bool isTopCard}) {
+    final photoList = target.photos.isNotEmpty ? target.photos : [ProfilePhoto(id: '0', url: target.primaryPhotoUrl, isPrimary: true)];
+    final safePhotoIndex = _currentPhotoIndex.clamp(0, photoList.length - 1);
+    final activePhotoUrl = photoList[safePhotoIndex].url;
+    final matchScore = target.matchPercentage != null ? (target.matchPercentage! * 100).round() : 91;
 
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.borderRose, width: 1.2),
+        border: Border.all(color: AppColors.borderRose, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.65),
+            blurRadius: 26,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          // Hero Portrait with Silhouette Blur Support
-          Stack(
-            children: [
-              Container(
-                height: 380,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(target.primaryPhotoUrl),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: _blurPortraits
-                    ? BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                        child: Container(color: Colors.black.withOpacity(0.2)),
-                      )
-                    : null,
+          // 1. Full-Bleed High-Res Image
+          Positioned.fill(
+            child: Image.network(
+              activePhotoUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: AppColors.cardSecondary,
+                child: const Icon(Icons.person_rounded, size: 80, color: AppColors.border),
               ),
-
-              // Bottom gradient shadow
-              Positioned.fill(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: AppColors.heroOverlayGradient,
-                  ),
-                ),
-              ),
-
-              // Match Percentage Badge (Top Left)
-              Positioned(
-                top: 16,
-                left: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(color: AppColors.rose.withOpacity(0.4), blurRadius: 10),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.bolt, size: 12, color: Colors.white),
-                      const SizedBox(width: 4),
-                      Text(
-                        '$matchScore% Match',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Campus Identity (Top Right)
-              Positioned(
-                top: 16,
-                right: 16,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.65),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        target.campus ?? 'EBSU',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
-                      ),
-                      if (target.isStudentVerified) ...[
-                        const SizedBox(width: 4),
-                        const Icon(Icons.verified, size: 13, color: AppColors.rose),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-
-              // Name, Age & Location (Bottom of Portrait)
-              Positioned(
-                bottom: 16,
-                left: 20,
-                right: 20,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          '${target.displayName}, ${target.age}',
-                          style: const TextStyle(
-                            fontFamily: 'Playfair Display',
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                        if (target.username != null) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            '@${target.username}',
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.rose),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${target.level ?? 'Student'} • ${target.faculty ?? 'Campus'} • ${target.city ?? 'Nigeria'}',
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
 
-          // Body Content
-          Padding(
-            padding: const EdgeInsets.all(20),
+          // 2. Silhouette Blur Filter (if enabled)
+          if (_blurPortraits)
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  color: Colors.black.withOpacity(0.35),
+                ),
+              ),
+            ),
+
+          // 3. Cinematic Dark Vignette Gradient
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.3),
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.65),
+                    Colors.black.withOpacity(0.96),
+                  ],
+                  stops: const [0.0, 0.35, 0.65, 1.0],
+                ),
+              ),
+            ),
+          ),
+
+          // 4. Story Photo Segment Indicators (Top)
+          if (photoList.length > 1)
+            Positioned(
+              top: 12,
+              left: 14,
+              right: 14,
+              child: Row(
+                children: List.generate(photoList.length, (idx) {
+                  final isActive = idx == safePhotoIndex;
+                  return Expanded(
+                    child: Container(
+                      height: 3,
+                      margin: const EdgeInsets.symmetric(horizontal: 2),
+                      decoration: BoxDecoration(
+                        color: isActive ? Colors.white : Colors.white.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(2),
+                        boxShadow: isActive ? [BoxShadow(color: Colors.white.withOpacity(0.8), blurRadius: 4)] : null,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+
+          // 5. Left / Right Photo Tap Navigation (Instagram / Tinder touch zones)
+          if (isTopCard && photoList.length > 1)
+            Positioned.fill(
+              child: Row(
+                children: [
+                  // Tap left -> Previous photo
+                  Expanded(
+                    flex: 1,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        if (_currentPhotoIndex > 0) {
+                          setState(() => _currentPhotoIndex--);
+                        }
+                      },
+                    ),
+                  ),
+                  // Middle 20% -> Info trigger
+                  Expanded(
+                    flex: 1,
+                    child: const SizedBox.shrink(),
+                  ),
+                  // Tap right -> Next photo
+                  Expanded(
+                    flex: 1,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        if (_currentPhotoIndex < photoList.length - 1) {
+                          setState(() => _currentPhotoIndex++);
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          // 6. Match Score Badge (Top Left under indicators)
+          Positioned(
+            top: photoList.length > 1 ? 26 : 14,
+            left: 14,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(color: AppColors.rose.withOpacity(0.4), blurRadius: 10),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.bolt, size: 12, color: Colors.white),
+                  const SizedBox(width: 3),
+                  Text(
+                    '$matchScore% SPARK',
+                    style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 7. Identity & Campus Information Overlay (Bottom)
+          Positioned(
+            bottom: 16,
+            left: 18,
+            right: 18,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Live Vibe Tag (if set)
-                if (target.vibeTag != null && target.vibeTag!.isNotEmpty) ...[
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.rose.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.borderRose),
-                    ),
-                    child: Text(
-                      target.vibeTag!,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.rose),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                ],
-
-                // Bio
-                if (target.bio != null && target.bio!.isNotEmpty) ...[
-                  Text(
-                    target.bio!,
-                    style: const TextStyle(fontSize: 14, color: Colors.white, height: 1.45),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-
-                // Connection Gate Question Challenge
-                if (target.gateQuestion != null && target.gateQuestion!.isNotEmpty) ...[
-                  GestureDetector(
-                    onTap: () => _handleSpark(target, 'gate_question', target.id, target.gateQuestion!),
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardSecondary,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.borderRose, width: 1.2),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Icon(Icons.lock_outline, size: 14, color: AppColors.rose),
-                              SizedBox(width: 6),
-                              Text(
-                                'CONNECTION GATE QUESTION',
-                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.rose, letterSpacing: 0.5),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            target.gateQuestion!,
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Tap to answer & spark connection →',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.rose),
-                          ),
-                        ],
+                // Name, Age & Verified Badge
+                Row(
+                  children: [
+                    Text(
+                      '${target.displayName}, ${target.age}',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                    const SizedBox(width: 8),
+                    if (target.isStudentVerified)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.success, width: 1.2),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.verified_rounded, size: 12, color: AppColors.success),
+                            SizedBox(width: 4),
+                            Text(
+                              'VERIFIED',
+                              style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: AppColors.success),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 4),
 
-                // Rabbit Hole Prompt
-                if (target.rabbitHole != null && target.rabbitHole!.isNotEmpty) ...[
-                  _buildPromptTile(
-                    title: 'MY RABBIT HOLE',
-                    content: target.rabbitHole!,
-                    onTap: () => _handleSpark(target, 'rabbit_hole', target.id, target.rabbitHole!),
-                  ),
-                  const SizedBox(height: 12),
-                ],
+                // Faculty, Department & Campus
+                Text(
+                  '${target.level ?? 'Student'} • ${target.department ?? target.faculty ?? 'Campus'} • ${target.campus ?? 'EBSU'}',
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 10),
 
-                // Defend This Take
-                if (target.defendTake != null && target.defendTake!.isNotEmpty) ...[
-                  _buildPromptTile(
-                    title: 'DEFEND THIS TAKE',
-                    content: target.defendTake!,
-                    onTap: () => _handleSpark(target, 'defend_take', target.id, target.defendTake!),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-
-                // Teach Me Something
-                if (target.teachMe != null && target.teachMe!.isNotEmpty) ...[
-                  _buildPromptTile(
-                    title: 'TEACH ME SOMETHING',
-                    content: target.teachMe!,
-                    onTap: () => _handleSpark(target, 'teach_me', target.id, target.teachMe!),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-
-                // World Tags
-                if (target.myWorldTags.isNotEmpty) ...[
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: target.myWorldTags.map((tag) {
-                      return Container(
+                // Campus Intention Wall & Live Vibe Badges
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    if (target.datingIntentions != null && target.datingIntentions!.isNotEmpty)
+                      Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                          color: AppColors.cardSecondary,
-                          borderRadius: BorderRadius.circular(14),
+                          color: AppColors.rose.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.rose, width: 1.2),
+                        ),
+                        child: Text(
+                          target.datingIntentions!,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white),
+                        ),
+                      ),
+
+                    if (target.vibeTag != null && target.vibeTag!.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: AppColors.border),
                         ),
                         child: Text(
-                          tag,
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-
-                // Action Bar: Pass (X) vs Spark (Flame)
-                Row(
-                  children: [
-                    // Pass Button
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        onTap: () => _handlePass(target),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            color: AppColors.cardSecondary,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.border),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.close, color: AppColors.textMuted, size: 20),
-                          ),
+                          target.vibeTag!,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.gold),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    // Spark Button
-                    Expanded(
-                      flex: 2,
-                      child: GestureDetector(
-                        onTap: () => _handleSpark(target, 'profile', target.id, target.bio ?? target.displayName),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(color: AppColors.rose.withOpacity(0.35), blurRadius: 14, offset: const Offset(0, 4)),
-                            ],
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.bolt, color: Colors.white, size: 18),
-                              SizedBox(width: 6),
-                              Text('Spark Take Free', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
+                const SizedBox(height: 12),
+
+                // Connection Gate Question Box
+                if (target.gateQuestion != null && target.gateQuestion!.isNotEmpty)
+                  GestureDetector(
+                    onTap: isTopCard
+                        ? () => _handleSpark(
+                              target,
+                              targetType: 'gate_question',
+                              targetId: target.id,
+                              targetContent: target.gateQuestion!,
+                            )
+                        : null,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardSecondary.withOpacity(0.92),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.borderRose, width: 1.2),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.rose),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'CONNECTION GATE QUESTION',
+                                  style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: AppColors.rose, letterSpacing: 0.5),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  target.gateQuestion!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: AppColors.rose),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                // Bio
+                if (target.bio != null && target.bio!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    target.bio!,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12.5, color: AppColors.textSecondary, height: 1.35),
+                  ),
+                ],
               ],
             ),
           ),
@@ -576,35 +700,86 @@ class _IdeaStreamScreenState extends State<IdeaStreamScreen> {
     );
   }
 
-  Widget _buildPromptTile({
-    required String title,
-    required String content,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.cardSecondary,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
-        ),
+  // Campus Radar Empty State
+  Widget _buildCampusRadarEmpty() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.rose, letterSpacing: 0.5)),
-                const Text('Spark this take →', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.rose)),
-              ],
+            // Concentric Radar Rings
+            Container(
+              width: 110,
+              height: 110,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.rose.withOpacity(0.2),
+                    AppColors.burgundy.withOpacity(0.1),
+                    Colors.transparent,
+                  ],
+                ),
+                border: Border.all(color: AppColors.borderRose, width: 1.5),
+              ),
+              child: Center(
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.cardSecondary,
+                    border: Border.all(color: AppColors.rose, width: 2),
+                  ),
+                  child: const Icon(Icons.radar_rounded, color: AppColors.rose, size: 30),
+                ),
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 20),
+
             Text(
-              content,
-              style: const TextStyle(fontSize: 13, color: Colors.white, height: 1.4, fontWeight: FontWeight.w600),
+              'All Campus Sparks Explored',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'You have seen all current student profiles matching your vibe in ${widget.currentProfile.campus ?? 'your university'}. Check back tonight or expand your vibe filter!',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, color: AppColors.textMuted, height: 1.45),
+            ),
+            const SizedBox(height: 22),
+
+            GestureDetector(
+              onTap: () {
+                setState(() => _selectedVibe = null);
+                _loadStream();
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(color: AppColors.rose.withOpacity(0.35), blurRadius: 16),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
+                    SizedBox(width: 8),
+                    Text(
+                      'Refresh Campus Radar',
+                      style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

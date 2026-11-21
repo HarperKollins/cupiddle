@@ -33,6 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late String _campus;
   late String _level;
   late String _vibeTag;
+  late String _datingIntentions;
 
   bool _isSaving = false;
   bool _savedSuccess = false;
@@ -55,6 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _campus = widget.profile.campus ?? 'EBSU';
     _level = widget.profile.level ?? '300L';
     _vibeTag = widget.profile.vibeTag ?? NigerianCampuses.moodTags[0];
+    _datingIntentions = widget.profile.datingIntentions ?? '✨ Mutual Intimacy';
   }
 
   @override
@@ -78,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'bio': _bioCtrl.text.trim(),
         'campus': _campus,
         'level': _level,
+        'dating_intentions': _datingIntentions,
         'gate_question': _gateQuestionCtrl.text.trim(),
         'vibe_tag': _vibeTag,
       });
@@ -246,9 +249,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Top Bar
               Row(
                 children: [
-                  const CupiddleLogo(size: 24),
+                  const CupiddleLogo(size: 26, showText: false),
                   const SizedBox(width: 8),
-                  const Text('Profile Studio', style: TextStyle(fontFamily: 'Playfair Display', fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white)),
+                  const Text('My Campus Profile', style: TextStyle(fontFamily: 'Playfair Display', fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white)),
                   const Spacer(),
                   if (_savedSuccess)
                     Container(
@@ -341,6 +344,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 20),
 
+              // Campus Intention Wall
+              const Text('CAMPUS INTENTION WALL', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.rose, letterSpacing: 0.5)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  '✨ Mutual Intimacy',
+                  '🔥 Campus Spark',
+                  '📚 Study Buddy',
+                  '🥂 Companionship',
+                ].map((intent) {
+                  final isSelected = _datingIntentions == intent;
+                  return GestureDetector(
+                    onTap: () => setState(() => _datingIntentions = intent),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.rose.withOpacity(0.2) : AppColors.cardSecondary,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isSelected ? AppColors.rose : AppColors.border,
+                          width: isSelected ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Text(
+                        intent,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                          color: isSelected ? Colors.white : AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+
               // Live Campus Vibe Selector
               const Text('BROADCAST CAMPUS VIBE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.textMuted, letterSpacing: 0.5)),
               const SizedBox(height: 8),
@@ -365,14 +407,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Curiosity Prompts
-              const Text('CURIOSITY PROMPTS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.textMuted, letterSpacing: 0.5)),
+              // Campus Dating Prompts
+              const Text('CAMPUS DATING PROMPTS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.textMuted, letterSpacing: 0.5)),
               const SizedBox(height: 8),
-              _buildEditorInput('My Rabbit Hole', _rabbitHoleCtrl),
+              _buildEditorInput('Late-Night Campus Confession', _rabbitHoleCtrl),
               const SizedBox(height: 10),
-              _buildEditorInput('Defend This Take', _defendTakeCtrl),
+              _buildEditorInput('Best Way to Spend Free Period', _defendTakeCtrl),
               const SizedBox(height: 10),
-              _buildEditorInput('Teach Me Something', _teachMeCtrl),
+              _buildEditorInput('My Biggest Campus Green Flag', _teachMeCtrl),
               const SizedBox(height: 20),
 
               // Identity Fields

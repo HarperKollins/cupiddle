@@ -116,11 +116,11 @@ class _MainShellState extends State<MainShell> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.explore_outlined, Icons.explore, 'Discover'),
-                _buildNavItem(1, Icons.bubble_chart_outlined, Icons.bubble_chart, 'Circles'),
-                _buildNavItem(2, Icons.bolt_outlined, Icons.bolt, 'Sparks', badgeCount: _pendingSparksCount),
-                _buildNavItem(3, Icons.chat_bubble_outline, Icons.chat_bubble, 'Chat', badgeCount: _unreadMessagesCount),
-                _buildNavItem(4, Icons.person_outline, Icons.person, 'Studio'),
+                _buildNavItem(0, Icons.local_fire_department_outlined, Icons.local_fire_department_rounded, 'Discover'),
+                _buildNavItem(1, Icons.explore_outlined, Icons.explore_rounded, 'Campus'),
+                _buildNavItem(2, Icons.bolt_outlined, Icons.bolt_rounded, 'Matches', badgeCount: _pendingSparksCount),
+                _buildNavItem(3, Icons.chat_bubble_outline, Icons.chat_bubble_rounded, 'Chats', badgeCount: _unreadMessagesCount),
+                _buildNavItem(4, Icons.person_outline, Icons.person_rounded, 'Profile'),
               ],
             ),
           ),
