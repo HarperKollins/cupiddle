@@ -103,6 +103,17 @@ class _CupiddleAppState extends State<CupiddleApp> {
           displayColor: AppColors.textPrimary,
         ),
       ),
+      builder: (context, child) {
+        return Container(
+          color: AppColors.canvas,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
+      },
       home: _isLoading
           ? const Scaffold(
               backgroundColor: AppColors.canvas,

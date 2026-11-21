@@ -1,4 +1,4 @@
-name: Build Android APK (Flutter)
+name: Build Android APK & Flutter Web
 
 on:
   push:
@@ -6,16 +6,24 @@ on:
     paths:
       - 'mobile/**'
       - '.github/workflows/build-apk.yml'
+      - 'Dockerfile'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
-  build-apk:
-    name: Build Android Release APK
+  build-all:
+    name: Build Flutter APK & Web PWA
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -30,21 +38,52 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Generate Official Android Platform Files
+      - name: Generate Official Android & Web Platforms
         working-directory: mobile
         run: |
-          flutter create . --org com.cupiddle --platforms=android --project-name cupiddle
-          # Add Internet and Camera permissions to AndroidManifest.xml
+          flutter create . --org com.cupiddle --platforms=android,web --project-name cupiddle
+          # Add Internet, Network State, and Camera permissions to AndroidManifest.xml
           sed -i 's/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android">/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android">\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>/g' android/app/src/main/AndroidManifest.xml
           flutter pub get
 
-      - name: Build Release APK
+      - name: Build Android Release APK
         working-directory: mobile
         run: flutter build apk --release --no-tree-shake-icons
 
-      - name: Upload APK Artifact
+      - name: Build Flutter Web (PWA)
+        working-directory: mobile
+        run: flutter build web --release --base-href "./"
+
+      - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: cupiddle-release-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+
+      - name: Upload Flutter Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cupiddle-flutter-web
+          path: mobile/build/web
+          if-no-files-found: error
+
+      - name: Sync Flutter Web to flutter_dist for EC2 Docker
+        run: |
+          rm -rf flutter_dist
+          mkdir -p flutter_dist
+          cp -r mobile/build/web/* flutter_dist/
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A flutter_dist
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(flutter): sync compiled 100% Flutter Web bundle [skip ci]"
+            git push origin HEAD:main
+            git push origin HEAD:master
+          fi
+
+      - name: Deploy Flutter Web to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: mobile/build/web
