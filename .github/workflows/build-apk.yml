@@ -30,9 +30,13 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Dependencies
+      - name: Generate Official Android Platform Files
         working-directory: mobile
-        run: flutter pub get
+        run: |
+          flutter create . --org com.cupiddle --platforms=android --project-name cupiddle
+          # Add Internet and Camera permissions to AndroidManifest.xml
+          sed -i 's/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android">/<manifest xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android">\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>/g' android/app/src/main/AndroidManifest.xml
+          flutter pub get
 
       - name: Build Release APK
         working-directory: mobile
