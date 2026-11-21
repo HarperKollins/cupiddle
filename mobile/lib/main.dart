@@ -6,7 +6,7 @@ import 'models/profile.dart';
 import 'models/user.dart';
 import 'services/api_service.dart';
 import 'services/websocket_service.dart';
-import 'screens/landing/sunlit_landing_screen.dart';
+import 'screens/landing/app_welcome_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/main_shell.dart';
 
@@ -122,7 +122,7 @@ class _CupiddleAppState extends State<CupiddleApp> {
               ),
             )
           : _currentUser == null
-              ? SunlitLandingScreen(
+              ? AppWelcomeScreen(
                   onAuthenticated: _handleAuthenticated,
                 )
               : !_currentUser!.hasCompletedOnboarding
