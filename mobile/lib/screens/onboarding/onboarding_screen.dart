@@ -158,7 +158,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         _isUploadingPhoto = true;
       });
 
-      final uploadedUrl = await ApiService().uploadPhoto(bytes, file.name);
+      final safeName = file.name.isNotEmpty ? file.name : 'portrait.jpg';
+      final uploadedUrl = await ApiService().uploadPhoto(bytes, safeName);
       if (mounted) {
         setState(() {
           _selectedPhotoUrl = uploadedUrl;

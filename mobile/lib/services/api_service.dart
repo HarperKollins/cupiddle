@@ -140,7 +140,7 @@ class ApiService {
       'vibe_tag': vibeTag,
       if (bio != null && bio.isNotEmpty) 'bio': bio,
     };
-    await updateProfile(profilePayload);
+    UserProfile updated = await updateProfile(profilePayload);
 
     // 2. Update Lifestyle Dimensions
     final lifestyleMap = <String, double>{};
@@ -161,27 +161,11 @@ class ApiService {
     // 4. Return refreshed profile from server
     try {
       final me = await getMe();
-      return UserProfile.fromJson(me['profile'] as Map<String, dynamic>);
-    } catch (_) {
-      // Fallback: return basic profile representation
-      return UserProfile(
-        id: '',
-        userId: '',
-        displayName: '',
-        age: 20,
-        campus: campus,
-        faculty: faculty,
-        department: department,
-        level: level,
-        gateQuestion: gateQuestion,
-        vibeTag: vibeTag,
-        datingIntentions: datingIntentions,
-        bio: bio,
-        photos: photoUrl != null
-            ? [ProfilePhoto(id: 'primary', url: photoUrl, isPrimary: true, order: 0)]
-            : [],
-      );
-    }
+      if (me.containsKey('profile') && me['profile'] != null) {
+        return UserProfile.fromJson(me['profile']);
+      }
+    } catch (_) {}
+    return updated;
   }
 
   // --- PHOTO UPLOAD (MULTIPART) ---
@@ -191,11 +175,12 @@ class ApiService {
     if (_token != null && _token!.isNotEmpty) {
       request.headers['Authorization'] = 'Bearer $_token';
     }
+    final safeName = filename.isNotEmpty ? filename : 'portrait.jpg';
     request.files.add(
       http.MultipartFile.fromBytes(
         'photo',
         bytes,
-        filename: filename,
+        filename: safeName,
       ),
     );
 
@@ -204,7 +189,12 @@ class ApiService {
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final data = jsonDecode(response.body);
-      final rawUrl = data['url'] as String;
+      final rawUrl = data is Map ? (data['url']?.toString() ?? '') : '';
+      if (rawUrl.isEmpty) {
+        throw Exception(data is Map && data['error'] != null
+            ? data['error'].toString()
+            : 'Server did not return photo URL');
+      }
       if (rawUrl.startsWith('http')) {
         return rawUrl;
       }
@@ -212,7 +202,9 @@ class ApiService {
       return '$hostRoot$rawUrl';
     } else {
       final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Failed to upload photo (${response.statusCode})');
+      throw Exception(err is Map && err['error'] != null
+          ? err['error'].toString()
+          : 'Failed to upload photo (${response.statusCode})');
     }
   }
 
@@ -520,10 +512,16 @@ class ApiService {
     final response = await http.put(url, headers: _headers(), body: jsonEncode(body));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return UserProfile.fromJson(jsonDecode(response.body)['profile']);
+      final data = jsonDecode(response.body);
+      final profileJson = (data is Map && data.containsKey('profile') && data['profile'] != null)
+          ? data['profile']
+          : data;
+      return UserProfile.fromJson(profileJson);
     } else {
       final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Failed to update profile');
+      throw Exception(err is Map && err['error'] != null
+          ? err['error'].toString()
+          : 'Failed to update profile (${response.statusCode})');
     }
   }
 
@@ -532,10 +530,16 @@ class ApiService {
     final response = await http.put(url, headers: _headers(), body: jsonEncode(body));
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return UserProfile.fromJson(jsonDecode(response.body)['profile']);
+      final data = jsonDecode(response.body);
+      final profileJson = (data is Map && data.containsKey('profile') && data['profile'] != null)
+          ? data['profile']
+          : data;
+      return UserProfile.fromJson(profileJson);
     } else {
       final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Failed to update curiosity');
+      throw Exception(err is Map && err['error'] != null
+          ? err['error'].toString()
+          : 'Failed to update curiosity (${response.statusCode})');
     }
   }
 

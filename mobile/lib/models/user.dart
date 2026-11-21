@@ -17,14 +17,26 @@ class User {
     required this.createdAt,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(dynamic json) {
+    if (json is! Map) {
+      return User(
+        id: '',
+        email: '',
+        role: 'user',
+        isEmailVerified: false,
+        hasCompletedOnboarding: false,
+        createdAt: '',
+      );
+    }
+    final map = Map<String, dynamic>.from(json as Map);
     return User(
-      id: json['id']?.toString() ?? '',
-      email: json['email']?.toString() ?? '',
-      role: json['role']?.toString() ?? 'user',
-      isEmailVerified: json['is_email_verified'] == true,
-      hasCompletedOnboarding: json['has_completed_onboarding'] == true,
-      createdAt: json['created_at']?.toString() ?? '',
+      id: map['id']?.toString() ?? '',
+      email: map['email']?.toString() ?? '',
+      role: map['role']?.toString() ?? 'user',
+      isEmailVerified: map['email_verified'] == true || map['is_email_verified'] == true,
+      hasCompletedOnboarding: map['has_completed_onboarding'] == true ||
+          (map['campus'] != null && map['campus'].toString().isNotEmpty && map['faculty'] != null && map['faculty'].toString().isNotEmpty),
+      createdAt: map['created_at']?.toString() ?? '',
     );
   }
 }
@@ -40,11 +52,19 @@ class AuthResponse {
     required this.profile,
   });
 
-  factory AuthResponse.fromJson(Map<String, dynamic> json) {
+  factory AuthResponse.fromJson(dynamic json) {
+    if (json is! Map) {
+      return AuthResponse(
+        token: '',
+        user: User.fromJson(null),
+        profile: UserProfile.fromJson(null),
+      );
+    }
+    final map = Map<String, dynamic>.from(json as Map);
     return AuthResponse(
-      token: json['token']?.toString() ?? '',
-      user: User.fromJson(json['user'] as Map<String, dynamic>),
-      profile: UserProfile.fromJson(json['profile'] as Map<String, dynamic>),
+      token: map['token']?.toString() ?? '',
+      user: User.fromJson(map['user']),
+      profile: UserProfile.fromJson(map['profile']),
     );
   }
 }

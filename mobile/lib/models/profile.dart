@@ -11,12 +11,22 @@ class ProfilePhoto {
     required this.order,
   });
 
-  factory ProfilePhoto.fromJson(Map<String, dynamic> json) {
+  factory ProfilePhoto.fromJson(dynamic json) {
+    if (json is! Map) {
+      return ProfilePhoto(
+        id: '',
+        url: json?.toString() ?? '',
+        isPrimary: false,
+        order: 0,
+      );
+    }
     return ProfilePhoto(
       id: json['id']?.toString() ?? '',
       url: json['url']?.toString() ?? '',
       isPrimary: json['is_primary'] == true,
-      order: json['order'] is int ? json['order'] : 0,
+      order: json['sort_order'] is int
+          ? json['sort_order']
+          : (json['order'] is int ? json['order'] : 0),
     );
   }
 
@@ -81,44 +91,63 @@ class UserProfile {
     this.distanceKm,
   });
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) {
+  factory UserProfile.fromJson(dynamic json) {
+    if (json is! Map) {
+      return UserProfile(
+        id: '',
+        userId: '',
+        displayName: 'Student',
+        age: 20,
+      );
+    }
+
+    final map = Map<String, dynamic>.from(json as Map);
+
     List<ProfilePhoto> parsedPhotos = [];
-    if (json['photos'] is List) {
-      parsedPhotos = (json['photos'] as List)
-          .map((p) => ProfilePhoto.fromJson(p as Map<String, dynamic>))
-          .toList();
+    if (map['photos'] is List) {
+      for (final p in (map['photos'] as List)) {
+        if (p is Map) {
+          parsedPhotos.add(ProfilePhoto.fromJson(Map<String, dynamic>.from(p)));
+        } else if (p != null) {
+          parsedPhotos.add(ProfilePhoto.fromJson(p));
+        }
+      }
     }
 
     List<String> parsedTags = [];
-    if (json['my_world_tags'] is List) {
-      parsedTags = (json['my_world_tags'] as List).map((t) => t.toString()).toList();
+    if (map['my_world_tags'] is List) {
+      for (final t in (map['my_world_tags'] as List)) {
+        if (t != null) {
+          parsedTags.add(t.toString());
+        }
+      }
     }
 
     return UserProfile(
-      id: json['id']?.toString() ?? '',
-      userId: json['user_id']?.toString() ?? '',
-      displayName: json['display_name']?.toString() ?? 'Curious Student',
-      username: json['username']?.toString(),
-      age: json['age'] is int ? json['age'] : (int.tryParse(json['age']?.toString() ?? '20') ?? 20),
-      gender: json['gender']?.toString(),
-      bio: json['bio']?.toString(),
-      city: json['city']?.toString() ?? 'Nigeria',
-      campus: json['campus']?.toString() ?? 'EBSU',
-      faculty: json['faculty']?.toString(),
-      department: json['department']?.toString(),
-      level: json['level']?.toString(),
-      isStudentVerified: json['is_student_verified'] == true,
-      vibeTag: json['vibe_tag']?.toString(),
-      gateQuestion: json['gate_question']?.toString(),
-      datingIntentions: json['dating_intentions']?.toString(),
-      rabbitHole: json['rabbit_hole']?.toString(),
-      defendTake: json['defend_take']?.toString(),
-      teachMe: json['teach_me']?.toString(),
+      id: map['id']?.toString() ?? map['user_id']?.toString() ?? '',
+      userId: map['user_id']?.toString() ?? map['id']?.toString() ?? '',
+      displayName: map['display_name']?.toString() ?? 'Curious Student',
+      username: map['username']?.toString(),
+      age: map['age'] is int ? map['age'] : (int.tryParse(map['age']?.toString() ?? '20') ?? 20),
+      gender: map['gender']?.toString(),
+      bio: map['bio']?.toString(),
+      city: map['city']?.toString() ?? 'Nigeria',
+      campus: map['campus']?.toString() ?? 'EBSU',
+      faculty: map['faculty']?.toString(),
+      department: map['department']?.toString(),
+      level: map['level']?.toString(),
+      isStudentVerified: map['is_student_verified'] == true,
+      vibeTag: map['vibe_tag']?.toString(),
+      gateQuestion: map['gate_question']?.toString(),
+      datingIntentions: map['dating_intentions']?.toString(),
+      rabbitHole: map['rabbit_hole']?.toString(),
+      defendTake: map['defend_take']?.toString(),
+      teachMe: map['teach_me']?.toString(),
       myWorldTags: parsedTags,
       photos: parsedPhotos,
-      dimensionScores: json['dimension_scores'] is Map<String, dynamic> ? json['dimension_scores'] : null,
-      matchPercentage: json['match_percentage'] is num ? (json['match_percentage'] as num).toDouble() : null,
-      distanceKm: json['distance_km'] is num ? (json['distance_km'] as num).toDouble() : null,
+      dimensionScores: map['dimension_scores'] is Map ? Map<String, dynamic>.from(map['dimension_scores'] as Map) : null,
+      matchPercentage: map['match_percentage'] is num ? (map['match_percentage'] as num).toDouble() : null,
+      distanceKm: map['distance_km'] is num ? (map['distance_km'] as num).toDouble() : null,
     );
   }
 

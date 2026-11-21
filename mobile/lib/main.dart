@@ -132,12 +132,12 @@ class _CupiddleAppState extends State<CupiddleApp> {
                         setState(() {
                           _currentProfile = updatedProfile;
                           _currentUser = User(
-                            id: _currentUser!.id,
-                            email: _currentUser!.email,
-                            role: _currentUser!.role,
-                            isEmailVerified: _currentUser!.isEmailVerified,
+                            id: _currentUser?.id ?? updatedProfile.userId,
+                            email: _currentUser?.email ?? '',
+                            role: _currentUser?.role ?? 'user',
+                            isEmailVerified: _currentUser?.isEmailVerified ?? false,
                             hasCompletedOnboarding: true,
-                            createdAt: _currentUser!.createdAt,
+                            createdAt: _currentUser?.createdAt ?? '',
                           );
                         });
                       },
