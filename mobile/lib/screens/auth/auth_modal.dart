@@ -51,7 +51,7 @@ class _AuthModalState extends State<AuthModal> {
   final TextEditingController _passwordCtrl = TextEditingController();
   final TextEditingController _displayNameCtrl = TextEditingController();
   final TextEditingController _usernameCtrl = TextEditingController();
-  final TextEditingController _ageCtrl = TextEditingController(text: '20');
+  DateTime? _selectedDob;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -69,8 +69,33 @@ class _AuthModalState extends State<AuthModal> {
     _passwordCtrl.dispose();
     _displayNameCtrl.dispose();
     _usernameCtrl.dispose();
-    _ageCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDob() async {
+    final now = DateTime.now();
+    final minDob = DateTime(now.year - 100);
+    final maxDob = DateTime(now.year - 18, now.month, now.day);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDob ?? DateTime(now.year - 20),
+      firstDate: minDob,
+      lastDate: maxDob,
+      helpText: 'SELECT YOUR DATE OF BIRTH',
+      builder: (ctx, child) => Theme(
+        data: Theme.of(ctx).copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: AppColors.rose,
+            onPrimary: Colors.white,
+            surface: AppColors.card,
+            onSurface: Colors.white,
+          ),
+          dialogBackgroundColor: AppColors.cardSecondary,
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) setState(() => _selectedDob = picked);
   }
 
   Future<void> _handleSubmit() async {
@@ -92,7 +117,6 @@ class _AuthModalState extends State<AuthModal> {
       if (_isSignUp) {
         final displayName = _displayNameCtrl.text.trim();
         final username = _usernameCtrl.text.trim();
-        final age = int.tryParse(_ageCtrl.text.trim()) ?? 20;
 
         if (displayName.isEmpty) {
           setState(() {
@@ -102,11 +126,23 @@ class _AuthModalState extends State<AuthModal> {
           return;
         }
 
+        if (_selectedDob == null) {
+          setState(() {
+            _errorMessage = 'Please select your date of birth.';
+            _isLoading = false;
+          });
+          return;
+        }
+
+        final dob = _selectedDob!;
+        final birthdate =
+            '${dob.year}-${dob.month.toString().padLeft(2, '0')}-${dob.day.toString().padLeft(2, '0')}';
+
         auth = await ApiService().register(
           email: email,
           password: password,
           displayName: displayName,
-          age: age,
+          birthdate: birthdate,
           campus: _selectedCampus,
           username: username.isNotEmpty ? username : null,
         );
@@ -289,7 +325,7 @@ class _AuthModalState extends State<AuthModal> {
               ),
               const SizedBox(height: 14),
 
-              // Display Name & Age Row
+              // Display Name & DOB Row
               Row(
                 children: [
                   Expanded(
@@ -320,20 +356,37 @@ class _AuthModalState extends State<AuthModal> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('AGE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.textMuted, letterSpacing: 0.5)),
+                        const Text('DATE OF BIRTH', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.textMuted, letterSpacing: 0.5)),
                         const SizedBox(height: 6),
-                        TextField(
-                          controller: _ageCtrl,
-                          keyboardType: TextInputType.number,
-                          style: const TextStyle(fontSize: 13, color: Colors.white),
-                          decoration: InputDecoration(
-                            hintText: '20',
-                            hintStyle: TextStyle(fontSize: 12, color: AppColors.textMuted),
-                            filled: true,
-                            fillColor: AppColors.cardSecondary,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.border)),
-                            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.rose)),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        GestureDetector(
+                          onTap: _pickDob,
+                          child: Container(
+                            height: 48,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: AppColors.cardSecondary,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: _selectedDob == null ? AppColors.border : AppColors.rose,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.cake_outlined, size: 15, color: _selectedDob == null ? AppColors.textMuted : AppColors.rose),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    _selectedDob == null
+                                        ? 'Pick date'
+                                        : '${_selectedDob!.day}/${_selectedDob!.month}/${_selectedDob!.year}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: _selectedDob == null ? AppColors.textMuted : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
